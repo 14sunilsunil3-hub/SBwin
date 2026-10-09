@@ -82,7 +82,7 @@
         <button onclick="selectGameSection('mini')" id="tab-mini" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-gray-600 hover:text-orange-600">Mini Game</button>
       </div>
 
-      <!-- SECTION 1: SLOTS CONTENT (Realistic Graphic Cards) -->
+      <!-- SECTION 1: SLOTS CONTENT (Realistic Graphic Cards linked to assist/game) -->
       <div id="section-slots" class="space-y-3">
         <!-- Providers Filter List -->
         <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1">
@@ -96,9 +96,9 @@
           <span class="bg-white border border-gray-300 text-gray-700 text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center">EVO_Element</span>
         </div>
 
-        <!-- Slots Game Grid -->
+        <!-- Slots Game Grid (All scrollable & connected to assist/game folder) -->
         <div class="grid grid-cols-3 gap-2.5">
-          <div onclick="showToast('Launching Twist...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/twist.html" onclick="showToast('Launching Twist...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-purple-900 via-gray-900 to-black text-center h-28 flex flex-col justify-center items-center relative overflow-hidden">
               <div class="w-16 h-16 rounded-full border-4 border-amber-400 bg-gradient-to-tr from-rose-600 via-orange-500 to-yellow-400 flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
                 <span class="text-xs font-black text-white tracking-widest drop-shadow">TWIST</span>
@@ -108,9 +108,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">INOUT</p>
               <p class="font-bold truncate">Twist</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Chicken Road 2...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/chicken-road-2.html" onclick="showToast('Launching Chicken Road 2...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-green-600 via-emerald-800 to-green-950 text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-2xl bg-amber-300 border-2 border-white flex flex-col items-center justify-center text-xs font-black text-emerald-950 shadow-md">
                 <span>CR2</span>
@@ -121,9 +121,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">INOUT</p>
               <p class="font-bold truncate">Chicken Road 2</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Chicken Road...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/chicken-road.html" onclick="showToast('Launching Chicken Road...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-900 text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-full bg-yellow-200 border-2 border-amber-500 flex flex-col items-center justify-center text-xs font-black text-amber-900 shadow-md">
                 <span>CR</span>
@@ -134,9 +134,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">INOUT</p>
               <p class="font-bold truncate">Chicken Road</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Forest Arrow...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/forest-arrow.html" onclick="showToast('Launching Forest Arrow...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-amber-900 via-stone-800 to-stone-950 text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-700 to-yellow-600 border-2 border-amber-300 flex items-center justify-center shadow-lg">
                 <span class="text-xs font-extrabold text-amber-100">ARROW</span>
@@ -147,9 +147,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">INOUT</p>
               <p class="font-bold truncate">Forest Arrow</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Squid Gambler...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/squid-gambler.html" onclick="showToast('Launching Squid Gambler...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-pink-900 via-rose-950 to-black text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-full border-2 border-pink-400 bg-pink-950 flex items-center justify-center shadow-md">
                 <span class="text-[10px] font-black text-pink-300">SQUID</span>
@@ -160,9 +160,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">INOUT</p>
               <p class="font-bold truncate">Squid Gambler</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Penalty Unlimited...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/penalty-unlimited.html" onclick="showToast('Launching Penalty Unlimited...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-sky-600 via-blue-800 to-indigo-950 text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-full bg-white border-2 border-sky-400 flex items-center justify-center shadow-md">
                 <span class="text-[9px] font-black text-blue-900">PENALTY</span>
@@ -173,9 +173,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">INOUT</p>
               <p class="font-bold truncate">Penalty Unlimited</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Diver...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/diver.html" onclick="showToast('Launching Diver...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-yellow-400 via-amber-500 to-orange-600 text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-2xl bg-slate-900 border-2 border-amber-300 flex items-center justify-center shadow-md">
                 <span class="text-[10px] font-black text-yellow-300">DIVER</span>
@@ -186,9 +186,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">INOUT</p>
               <p class="font-bold truncate">Diver</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Plinko 1000...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/plinko-1000.html" onclick="showToast('Launching Plinko 1000...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-blue-500 via-indigo-700 to-blue-950 text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-full bg-cyan-400 border-2 border-white flex items-center justify-center shadow-md">
                 <span class="text-[10px] font-black text-blue-950">PLINKO</span>
@@ -199,9 +199,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">INOUT</p>
               <p class="font-bold truncate">Plinko 1000</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Hamster Run...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/hamster-run.html" onclick="showToast('Launching Hamster Run...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-purple-600 via-fuchsia-800 to-purple-950 text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-2xl bg-amber-200 border-2 border-purple-400 flex items-center justify-center shadow-md">
                 <span class="text-[9px] font-black text-purple-950">HAMSTER</span>
@@ -212,38 +212,38 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">INOUT</p>
               <p class="font-bold truncate">Hamster Run</p>
             </div>
-          </div>
+          </a>
         </div>
       </div>
 
-      <!-- SECTION 2: LOTTERY CONTENT (Realistic Banner/Cards) -->
+      <!-- SECTION 2: LOTTERY CONTENT (Linked to assist/game) -->
       <div id="section-lottery" class="space-y-3 hidden">
         <div class="grid grid-cols-3 gap-2.5">
-          <div onclick="showToast('Launching Win Go...')" class="bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-700 text-white rounded-2xl p-3 text-center shadow-md relative overflow-hidden">
+          <a href="assist/game/win-go.html" onclick="showToast('Launching Win Go...')" class="bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-700 text-white rounded-2xl p-3 text-center shadow-md relative overflow-hidden block">
             <div class="w-10 h-10 rounded-full bg-white/20 border border-white/40 mx-auto flex items-center justify-center font-black text-sm">WIN</div>
             <h4 class="font-extrabold text-xs mt-2">WIN GO</h4>
             <p class="text-[9px] text-blue-100 font-medium">Color Predict</p>
-          </div>
-          <div onclick="showToast('Launching K3 Lotre...')" class="bg-gradient-to-br from-red-500 via-orange-500 to-rose-600 text-white rounded-2xl p-3 text-center shadow-md relative overflow-hidden">
+          </a>
+          <a href="assist/game/k3-lotre.html" onclick="showToast('Launching K3 Lotre...')" class="bg-gradient-to-br from-red-500 via-orange-500 to-rose-600 text-white rounded-2xl p-3 text-center shadow-md relative overflow-hidden block">
             <div class="w-10 h-10 rounded-xl bg-white/20 border border-white/40 mx-auto flex items-center justify-center font-black text-sm">K3</div>
             <h4 class="font-extrabold text-xs mt-2">K3 LOTRE</h4>
             <p class="text-[9px] text-red-100 font-medium">Dice Game</p>
-          </div>
-          <div onclick="showToast('Launching 5D Lotre...')" class="bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-700 text-white rounded-2xl p-3 text-center shadow-md relative overflow-hidden">
+          </a>
+          <a href="assist/game/5d-lotre.html" onclick="showToast('Launching 5D Lotre...')" class="bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-700 text-white rounded-2xl p-3 text-center shadow-md relative overflow-hidden block">
             <div class="w-10 h-10 rounded-full bg-white/20 border border-white/40 mx-auto flex items-center justify-center font-black text-sm">5D</div>
             <h4 class="font-extrabold text-xs mt-2">5D LOTRE</h4>
             <p class="text-[9px] text-teal-100 font-medium">Number Draw</p>
-          </div>
-          <div onclick="showToast('Launching Trx Win...')" class="bg-gradient-to-br from-purple-500 via-indigo-600 to-purple-800 text-white rounded-2xl p-3 text-center shadow-md relative overflow-hidden">
+          </a>
+          <a href="assist/game/trx-win.html" onclick="showToast('Launching Trx Win...')" class="bg-gradient-to-br from-purple-500 via-indigo-600 to-purple-800 text-white rounded-2xl p-3 text-center shadow-md relative overflow-hidden block">
             <div class="w-10 h-10 rounded-full bg-white/20 border border-white/40 mx-auto flex items-center justify-center font-black text-xs">TRX</div>
             <h4 class="font-extrabold text-xs mt-2">TRX WINGO</h4>
             <p class="text-[9px] text-purple-100 font-medium">Crypto Hash</p>
-          </div>
-          <div onclick="showToast('Launching MotoRace...')" class="bg-gradient-to-br from-orange-500 via-amber-500 to-red-600 text-white rounded-2xl p-3 text-center shadow-md relative overflow-hidden">
+          </a>
+          <a href="assist/game/moto-racing.html" onclick="showToast('Launching MotoRace...')" class="bg-gradient-to-br from-orange-500 via-amber-500 to-red-600 text-white rounded-2xl p-3 text-center shadow-md relative overflow-hidden block">
             <div class="w-10 h-10 rounded-2xl bg-white/20 border border-white/40 mx-auto flex items-center justify-center font-black text-xs">MOTO</div>
             <h4 class="font-extrabold text-xs mt-2">MOTO RACING</h4>
             <p class="text-[9px] text-orange-100 font-medium">Speed Racing</p>
-          </div>
+          </a>
         </div>
 
         <!-- Super Jackpot Section -->
@@ -254,26 +254,26 @@
           </div>
           <p class="text-[10px] text-gray-500">When you win a super jackpot, you will receive additional rewards Maximum <span class="text-emerald-600 font-bold">₹500.00</span></p>
           <div class="grid grid-cols-3 gap-2 pt-1">
-            <div class="bg-gradient-to-b from-green-600 to-emerald-800 text-white rounded-xl p-2 text-center text-[10px] shadow">
+            <a href="assist/game/money-coming.html" class="bg-gradient-to-b from-green-600 to-emerald-800 text-white rounded-xl p-2 text-center text-[10px] shadow block">
               <span class="bg-emerald-400 text-black font-black text-[8px] px-1 rounded">21X</span>
               <p class="font-bold mt-1">Money Coming</p>
-            </div>
-            <div class="bg-gradient-to-b from-green-600 to-emerald-800 text-white rounded-xl p-2 text-center text-[10px] shadow">
+            </a>
+            <a href="assist/game/money-coming.html" class="bg-gradient-to-b from-green-600 to-emerald-800 text-white rounded-xl p-2 text-center text-[10px] shadow block">
               <span class="bg-emerald-400 text-black font-black text-[8px] px-1 rounded">51X</span>
               <p class="font-bold mt-1">Money Coming</p>
-            </div>
-            <div class="bg-gradient-to-b from-green-600 to-emerald-800 text-white rounded-xl p-2 text-center text-[10px] shadow">
+            </a>
+            <a href="assist/game/money-coming.html" class="bg-gradient-to-b from-green-600 to-emerald-800 text-white rounded-xl p-2 text-center text-[10px] shadow block">
               <span class="bg-emerald-400 text-black font-black text-[8px] px-1 rounded">50X</span>
               <p class="font-bold mt-1">Money Coming</p>
-            </div>
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- SECTION 3: MINI GAME CONTENT (Realistic Banner Cards) -->
+      <!-- SECTION 3: MINI GAME CONTENT (Linked to assist/game) -->
       <div id="section-mini" class="space-y-3 hidden">
         <div class="grid grid-cols-3 gap-2.5">
-          <div onclick="showToast('Launching Aviator...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/aviator.html" onclick="showToast('Launching Aviator...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-gray-900 via-red-950 to-black text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-xl bg-red-600 border border-red-400 flex items-center justify-center shadow-lg">
                 <span class="text-[9px] font-black text-white">AVIATOR</span>
@@ -284,9 +284,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">SPRIBE</p>
               <p class="font-bold truncate">Aviator</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Aviator...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/aviator-tb.html" onclick="showToast('Launching Aviator...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-red-800 via-red-900 to-rose-950 text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-xl bg-white border border-red-200 flex items-center justify-center shadow-lg">
                 <span class="text-[9px] font-black text-red-700">TB</span>
@@ -297,9 +297,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">TB_Chess</p>
               <p class="font-bold truncate">Aviator</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Cricket...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/cricket.html" onclick="showToast('Launching Cricket...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-emerald-600 via-green-700 to-green-900 text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-full bg-amber-300 border border-white flex items-center justify-center shadow-lg">
                 <span class="text-[9px] font-black text-emerald-950">CRICKET</span>
@@ -310,9 +310,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">TB_Chess</p>
               <p class="font-bold truncate">Cricket</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Go Rush...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/go-rush.html" onclick="showToast('Launching Go Rush...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-indigo-600 via-blue-800 to-indigo-950 text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-2xl bg-orange-500 border border-yellow-300 flex items-center justify-center shadow-lg">
                 <span class="text-[9px] font-black text-white">RUSH</span>
@@ -323,9 +323,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">JILI</p>
               <p class="font-bold truncate">Go Rush</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Limbo...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/limbo.html" onclick="showToast('Launching Limbo...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-blue-900 via-indigo-950 to-black text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-xl bg-sky-500 border border-white flex items-center justify-center shadow-lg">
                 <span class="text-[9px] font-black text-white">LIMBO</span>
@@ -336,9 +336,9 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">TB_Chess</p>
               <p class="font-bold truncate">Limbo</p>
             </div>
-          </div>
+          </a>
 
-          <div onclick="showToast('Launching Mines...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200">
+          <a href="assist/game/mines.html" onclick="showToast('Launching Mines...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md text-white border border-orange-200 block">
             <div class="p-3 bg-gradient-to-b from-violet-700 via-purple-900 to-indigo-950 text-center h-28 flex flex-col justify-center items-center relative">
               <div class="w-12 h-12 rounded-full bg-amber-400 border border-yellow-200 flex items-center justify-center shadow-lg">
                 <span class="text-[9px] font-black text-purple-950">MINES</span>
@@ -349,7 +349,7 @@
               <p class="text-gray-400 text-[8px] uppercase font-semibold">JILI</p>
               <p class="font-bold truncate">Mines</p>
             </div>
-          </div>
+          </a>
         </div>
       </div>
 
@@ -461,7 +461,7 @@
       </div>
     </section>
 
-    <!-- PAGE 5: ACCOUNT / PROFILE PAGE (Updated from index (1).html) -->
+    <!-- PAGE 5: ACCOUNT / PROFILE PAGE -->
     <section id="page-account" class="page-view hidden space-y-4 p-4">
       
       <!-- Top Balance Header -->
