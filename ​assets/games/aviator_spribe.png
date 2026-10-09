@@ -1,0 +1,9 @@
+<div onclick="showToast('Launching Aviator...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md border border-orange-200 cursor-pointer">
+  <div class="h-28 w-full bg-gray-800">
+    <img src="/assets/games/aviator_spribe.png" alt="Aviator" class="w-full h-full object-cover" onerror="this.src='https://picsum.photos/seed/aviator1/300/300'">
+  </div>
+  <div class="p-1.5 bg-white text-gray-800 text-[10px]">
+    <p class="text-gray-400 text-[8px] uppercase font-semibold">SPRIBE</p>
+    <p class="font-bold truncate">Aviator</p>
+  </div>
+</div>
