@@ -1,9 +1,0 @@
-<div onclick="showToast('Launching Limbo...')" class="bg-gray-900 rounded-2xl overflow-hidden shadow-md border border-orange-200 cursor-pointer">
-  <div class="h-28 w-full bg-gray-800">
-    <img src="/assets/games/limbo.png" alt="Limbo" class="w-full h-full object-cover">
-  </div>
-  <div class="p-1.5 bg-white text-gray-800 text-[10px]">
-    <p class="text-gray-400 text-[8px] uppercase font-semibold">TB_Chess</p>
-    <p class="font-bold truncate">Limbo</p>
-  </div>
-</div>
