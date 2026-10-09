@@ -1,3 +1,0 @@
-<div onclick="showToast('Launching 5D Lotre...')" class="bg-gray-800 rounded-2xl overflow-hidden shadow-md cursor-pointer border border-orange-200">
-  <img src="/assets/games/5d.png" alt="5D Lotre" class="w-full h-32 object-cover" onerror="this.src='https://picsum.photos/seed/5dlotre/300/300'">
-</div>
