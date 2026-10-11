@@ -7,10 +7,16 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body {
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       font-family: 'Inter', sans-serif;
-      background-color: #fff7ed;
-      color: #1f2937;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: linear-gradient(135deg, #2e1065, #022c22);
+      color: #fff;
       touch-action: manipulation;
     }
     .no-scrollbar::-webkit-scrollbar {
@@ -20,26 +26,20 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-    .gradient-orange-banner {
-      background: linear-gradient(135deg, #ff8c00 0%, #ff4500 100%);
-    }
     .gradient-card-dark {
-      background: linear-gradient(180deg, #1e232a 0%, #16191e 100%);
+      background: linear-gradient(135deg, #1e1b4b, #064e3b);
     }
     .gradient-orange-btn {
       background: linear-gradient(135deg, #ff7a00 0%, #ff5500 100%);
     }
-    .gradient-gold {
-      background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
-    }
   </style>
 </head>
-<body class="bg-[#fff7ed] text-gray-800 min-h-screen flex flex-col justify-between max-w-md mx-auto relative shadow-2xl overflow-x-hidden border-x border-orange-200">
+<body class="min-h-screen flex flex-col justify-between max-w-md mx-auto relative shadow-2xl overflow-x-hidden border-x border-emerald-900/30">
 
   <!-- Toast Notification -->
   <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-4 max-w-xs w-full">
-    <div class="bg-gray-900 border border-orange-500/50 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
-      <svg class="w-5 h-5 flex-shrink-0 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <div class="bg-gray-900 border border-emerald-500/50 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+      <svg class="w-5 h-5 flex-shrink-0 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
       <span id="toast-message" class="text-xs font-medium">Action performed!</span>
     </div>
   </div>
@@ -47,10 +47,10 @@
   <main class="flex-1 overflow-y-auto pb-24 no-scrollbar" id="main-content">
     
     <!-- TOP HEADER -->
-    <div class="bg-white p-3 border-b border-orange-100 flex items-center justify-between sticky top-0 z-30 shadow-sm">
-      <h1 class="text-2xl font-extrabold text-orange-600 tracking-tight">sbwin</h1>
+    <div class="bg-gray-900/80 backdrop-blur-md p-3 border-b border-emerald-500/20 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+      <h1 class="text-2xl font-extrabold bg-gradient-to-r from-purple-400 to-emerald-400 bg-clip-text text-transparent tracking-tight">sbwin</h1>
       <div class="flex items-center space-x-2">
-        <span class="text-xs font-semibold bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full">VIP 3</span>
+        <span class="text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full">VIP 3</span>
       </div>
     </div>
 
@@ -59,81 +59,69 @@
       
       <!-- Top Promos -->
       <div class="grid grid-cols-2 gap-2">
-        <div class="bg-gradient-to-r from-blue-100 to-cyan-100 border border-blue-200 p-2.5 rounded-2xl flex items-center justify-between">
+        <div class="gradient-card-dark border border-purple-500/30 p-2.5 rounded-2xl flex items-center justify-between shadow">
           <div>
-            <p class="text-[11px] font-bold text-blue-900">Wheel of fortune</p>
-            <button onclick="switchTab('invite')" class="mt-1 bg-blue-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow">View</button>
+            <p class="text-[11px] font-bold text-emerald-300">Wheel of fortune</p>
+            <button onclick="switchTab('invite')" class="mt-1 bg-purple-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow">View</button>
           </div>
-          <div class="w-8 h-8 rounded-full bg-blue-400/20 flex items-center justify-center font-bold text-blue-600">🎡</div>
+          <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center font-bold text-purple-300">🎡</div>
         </div>
-        <div class="bg-gradient-to-r from-emerald-100 to-green-100 border border-emerald-200 p-2.5 rounded-2xl flex items-center justify-between">
+        <div class="gradient-card-dark border border-emerald-500/30 p-2.5 rounded-2xl flex items-center justify-between shadow">
           <div>
-            <p class="text-[11px] font-bold text-emerald-900">Welcome Bonus</p>
-            <button onclick="showToast('Welcome Bonus Claimed!')" class="mt-1 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow">View</button>
+            <p class="text-[11px] font-bold text-emerald-300">Welcome Bonus</p>
+            <button onclick="showToast('Welcome Bonus Claimed!')" class="mt-1 bg-emerald-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow">View</button>
           </div>
-          <div class="w-8 h-8 rounded-full bg-emerald-400/20 flex items-center justify-center font-bold text-emerald-600">💎</div>
+          <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center font-bold text-emerald-300">💎</div>
         </div>
       </div>
 
       <!-- ALL GAMES SECTION (Single Scrollable Grid) -->
       <div class="space-y-3">
         <div class="flex items-center justify-between">
-          <h3 class="text-xs font-black uppercase text-gray-700 tracking-wider">Popular Games</h3>
+          <h3 class="text-xs font-black uppercase text-emerald-300 tracking-wider">Popular Games</h3>
         </div>
 
-                                                <!-- Games Grid -->
+        <!-- Games Grid -->
         <div class="grid grid-cols-3 gap-2.5">
           
           <!-- 1. Win Go -->
-          <a href="assist/win-go.html" onclick="showToast('Launching Win Go...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/wingo.png');"></a>
+          <a href="assist/win-go.html" onclick="showToast('Launching Win Go...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/wingo.png');"></a>
 
           <!-- 2. K3 Lotre -->
-          <a href="assist/k3-lotre.html" onclick="showToast('Launching K3 Lotre...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/k3.png');"></a>
+          <a href="assist/k3-lotre.html" onclick="showToast('Launching K3 Lotre...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/k3.png');"></a>
 
           <!-- 3. 5D Lotre -->
-          <a href="assist/5d-lotre.html" onclick="showToast('Launching 5D Lotre...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/5d.png');"></a>
+          <a href="assist/5d-lotre.html" onclick="showToast('Launching 5D Lotre...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/5d.png');"></a>
 
           <!-- 4. TRX Wingo -->
-          <a href="assist/trx-win.html" onclick="showToast('Launching Trx Win...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/trx_wingo.png');"></a>
+          <a href="assist/trx-win.html" onclick="showToast('Launching Trx Win...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/trx_wingo.png');"></a>
 
           <!-- 5. Moto Racing -->
-          <a href="assist/moto-racing.html" onclick="showToast('Launching MotoRace...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/moto_racing.png');"></a>
+          <a href="assist/moto-racing.html" onclick="showToast('Launching MotoRace...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/moto_racing.png');"></a>
 
           <!-- 6. Aviator Spribe -->
-          <a href="assist/aviator.html" onclick="showToast('Launching Aviator...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/aviator.png');"></a>
+          <a href="assist/aviator.html" onclick="showToast('Launching Aviator...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/aviator.png');"></a>
 
           <!-- 7. Aviator TB -->
-          <a href="assist/aviator-tb.html" onclick="showToast('Launching Aviator...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/aviator_tb.png');"></a>
+          <a href="assist/aviator-tb.html" onclick="showToast('Launching Aviator...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/aviator_tb.png');"></a>
 
           <!-- 8. Cricket -->
-          <a href="assist/cricket.html" onclick="showToast('Launching Cricket...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/cricket.png');"></a>
+          <a href="assist/cricket.html" onclick="showToast('Launching Cricket...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/cricket.png');"></a>
 
           <!-- 9. Mines -->
-          <a href="assist/mines.html" onclick="showToast('Launching Mines...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/mines.png');"></a>
+          <a href="assist/mines.html" onclick="showToast('Launching Mines...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/mines.png');"></a>
 
           <!-- 10. Limbo -->
-          <a href="assist/limbo.html" onclick="showToast('Launching Limbo...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/limbo.png');"></a>
+          <a href="assist/limbo.html" onclick="showToast('Launching Limbo...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/limbo.png');"></a>
 
           <!-- 11. Go Rush -->
-          <a href="assist/go-rush.html" onclick="showToast('Launching Go Rush...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/go_rush.png');"></a>
+          <a href="assist/go-rush.html" onclick="showToast('Launching Go Rush...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/go_rush.png');"></a>
 
           <!-- 12. Plinko -->
-          <a href="assist/plinko-1000.html" onclick="showToast('Launching Plinko 1000...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/plinko.png');"></a>
+          <a href="assist/plinko-1000.html" onclick="showToast('Launching Plinko 1000...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/plinko.png');"></a>
 
           <!-- 13. Chicken Road 2 -->
-          <a href="assist/chicken-road-2.html" onclick="showToast('Launching Chicken Road 2...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center" style="background-image: url('/assets/chicken_road_2.png');"></a>
-
-        </div>
-
-
-        </div>
-
-
-        </div>
-
-
-        </div>
-
+          <a href="assist/chicken-road-2.html" onclick="showToast('Launching Chicken Road 2...')" class="block rounded-2xl overflow-hidden shadow-md h-44 bg-cover bg-center border border-purple-500/20" style="background-image: url('assets/chicken_road_2.png');"></a>
 
         </div>
       </div>
@@ -141,8 +129,8 @@
     </section>
 
     <!-- PAGE 2: INVITE WHEEL PAGE -->
-    <section id="page-invite" class="page-view hidden min-h-screen bg-[#ea3829] text-white flex flex-col justify-between p-4 relative">
-      <div class="flex items-center justify-between pb-2 border-b border-white/20">
+    <section id="page-invite" class="page-view hidden min-h-screen gradient-card-dark text-white flex flex-col justify-between p-4 relative">
+      <div class="flex items-center justify-between pb-2 border-b border-emerald-500/20">
         <button onclick="switchTab('home')" class="p-1">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
         </button>
@@ -156,63 +144,63 @@
       </div>
 
       <div class="text-center my-3">
-        <p class="text-xs text-orange-100 font-medium">My Amount(44:16:36)</p>
-        <h1 class="text-3xl font-black text-amber-300 mt-0.5">₹327.40</h1>
-        <button onclick="showToast('Cash Out Requested!')" class="mt-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-8 py-1.5 rounded-full shadow-md uppercase tracking-wider">
+        <p class="text-xs text-emerald-300 font-medium">My Amount(44:16:36)</p>
+        <h1 class="text-3xl font-black text-emerald-400 mt-0.5">₹327.40</h1>
+        <button onclick="showToast('Cash Out Requested!')" class="mt-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold px-8 py-1.5 rounded-full shadow-md uppercase tracking-wider">
           CASH OUT
         </button>
       </div>
 
       <div class="relative my-4 flex justify-center items-center">
-        <div class="w-64 h-64 rounded-full border-8 border-rose-700 bg-gradient-to-b from-amber-100 to-orange-100 shadow-2xl relative flex items-center justify-center overflow-hidden border-dashed">
-          <div class="absolute inset-0 border-4 border-red-600 rounded-full"></div>
+        <div class="w-64 h-64 rounded-full border-8 border-purple-900 bg-gradient-to-b from-purple-900 to-emerald-950 shadow-2xl relative flex items-center justify-center overflow-hidden border-dashed">
+          <div class="absolute inset-0 border-4 border-emerald-500/40 rounded-full"></div>
           <div class="absolute inset-0 flex items-center justify-center">
-            <div class="w-full h-full rounded-full border-2 border-amber-300 relative">
-              <span class="absolute top-2 left-1/2 -translate-x-1/2 font-black text-xs text-red-600">₹200</span>
-              <span class="absolute top-8 right-6 font-black text-xs text-red-600">₹50</span>
-              <span class="absolute right-3 top-1/2 -translate-y-1/2 font-black text-xs text-red-600">₹35</span>
-              <span class="absolute bottom-8 right-6 font-black text-xs text-red-600">₹40</span>
-              <span class="absolute bottom-2 left-1/2 -translate-x-1/2 font-black text-xs text-red-600">₹45</span>
-              <span class="absolute bottom-8 left-6 font-black text-xs text-red-600">₹0-10</span>
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-red-600">₹25</span>
-              <span class="absolute top-8 left-6 font-black text-xs text-red-600">₹30</span>
+            <div class="w-full h-full rounded-full border-2 border-emerald-400/30 relative">
+              <span class="absolute top-2 left-1/2 -translate-x-1/2 font-black text-xs text-emerald-300">₹200</span>
+              <span class="absolute top-8 right-6 font-black text-xs text-emerald-300">₹50</span>
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 font-black text-xs text-emerald-300">₹35</span>
+              <span class="absolute bottom-8 right-6 font-black text-xs text-emerald-300">₹40</span>
+              <span class="absolute bottom-2 left-1/2 -translate-x-1/2 font-black text-xs text-emerald-300">₹45</span>
+              <span class="absolute bottom-8 left-6 font-black text-xs text-emerald-300">₹0-10</span>
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-emerald-300">₹25</span>
+              <span class="absolute top-8 left-6 font-black text-xs text-emerald-300">₹30</span>
             </div>
           </div>
-          <div class="w-20 h-20 rounded-full bg-white border-4 border-red-600 z-10 shadow-lg flex flex-col items-center justify-center text-center">
-            <span class="text-sm font-black text-red-600">X0</span>
-            <span class="text-[8px] font-bold text-red-500 uppercase">FREE SPIN</span>
+          <div class="w-20 h-20 rounded-full bg-gray-900 border-4 border-emerald-500 z-10 shadow-lg flex flex-col items-center justify-center text-center">
+            <span class="text-sm font-black text-emerald-400">X0</span>
+            <span class="text-[8px] font-bold text-emerald-300 uppercase">FREE SPIN</span>
           </div>
         </div>
       </div>
 
       <div class="text-center space-y-2 mb-4">
-        <button onclick="showToast('Share link copied to clipboard!')" class="w-full bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-red-900 font-extrabold text-sm py-3 rounded-full shadow-lg active:scale-95 transition-transform uppercase tracking-wider">
+        <button onclick="showToast('Share link copied to clipboard!')" class="w-full bg-gradient-to-r from-emerald-400 via-teal-400 to-green-500 text-gray-950 font-extrabold text-sm py-3 rounded-full shadow-lg active:scale-95 transition-transform uppercase tracking-wider">
           INVITE FRIENDS TO GET SPIN
         </button>
-        <p class="text-[11px] text-orange-100">Only ₹172.60 left to get prize ₹500.00</p>
+        <p class="text-[11px] text-emerald-300">Only ₹172.60 left to get prize ₹500.00</p>
       </div>
 
-      <div class="space-y-2 pt-2 border-t border-white/20">
+      <div class="space-y-2 pt-2 border-t border-emerald-500/20">
         <h3 class="text-xs font-bold text-white">Record</h3>
         <div class="space-y-1.5 text-xs">
-          <div class="flex items-center justify-between bg-red-800/40 p-2 rounded-xl">
+          <div class="flex items-center justify-between bg-gray-900/60 border border-purple-500/20 p-2 rounded-xl">
             <div class="flex items-center space-x-2">
-              <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-[10px]">👤</div>
-              <span class="font-medium">MemberNNGABDTT</span>
+              <div class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-[10px]">👤</div>
+              <span class="font-medium text-gray-200">MemberNNGABDTT</span>
             </div>
             <div class="text-right">
-              <p class="font-bold text-amber-300">₹0.10</p>
-              <p class="text-[8px] text-orange-200">2026-10-09 04:04:36</p>
+              <p class="font-bold text-emerald-400">₹0.10</p>
+              <p class="text-[8px] text-gray-400">2026-10-09 04:04:36</p>
             </div>
           </div>
-          <div class="flex items-center justify-between bg-red-800/40 p-2 rounded-xl">
+          <div class="flex items-center justify-between bg-gray-900/60 border border-purple-500/20 p-2 rounded-xl">
             <div class="flex items-center space-x-2">
-              <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-[10px]">👤</div>
-              <span class="font-medium">MemberNNGABDTT</span>
+              <div class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-[10px]">👤</div>
+              <span class="font-medium text-gray-200">MemberNNGABDTT</span>
             </div>
             <div class="text-right">
-              <p class="font-bold text-amber-300">₹0.15</p>
-              <p class="text-[8px] text-orange-200">2026-10-08 01:27:28</p>
+              <p class="font-bold text-emerald-400">₹0.15</p>
+              <p class="text-[8px] text-gray-400">2026-10-08 01:27:28</p>
             </div>
           </div>
         </div>
@@ -221,27 +209,27 @@
 
     <!-- PAGE 3: ACTIVITY PAGE -->
     <section id="page-activity" class="page-view hidden space-y-4 p-4">
-      <h2 class="text-lg font-bold text-gray-800">Activity Center</h2>
-      <div class="bg-white p-4 rounded-2xl border border-orange-200 space-y-3 shadow-sm">
+      <h2 class="text-lg font-bold text-emerald-300">Activity Center</h2>
+      <div class="gradient-card-dark p-4 rounded-2xl border border-emerald-500/30 space-y-3 shadow-md">
         <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 font-bold">🎁</div>
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">🎁</div>
           <div>
-            <h4 class="font-bold text-xs text-gray-800">Daily Sign-in Bonus</h4>
-            <p class="text-[10px] text-gray-500">Claim free rewards every day!</p>
+            <h4 class="font-bold text-xs text-white">Daily Sign-in Bonus</h4>
+            <p class="text-[10px] text-gray-400">Claim free rewards every day!</p>
           </div>
         </div>
-        <button onclick="showToast('Claimed Daily Bonus ₹10!')" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs py-2.5 rounded-xl shadow">Claim ₹10 Today</button>
+        <button onclick="showToast('Claimed Daily Bonus ₹10!')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 rounded-xl shadow">Claim ₹10 Today</button>
       </div>
     </section>
 
     <!-- PAGE 4: PROMOTION PAGE -->
     <section id="page-promotion" class="page-view hidden space-y-4 p-4">
-      <h2 class="text-lg font-bold text-gray-800">Promotion</h2>
-      <div class="bg-white p-4 rounded-2xl border border-orange-200 text-center space-y-3 shadow-sm">
-        <p class="text-xs text-gray-600">Invite friends and earn commission up to 85%</p>
-        <div class="bg-orange-50 border border-orange-200 p-2.5 rounded-xl text-xs font-mono text-orange-700 flex justify-between items-center">
+      <h2 class="text-lg font-bold text-emerald-300">Promotion</h2>
+      <div class="gradient-card-dark p-4 rounded-2xl border border-emerald-500/30 text-center space-y-3 shadow-md">
+        <p class="text-xs text-gray-300">Invite friends and earn commission up to 85%</p>
+        <div class="bg-gray-900/80 border border-purple-500/30 p-2.5 rounded-xl text-xs font-mono text-emerald-400 flex justify-between items-center">
           <span>SBWIN_REF_98314</span>
-          <button onclick="showToast('Referral code copied!')" class="text-xs bg-orange-500 text-white font-bold px-3 py-1 rounded-lg">Copy</button>
+          <button onclick="showToast('Referral code copied!')" class="text-xs bg-emerald-600 text-white font-bold px-3 py-1 rounded-lg">Copy</button>
         </div>
       </div>
     </section>
@@ -250,12 +238,12 @@
     <section id="page-account" class="page-view hidden space-y-4 p-4">
       
       <!-- Top Balance Header -->
-      <div class="gradient-card-dark rounded-2xl p-4 border border-gray-800 shadow-lg relative overflow-hidden text-white">
+      <div class="gradient-card-dark rounded-2xl p-4 border border-emerald-500/30 shadow-lg relative overflow-hidden text-white">
         <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-emerald-500/10 rounded-full blur-xl"></div>
         
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-full gradient-orange-btn flex items-center justify-center text-white font-bold text-lg border-2 border-emerald-400/30">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-600 to-emerald-500 flex items-center justify-center text-white font-bold text-lg border-2 border-emerald-400/30">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
             </div>
             <div>
@@ -271,7 +259,7 @@
           </button>
         </div>
 
-        <div class="flex items-end justify-between pt-2 border-t border-gray-800">
+        <div class="flex items-end justify-between pt-2 border-t border-emerald-500/20">
           <div>
             <p class="text-xs text-gray-400 font-medium">Total Balance</p>
             <div class="flex items-baseline space-x-1 mt-0.5">
@@ -285,7 +273,7 @@
         </div>
 
         <!-- Quick Action Bar -->
-        <div class="grid grid-cols-4 gap-2 mt-4 pt-3 border-t border-gray-800/80 text-center">
+        <div class="grid grid-cols-4 gap-2 mt-4 pt-3 border-t border-emerald-500/20 text-center">
           <button onclick="showToast('Opening ARWallet...')" class="flex flex-col items-center group">
             <div class="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 group-hover:scale-105 transition-transform">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -317,7 +305,7 @@
       </div>
 
       <!-- Safe Section -->
-      <div class="gradient-card-dark border border-gray-800 rounded-2xl p-4 flex items-center justify-between shadow-md relative overflow-hidden text-white">
+      <div class="gradient-card-dark border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between shadow-md relative overflow-hidden text-white">
         <div class="flex items-center space-x-3">
           <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 flex-shrink-0">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
@@ -337,7 +325,7 @@
 
       <!-- Grid History Cards Section -->
       <div class="grid grid-cols-2 gap-3 text-white">
-        <button onclick="showToast('Loading Game History...')" class="gradient-card-dark border border-gray-800/80 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-gray-700 active:scale-95 transition-all">
+        <button onclick="showToast('Loading Game History...')" class="gradient-card-dark border border-emerald-500/30 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-emerald-500/60 active:scale-95 transition-all">
           <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           </div>
@@ -347,7 +335,7 @@
           </div>
         </button>
 
-        <button onclick="showToast('Loading Transaction History...')" class="gradient-card-dark border border-gray-800/80 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-gray-700 active:scale-95 transition-all">
+        <button onclick="showToast('Loading Transaction History...')" class="gradient-card-dark border border-emerald-500/30 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-emerald-500/60 active:scale-95 transition-all">
           <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
           </div>
@@ -357,7 +345,7 @@
           </div>
         </button>
 
-        <button onclick="showToast('Loading Deposit History...')" class="gradient-card-dark border border-gray-800/80 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-gray-700 active:scale-95 transition-all">
+        <button onclick="showToast('Loading Deposit History...')" class="gradient-card-dark border border-emerald-500/30 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-emerald-500/60 active:scale-95 transition-all">
           <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 flex-shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
           </div>
@@ -367,7 +355,7 @@
           </div>
         </button>
 
-        <button onclick="showToast('Loading Withdraw History...')" class="gradient-card-dark border border-gray-800/80 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-gray-700 active:scale-95 transition-all">
+        <button onclick="showToast('Loading Withdraw History...')" class="gradient-card-dark border border-emerald-500/30 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-emerald-500/60 active:scale-95 transition-all">
           <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 flex-shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           </div>
@@ -379,8 +367,8 @@
       </div>
 
       <!-- Vertical List Menu -->
-      <div class="gradient-card-dark border border-gray-800 rounded-2xl divide-y divide-gray-800/80 overflow-hidden shadow-md text-white">
-        <button onclick="showToast('Opening Notifications...')" class="w-full p-3.5 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
+      <div class="gradient-card-dark border border-emerald-500/30 rounded-2xl divide-y divide-emerald-500/20 overflow-hidden shadow-md text-white">
+        <button onclick="showToast('Opening Notifications...')" class="w-full p-3.5 flex items-center justify-between hover:bg-emerald-500/10 transition-colors">
           <div class="flex items-center space-x-3">
             <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 01-6 0v-1m6 0H9"></path></svg>
@@ -393,7 +381,7 @@
           </div>
         </button>
 
-        <button onclick="showToast('Gifts & Rewards Center')" class="w-full p-3.5 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
+        <button onclick="showToast('Gifts & Rewards Center')" class="w-full p-3.5 flex items-center justify-between hover:bg-emerald-500/10 transition-colors">
           <div class="flex items-center space-x-3">
             <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V6a2 2 0 10-2 2h2zm0 13C10.832 19.877 9 20 7.5 20 5.015 20 3 18.5 3 16V8a2 2 0 012-2h14a2 2 0 012 2v8c0 2.5-2.015 4-4.5 4-1.5 0-3.332-.123-4.5-1z"></path></svg>
@@ -403,7 +391,7 @@
           <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
         </button>
 
-        <button onclick="showToast('Loading Top-Up Coupons...')" class="w-full p-3.5 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
+        <button onclick="showToast('Loading Top-Up Coupons...')" class="w-full p-3.5 flex items-center justify-between hover:bg-emerald-500/10 transition-colors">
           <div class="flex items-center space-x-3">
             <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 001 1.732 2 2 0 010 3.536A2 2 0 003 17v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 00-1-1.732 2 2 0 010-3.536A2 2 0 0021 10V7a2 2 0 00-2-2H5z"></path></svg>
@@ -413,7 +401,7 @@
           <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
         </button>
 
-        <button onclick="showToast('Calculating Statistics...')" class="w-full p-3.5 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
+        <button onclick="showToast('Calculating Statistics...')" class="w-full p-3.5 flex items-center justify-between hover:bg-emerald-500/10 transition-colors">
           <div class="flex items-center space-x-3">
             <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
@@ -423,7 +411,7 @@
           <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
         </button>
 
-        <button onclick="showToast('Language set to English')" class="w-full p-3.5 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
+        <button onclick="showToast('Language set to English')" class="w-full p-3.5 flex items-center justify-between hover:bg-emerald-500/10 transition-colors">
           <div class="flex items-center space-x-3">
             <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
@@ -438,399 +426,45 @@
       </div>
 
       <!-- Service Center Section -->
-      <div class="gradient-card-dark border border-gray-800 rounded-2xl p-4 space-y-3 shadow-md text-white">
+      <div class="gradient-card-dark border border-emerald-500/30 rounded-2xl p-4 space-y-3 shadow-md text-white">
         <h3 class="text-xs font-bold text-gray-300">Service center</h3>
         <div class="grid grid-cols-3 gap-3 text-center">
-          <button onclick="showToast('Opening Settings...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
+          <button onclick="showToast('Opening Settings...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-emerald-500/10 transition-colors">
             <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
             </div>
             <span class="text-[11px] text-gray-300">Settings</span>
           </button>
 
-          <button onclick="showToast('Opening Feedback Form...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
+          <button onclick="showToast('Opening Feedback Form...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-emerald-500/10 transition-colors">
             <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
             </div>
             <span class="text-[11px] text-gray-300">Feedback</span>
           </button>
 
-          <button onclick="showToast('Checking Announcements...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
+          <button onclick="showToast('Checking Announcements...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-emerald-500/10 transition-colors">
             <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c.41 0 .748.336.748.75v6.5c0 .414-.338.75-.748.75H7c-.57 0-1.11-.122-1.564-.317z"></path></svg>
             </div>
             <span class="text-[11px] text-gray-300">Announcement</span>
           </button>
 
-          <button onclick="showToast('Connecting 24/7 Support...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
+          <button onclick="showToast('Connecting 24/7 Support...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-emerald-500/10 transition-colors">
             <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
             </div>
             <span class="text-[11px] text-gray-300">Customer Service</span>
           </button>
 
-          <button onclick="showToast('Opening Beginner\'s Guide...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
+          <button onclick="showToast('Opening Beginner\'s Guide...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-emerald-500/10 transition-colors">
             <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
             </div>
             <span class="text-[11px] text-gray-300">Beginner's Guide</span>
           </button>
 
-          <button onclick="showToast('sbwin Version v2.4.1')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-            </div>
-            <span class="text-[11px] text-gray-300">About us</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Log Out Button -->
-      <div class="pt-2 pb-4">
-        <button onclick="showToast('Logged out successfully')" class="w-full border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 font-medium text-xs py-3 rounded-full flex items-center justify-center space-x-2 transition-colors active:scale-98">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-          <span>Log out</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- PAGE 2: INVITE WHEEL PAGE -->
-    <section id="page-invite" class="page-view hidden min-h-screen bg-[#ea3829] text-white flex flex-col justify-between p-4 relative">
-      <div class="flex items-center justify-between pb-2 border-b border-white/20">
-        <button onclick="switchTab('home')" class="p-1">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
-        </button>
-        <h2 class="text-base font-bold">Invite Wheel</h2>
-        <div class="flex items-center space-x-3">
-          <button class="w-6 h-6 rounded-full border border-white/60 text-xs flex items-center justify-center font-bold">?</button>
-          <button class="p-1">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="text-center my-3">
-        <p class="text-xs text-orange-100 font-medium">My Amount(44:16:36)</p>
-        <h1 class="text-3xl font-black text-amber-300 mt-0.5">₹327.40</h1>
-        <button onclick="showToast('Cash Out Requested!')" class="mt-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-8 py-1.5 rounded-full shadow-md uppercase tracking-wider">
-          CASH OUT
-        </button>
-      </div>
-
-      <div class="relative my-4 flex justify-center items-center">
-        <div class="w-64 h-64 rounded-full border-8 border-rose-700 bg-gradient-to-b from-amber-100 to-orange-100 shadow-2xl relative flex items-center justify-center overflow-hidden border-dashed">
-          <div class="absolute inset-0 border-4 border-red-600 rounded-full"></div>
-          <div class="absolute inset-0 flex items-center justify-center">
-            <div class="w-full h-full rounded-full border-2 border-amber-300 relative">
-              <span class="absolute top-2 left-1/2 -translate-x-1/2 font-black text-xs text-red-600">₹200</span>
-              <span class="absolute top-8 right-6 font-black text-xs text-red-600">₹50</span>
-              <span class="absolute right-3 top-1/2 -translate-y-1/2 font-black text-xs text-red-600">₹35</span>
-              <span class="absolute bottom-8 right-6 font-black text-xs text-red-600">₹40</span>
-              <span class="absolute bottom-2 left-1/2 -translate-x-1/2 font-black text-xs text-red-600">₹45</span>
-              <span class="absolute bottom-8 left-6 font-black text-xs text-red-600">₹0-10</span>
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-red-600">₹25</span>
-              <span class="absolute top-8 left-6 font-black text-xs text-red-600">₹30</span>
-            </div>
-          </div>
-          <div class="w-20 h-20 rounded-full bg-white border-4 border-red-600 z-10 shadow-lg flex flex-col items-center justify-center text-center">
-            <span class="text-sm font-black text-red-600">X0</span>
-            <span class="text-[8px] font-bold text-red-500 uppercase">FREE SPIN</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="text-center space-y-2 mb-4">
-        <button onclick="showToast('Share link copied to clipboard!')" class="w-full bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-red-900 font-extrabold text-sm py-3 rounded-full shadow-lg active:scale-95 transition-transform uppercase tracking-wider">
-          INVITE FRIENDS TO GET SPIN
-        </button>
-        <p class="text-[11px] text-orange-100">Only ₹172.60 left to get prize ₹500.00</p>
-      </div>
-
-      <div class="space-y-2 pt-2 border-t border-white/20">
-        <h3 class="text-xs font-bold text-white">Record</h3>
-        <div class="space-y-1.5 text-xs">
-          <div class="flex items-center justify-between bg-red-800/40 p-2 rounded-xl">
-            <div class="flex items-center space-x-2">
-              <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-[10px]">👤</div>
-              <span class="font-medium">MemberNNGABDTT</span>
-            </div>
-            <div class="text-right">
-              <p class="font-bold text-amber-300">₹0.10</p>
-              <p class="text-[8px] text-orange-200">2026-10-09 04:04:36</p>
-            </div>
-          </div>
-          <div class="flex items-center justify-between bg-red-800/40 p-2 rounded-xl">
-            <div class="flex items-center space-x-2">
-              <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-[10px]">👤</div>
-              <span class="font-medium">MemberNNGABDTT</span>
-            </div>
-            <div class="text-right">
-              <p class="font-bold text-amber-300">₹0.15</p>
-              <p class="text-[8px] text-orange-200">2026-10-08 01:27:28</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PAGE 3: ACTIVITY PAGE -->
-    <section id="page-activity" class="page-view hidden space-y-4 p-4">
-      <h2 class="text-lg font-bold text-gray-800">Activity Center</h2>
-      <div class="bg-white p-4 rounded-2xl border border-orange-200 space-y-3 shadow-sm">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 font-bold">🎁</div>
-          <div>
-            <h4 class="font-bold text-xs text-gray-800">Daily Sign-in Bonus</h4>
-            <p class="text-[10px] text-gray-500">Claim free rewards every day!</p>
-          </div>
-        </div>
-        <button onclick="showToast('Claimed Daily Bonus ₹10!')" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs py-2.5 rounded-xl shadow">Claim ₹10 Today</button>
-      </div>
-    </section>
-
-    <!-- PAGE 4: PROMOTION PAGE -->
-    <section id="page-promotion" class="page-view hidden space-y-4 p-4">
-      <h2 class="text-lg font-bold text-gray-800">Promotion</h2>
-      <div class="bg-white p-4 rounded-2xl border border-orange-200 text-center space-y-3 shadow-sm">
-        <p class="text-xs text-gray-600">Invite friends and earn commission up to 85%</p>
-        <div class="bg-orange-50 border border-orange-200 p-2.5 rounded-xl text-xs font-mono text-orange-700 flex justify-between items-center">
-          <span>SBWIN_REF_98314</span>
-          <button onclick="showToast('Referral code copied!')" class="text-xs bg-orange-500 text-white font-bold px-3 py-1 rounded-lg">Copy</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- PAGE 5: ACCOUNT / PROFILE PAGE -->
-    <section id="page-account" class="page-view hidden space-y-4 p-4">
-      
-      <!-- Top Balance Header -->
-      <div class="gradient-card-dark rounded-2xl p-4 border border-gray-800 shadow-lg relative overflow-hidden text-white">
-        <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-emerald-500/10 rounded-full blur-xl"></div>
-        
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-full gradient-orange-btn flex items-center justify-center text-white font-bold text-lg border-2 border-emerald-400/30">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-            </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-base text-white">Member_8921</span>
-                <span class="bg-gradient-to-r from-amber-500 to-yellow-600 text-[10px] font-black px-2 py-0.5 rounded-full text-black tracking-wider">VIP 3</span>
-              </div>
-              <p class="text-xs text-gray-400">UID: 98314201</p>
-            </div>
-          </div>
-          <button onclick="showToast('Refreshing Wallet Balance...')" class="p-2 text-gray-400 hover:text-emerald-400 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-          </button>
-        </div>
-
-        <div class="flex items-end justify-between pt-2 border-t border-gray-800">
-          <div>
-            <p class="text-xs text-gray-400 font-medium">Total Balance</p>
-            <div class="flex items-baseline space-x-1 mt-0.5">
-              <span class="text-emerald-400 text-sm font-bold">₹</span>
-              <span class="text-2xl font-black text-white tracking-wide" id="user-balance">327.40</span>
-            </div>
-          </div>
-          <button onclick="showToast('Redirecting to Wallet...')" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold text-xs px-4 py-2 rounded-xl shadow-md active:scale-95 transition-all">
-            Enter wallet
-          </button>
-        </div>
-
-        <!-- Quick Action Bar -->
-        <div class="grid grid-cols-4 gap-2 mt-4 pt-3 border-t border-gray-800/80 text-center">
-          <button onclick="showToast('Opening ARWallet...')" class="flex flex-col items-center group">
-            <div class="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 group-hover:scale-105 transition-transform">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-            </div>
-            <span class="text-[11px] text-gray-300 mt-1">ARWallet</span>
-          </button>
-          
-          <button onclick="showToast('Redirecting to Deposit...')" class="flex flex-col items-center group">
-            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-105 transition-transform">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            </div>
-            <span class="text-[11px] text-gray-300 mt-1">Deposit</span>
-          </button>
-
-          <button onclick="showToast('Opening Withdraw screen...')" class="flex flex-col items-center group">
-            <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-105 transition-transform">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-            </div>
-            <span class="text-[11px] text-gray-300 mt-1">Withdraw</span>
-          </button>
-
-          <button onclick="showToast('VIP Privileges Center')" class="flex flex-col items-center group">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
-            </div>
-            <span class="text-[11px] text-gray-300 mt-1">VIP</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Safe Section -->
-      <div class="gradient-card-dark border border-gray-800 rounded-2xl p-4 flex items-center justify-between shadow-md relative overflow-hidden text-white">
-        <div class="flex items-center space-x-3">
-          <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 flex-shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-          </div>
-          <div>
-            <div class="flex items-center space-x-2">
-              <span class="font-bold text-sm text-white">Safe</span>
-              <span class="bg-amber-500/20 text-amber-400 text-[11px] font-bold px-2 py-0.5 rounded-full border border-amber-500/30">₹0.00</span>
-            </div>
-            <p class="text-[11px] text-gray-400 mt-0.5 leading-tight">
-              The daily interest rate is <span class="text-emerald-400 font-semibold">0.1%</span>, and income is calculated once every 1 minutes.
-            </p>
-          </div>
-        </div>
-        <svg class="w-5 h-5 text-gray-500 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-      </div>
-
-      <!-- Grid History Cards Section -->
-      <div class="grid grid-cols-2 gap-3 text-white">
-        <button onclick="showToast('Loading Game History...')" class="gradient-card-dark border border-gray-800/80 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-gray-700 active:scale-95 transition-all">
-          <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-white">Game History</h4>
-            <p class="text-[10px] text-gray-400">My game history</p>
-          </div>
-        </button>
-
-        <button onclick="showToast('Loading Transaction History...')" class="gradient-card-dark border border-gray-800/80 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-gray-700 active:scale-95 transition-all">
-          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-white">Transaction</h4>
-            <p class="text-[10px] text-gray-400">My transaction history</p>
-          </div>
-        </button>
-
-        <button onclick="showToast('Loading Deposit History...')" class="gradient-card-dark border border-gray-800/80 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-gray-700 active:scale-95 transition-all">
-          <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 flex-shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-white">Deposit</h4>
-            <p class="text-[10px] text-gray-400">My deposit history</p>
-          </div>
-        </button>
-
-        <button onclick="showToast('Loading Withdraw History...')" class="gradient-card-dark border border-gray-800/80 rounded-2xl p-3.5 flex items-center space-x-3 text-left hover:border-gray-700 active:scale-95 transition-all">
-          <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 flex-shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-white">Withdraw</h4>
-            <p class="text-[10px] text-gray-400">My withdraw history</p>
-          </div>
-        </button>
-      </div>
-
-      <!-- Vertical List Menu -->
-      <div class="gradient-card-dark border border-gray-800 rounded-2xl divide-y divide-gray-800/80 overflow-hidden shadow-md text-white">
-        <button onclick="showToast('Opening Notifications...')" class="w-full p-3.5 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
-          <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 01-6 0v-1m6 0H9"></path></svg>
-            </div>
-            <span class="text-xs font-semibold text-gray-200">Notification</span>
-          </div>
-          <div class="flex items-center space-x-2">
-            <span class="w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">1</span>
-            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-          </div>
-        </button>
-
-        <button onclick="showToast('Gifts & Rewards Center')" class="w-full p-3.5 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
-          <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V6a2 2 0 10-2 2h2zm0 13C10.832 19.877 9 20 7.5 20 5.015 20 3 18.5 3 16V8a2 2 0 012-2h14a2 2 0 012 2v8c0 2.5-2.015 4-4.5 4-1.5 0-3.332-.123-4.5-1z"></path></svg>
-            </div>
-            <span class="text-xs font-semibold text-gray-200">Gifts</span>
-          </div>
-          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-        </button>
-
-        <button onclick="showToast('Loading Top-Up Coupons...')" class="w-full p-3.5 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
-          <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 001 1.732 2 2 0 010 3.536A2 2 0 003 17v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 00-1-1.732 2 2 0 010-3.536A2 2 0 0021 10V7a2 2 0 00-2-2H5z"></path></svg>
-            </div>
-            <span class="text-xs font-semibold text-gray-200">My Top-Up Coupons</span>
-          </div>
-          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-        </button>
-
-        <button onclick="showToast('Calculating Statistics...')" class="w-full p-3.5 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
-          <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-            </div>
-            <span class="text-xs font-semibold text-gray-200">Game statistics</span>
-          </div>
-          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-        </button>
-
-        <button onclick="showToast('Language set to English')" class="w-full p-3.5 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
-          <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-            </div>
-            <span class="text-xs font-semibold text-gray-200">Language</span>
-          </div>
-          <div class="flex items-center space-x-2">
-            <span class="text-xs text-gray-400">English</span>
-            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-          </div>
-        </button>
-      </div>
-
-      <!-- Service Center Section -->
-      <div class="gradient-card-dark border border-gray-800 rounded-2xl p-4 space-y-3 shadow-md text-white">
-        <h3 class="text-xs font-bold text-gray-300">Service center</h3>
-        <div class="grid grid-cols-3 gap-3 text-center">
-          <button onclick="showToast('Opening Settings...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
-            </div>
-            <span class="text-[11px] text-gray-300">Settings</span>
-          </button>
-
-          <button onclick="showToast('Opening Feedback Form...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-            </div>
-            <span class="text-[11px] text-gray-300">Feedback</span>
-          </button>
-
-          <button onclick="showToast('Checking Announcements...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c.41 0 .748.336.748.75v6.5c0 .414-.338.75-.748.75H7c-.57 0-1.11-.122-1.564-.317z"></path></svg>
-            </div>
-            <span class="text-[11px] text-gray-300">Announcement</span>
-          </button>
-
-          <button onclick="showToast('Connecting 24/7 Support...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-            </div>
-            <span class="text-[11px] text-gray-300">Customer Service</span>
-          </button>
-
-          <button onclick="showToast('Opening Beginner\'s Guide...')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-            </div>
-            <span class="text-[11px] text-gray-300">Beginner's Guide</span>
-          </button>
-
-          <button onclick="showToast('sbwin Version v2.4.1')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-gray-800/40 transition-colors">
+          <button onclick="showToast('sbwin Version v2.4.1')" class="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-emerald-500/10 transition-colors">
             <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1.5">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
             </div>
@@ -850,12 +484,12 @@
 
   </main>
 
-  <!-- Bottom Navigation Bar -->
-  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-md w-full bg-white border-t border-orange-200 z-40 px-2 py-1.5 shadow-lg">
+  <!-- Bottom Navigation Bar (Fixed cleanly without floating unwanted blocks) -->
+  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-md w-full bg-gray-900/90 backdrop-blur-md border-t border-emerald-500/30 z-40 px-2 py-1.5 shadow-lg">
     <div class="grid grid-cols-5 items-center text-center relative">
       
       <!-- Home -->
-      <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center justify-center text-emerald-500 py-1">
+      <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center justify-center text-emerald-400 py-1">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
         <span class="text-[10px] font-bold mt-0.5">Home</span>
       </button>
@@ -868,7 +502,7 @@
 
       <!-- Center Featured Button: Get ₹500 Wheel -->
       <div class="flex justify-center -mt-6">
-        <button onclick="switchTab('invite')" class="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-400 via-teal-400 to-green-300 border-4 border-white flex flex-col items-center justify-center text-black font-black shadow-xl transform active:scale-90 transition-transform">
+        <button onclick="switchTab('invite')" class="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-400 via-teal-400 to-green-300 border-4 border-gray-900 flex flex-col items-center justify-center text-black font-black shadow-xl transform active:scale-90 transition-transform">
           <span class="text-[9px] uppercase leading-none font-extrabold text-white">GO</span>
           <span class="text-[8px] font-bold text-white">Get ₹500</span>
         </button>
@@ -893,7 +527,7 @@
     function switchTab(tabName) {
       document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
       document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-emerald-500');
+        btn.classList.remove('text-emerald-400');
         btn.classList.add('text-gray-400');
       });
 
@@ -903,7 +537,7 @@
       const activeNav = document.getElementById(`nav-${tabName}`);
       if (activeNav) {
         activeNav.classList.remove('text-gray-400');
-        activeNav.classList.add('text-emerald-500');
+        activeNav.classList.add('text-emerald-400');
       }
     }
 
@@ -923,20 +557,4 @@
     }
   </script>
 </body>
-</html          <!-- 1. Win Go (Pure CSS Card) -->
-          <a href="assist/win-go.html" onclick="showToast('Launching Win Go...')" class="block rounded-2xl overflow-hidden shadow-md h-32 relative bg-gradient-to-br from-sky-400 to-blue-700 flex flex-col items-center justify-end pb-2 group">
-            <!-- Background Circle -->
-            <div class="absolute -top-6 -left-6 w-20 h-20 bg-white/15 rounded-full"></div>
-            <!-- Gold Coin -->
-            <div class="absolute top-2 left-2 w-5 h-5 rounded-full bg-gradient-to-br from-yellow-200 to-yellow-500 border border-yellow-600 flex items-center justify-center text-[9px] font-bold text-yellow-800 shadow">$</div>
-            <!-- Pink Ball (1) -->
-            <div class="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-[radial-gradient(circle_at_35%_35%,#ff85a2,#e11d48)] shadow-inner flex items-center justify-center">
-              <span class="text-3xl font-black italic text-rose-900 drop-shadow-sm">1</span>
-            </div>
-            <!-- Blue Ball (8) -->
-            <div class="absolute bottom-5 right-2 w-6 h-6 rounded-full bg-[radial-gradient(circle_at_35%_35%,#7dd3fc,#0284c7)] shadow-inner flex items-center justify-center">
-              <span class="text-[10px] font-extrabold text-white">8</span>
-            </div>
-            <!-- Title -->
-            <span class="text-[11px] font-black uppercase text-white tracking-wider drop-shadow z-10">Win Go</span>
-          </a>
+</html>
