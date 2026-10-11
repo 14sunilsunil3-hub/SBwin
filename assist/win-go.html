@@ -181,7 +181,7 @@
         .bg-violet { background: #9c27b0; }
         .bg-red { background: #d9534f; }
 
-        /* Exact 1:1 Realistic Glass Balls Grid */
+        /* Exact Number Balls Grid UI */
         .number-grid {
             background: white;
             margin: 0 15px 15px 15px;
@@ -193,88 +193,110 @@
             justify-items: center;
         }
         .ball {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
             position: relative;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
             display: flex;
-            justify-content: center;
             align-items: center;
-            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.15);
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
             overflow: hidden;
+            box-shadow: inset 0 -6px 8px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.1);
             cursor: pointer;
         }
-        /* Top glossy white reflection */
         .ball::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .ball::after {
             content: '';
             position: absolute;
             top: 2px;
             left: 50%;
             transform: translateX(-50%);
-            width: 24px;
-            height: 7px;
-            background: rgba(255, 255, 255, 0.65);
+            width: 16px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.6);
             border-radius: 50%;
+            z-index: 3;
         }
-        /* Side curved glass highlights */
-        .ball::after {
-            content: '';
+        .side-glow-left, .side-glow-right, .bottom-glow {
             position: absolute;
-            left: -2px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            z-index: 3;
+        }
+        .side-glow-left {
             top: 50%;
+            left: 2px;
             transform: translateY(-50%);
-            width: 10px;
-            height: 16px;
-            background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
+            width: 7px;
+            height: 14px;
         }
-        .right-glow::after {
-            left: auto;
-            right: -2px;
+        .side-glow-right {
+            top: 50%;
+            right: 2px;
+            transform: translateY(-50%);
+            width: 7px;
+            height: 14px;
         }
-
-        /* Inner Soft Glassy Circle */
-        .inner-circle {
-            width: 36px;
-            height: 36px;
-            background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f0f0f0 60%, #dedede 100%);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.1);
+        .bottom-glow {
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 4px;
+        }
+        .ball span {
+            position: relative;
             z-index: 2;
-            font-weight: bold;
-            font-size: 18px;
         }
 
-        /* Natural Soft Color Themes (Matching Reference exactly) */
+        /* Color Variations */
         .ball.red {
-            background: radial-gradient(circle at 35% 35%, #ff8a8a, #e53935 70%, #b71c1c);
+            background: radial-gradient(circle, rgba(255,107,107,0.3) 30%, #e60012 80%);
         }
-        .ball.red .inner-circle {
-            color: #d32f2f;
+        .ball.red::before {
+            background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(255,107,107,0.3) 100%);
         }
+        .ball.red span { color: #e60012; }
 
         .ball.green {
-            background: radial-gradient(circle at 35% 35%, #73e69b, #2e7d32 70%, #1b5e20);
+            background: radial-gradient(circle, rgba(92,214,133,0.3) 30%, #00b050 80%);
         }
-        .ball.green .inner-circle {
-            color: #2e7d32;
+        .ball.green::before {
+            background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(92,214,133,0.3) 100%);
+        }
+        .ball.green span { color: #00b050; }
+
+        .ball.split-0 {
+            background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 45%, #b366ff 55%, #7a00cc 100%);
+        }
+        .ball.split-0::before {
+            background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(179,102,255,0.3) 100%);
+        }
+        .ball.split-0 span {
+            background: linear-gradient(135deg, #cc0000, #800080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .ball.mixed-0 {
-            background: linear-gradient(135deg, #e53935 0%, #e53935 38%, #ab47bc 38%, #7b1fa2 100%);
+        .ball.split-5 {
+            background: linear-gradient(135deg, #00b050 0%, #008033 45%, #b366ff 55%, #7a00cc 100%);
         }
-        .ball.mixed-0 .inner-circle {
-            color: #7b1fa2;
+        .ball.split-5::before {
+            background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(179,102,255,0.3) 100%);
         }
-
-        .ball.mixed-5 {
-            background: linear-gradient(135deg, #2e7d32 0%, #2e7d32 38%, #ab47bc 38%, #7b1fa2 100%);
-        }
-        .ball.mixed-5 .inner-circle {
-            color: #7b1fa2;
+        .ball.split-5 span {
+            background: linear-gradient(135deg, #008033, #800080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         /* Multiplier Buttons */
@@ -463,37 +485,47 @@
             <button class="c-btn bg-red" onclick="showToast('Bet placed on Red')">Red</button>
         </div>
 
-        <!-- 100% Perfect Realistic Glass Balls Grid -->
+        <!-- Exact Number Balls Grid -->
         <div class="number-grid">
-            <div class="ball mixed-0" onclick="showToast('Bet placed on Number 0')">
-                <div class="inner-circle"><span>0</span></div>
+            <div class="ball split-0" onclick="showToast('Bet placed on Number 0')">
+                <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
+                <span>0</span>
             </div>
-            <div class="ball green right-glow" onclick="showToast('Bet placed on Number 1')">
-                <div class="inner-circle"><span>1</span></div>
+            <div class="ball green" onclick="showToast('Bet placed on Number 1')">
+                <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
+                <span>1</span>
             </div>
-            <div class="ball red right-glow" onclick="showToast('Bet placed on Number 2')">
-                <div class="inner-circle"><span>2</span></div>
+            <div class="ball red" onclick="showToast('Bet placed on Number 2')">
+                <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
+                <span>2</span>
             </div>
-            <div class="ball green right-glow" onclick="showToast('Bet placed on Number 3')">
-                <div class="inner-circle"><span>3</span></div>
+            <div class="ball green" onclick="showToast('Bet placed on Number 3')">
+                <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
+                <span>3</span>
             </div>
-            <div class="ball red right-glow" onclick="showToast('Bet placed on Number 4')">
-                <div class="inner-circle"><span>4</span></div>
+            <div class="ball red" onclick="showToast('Bet placed on Number 4')">
+                <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
+                <span>4</span>
             </div>
-            <div class="ball mixed-5" onclick="showToast('Bet placed on Number 5')">
-                <div class="inner-circle"><span>5</span></div>
+            <div class="ball split-5" onclick="showToast('Bet placed on Number 5')">
+                <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
+                <span>5</span>
             </div>
-            <div class="ball red right-glow" onclick="showToast('Bet placed on Number 6')">
-                <div class="inner-circle"><span>6</span></div>
+            <div class="ball red" onclick="showToast('Bet placed on Number 6')">
+                <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
+                <span>6</span>
             </div>
-            <div class="ball green right-glow" onclick="showToast('Bet placed on Number 7')">
-                <div class="inner-circle"><span>7</span></div>
+            <div class="ball green" onclick="showToast('Bet placed on Number 7')">
+                <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
+                <span>7</span>
             </div>
-            <div class="ball red right-glow" onclick="showToast('Bet placed on Number 8')">
-                <div class="inner-circle"><span>8</span></div>
+            <div class="ball red" onclick="showToast('Bet placed on Number 8')">
+                <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
+                <span>8</span>
             </div>
-            <div class="ball green right-glow" onclick="showToast('Bet placed on Number 9')">
-                <div class="inner-circle"><span>9</span></div>
+            <div class="ball green" onclick="showToast('Bet placed on Number 9')">
+                <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
+                <span>9</span>
             </div>
         </div>
 
@@ -531,19 +563,19 @@
             </div>
             <div class="table-row">
                 <div>20261011100051213</div>
-                <div style="color: #2e7d32; font-weight: bold;">9</div>
+                <div style="color: #00b050; font-weight: bold;">9</div>
                 <div>Big</div>
                 <div>🟢</div>
             </div>
             <div class="table-row">
                 <div>20261011100051212</div>
-                <div style="color: #d32f2f; font-weight: bold;">8</div>
+                <div style="color: #e60012; font-weight: bold;">8</div>
                 <div>Big</div>
                 <div>🔴</div>
             </div>
             <div class="table-row">
                 <div>20261011100051211</div>
-                <div style="color: #d32f2f; font-weight: bold;">6</div>
+                <div style="color: #e60012; font-weight: bold;">6</div>
                 <div>Big</div>
                 <div>🔴</div>
             </div>
