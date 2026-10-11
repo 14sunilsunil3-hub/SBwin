@@ -134,18 +134,40 @@
         <button onclick="placeBet('Red')" class="bg-[#fd565c] hover:opacity-90 text-white font-bold text-xs py-2.5 rounded-xl shadow">Red</button>
       </div>
 
-      <!-- NUMBER GRID (0 to 9) -->
-      <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 grid grid-cols-5 gap-2 text-center">
-        <button onclick="placeBet('Number 0')" class="p-2 rounded-xl bg-slate-50 border border-slate-200 font-black text-purple-600 text-sm hover:bg-slate-100">0</button>
-        <button onclick="placeBet('Number 1')" class="p-2 rounded-xl bg-slate-50 border border-slate-200 font-black text-emerald-600 text-sm hover:bg-slate-100">1</button>
-        <button onclick="placeBet('Number 2')" class="p-2 rounded-xl bg-slate-50 border border-slate-200 font-black text-rose-600 text-sm hover:bg-slate-100">2</button>
-        <button onclick="placeBet('Number 3')" class="p-2 rounded-xl bg-slate-50 border border-slate-200 font-black text-emerald-600 text-sm hover:bg-slate-100">3</button>
-        <button onclick="placeBet('Number 4')" class="p-2 rounded-xl bg-slate-50 border border-slate-200 font-black text-rose-600 text-sm hover:bg-slate-100">4</button>
-        <button onclick="placeBet('Number 5')" class="p-2 rounded-xl bg-slate-50 border border-slate-200 font-black text-purple-600 text-sm hover:bg-slate-100">5</button>
-        <button onclick="placeBet('Number 6')" class="p-2 rounded-xl bg-slate-50 border border-slate-200 font-black text-rose-600 text-sm hover:bg-slate-100">6</button>
-        <button onclick="placeBet('Number 7')" class="p-2 rounded-xl bg-slate-50 border border-slate-200 font-black text-emerald-600 text-sm hover:bg-slate-100">7</button>
-        <button onclick="placeBet('Number 8')" class="p-2 rounded-xl bg-slate-50 border border-slate-200 font-black text-rose-600 text-sm hover:bg-slate-100">8</button>
-        <button onclick="placeBet('Number 9')" class="p-2 rounded-xl bg-slate-50 border border-slate-200 font-black text-emerald-600 text-sm hover:bg-slate-100">9</button>
+      <!-- 3D GLOSSY BALL NUMBER GRID (0 to 9) matching YaarWin style -->
+      <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 grid grid-cols-5 gap-3 text-center">
+        <button onclick="placeBet('Number 0')" class="relative rounded-2xl overflow-hidden shadow aspect-square bg-purple-100 flex items-center justify-center border border-purple-200 active:scale-95 transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br from-purple-500/80 to-indigo-600/90 flex items-center justify-center text-white font-black text-xl shadow-inner">0</div>
+          <div class="absolute top-0.5 right-1 w-2.5 h-2.5 rounded-full bg-rose-500 opacity-80"></div>
+        </button>
+        <button onclick="placeBet('Number 1')" class="relative rounded-2xl overflow-hidden shadow aspect-square bg-emerald-100 flex items-center justify-center border border-emerald-200 active:scale-95 transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white font-black text-xl shadow-inner">1</div>
+        </button>
+        <button onclick="placeBet('Number 2')" class="relative rounded-2xl overflow-hidden shadow aspect-square bg-rose-100 flex items-center justify-center border border-rose-200 active:scale-95 transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br from-rose-400 to-red-600 flex items-center justify-center text-white font-black text-xl shadow-inner">2</div>
+        </button>
+        <button onclick="placeBet('Number 3')" class="relative rounded-2xl overflow-hidden shadow aspect-square bg-emerald-100 flex items-center justify-center border border-emerald-200 active:scale-95 transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white font-black text-xl shadow-inner">3</div>
+        </button>
+        <button onclick="placeBet('Number 4')" class="relative rounded-2xl overflow-hidden shadow aspect-square bg-rose-100 flex items-center justify-center border border-rose-200 active:scale-95 transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br from-rose-400 to-red-600 flex items-center justify-center text-white font-black text-xl shadow-inner">4</div>
+        </button>
+        <button onclick="placeBet('Number 5')" class="relative rounded-2xl overflow-hidden shadow aspect-square bg-purple-100 flex items-center justify-center border border-purple-200 active:scale-95 transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br from-purple-500/80 to-indigo-600/90 flex items-center justify-center text-white font-black text-xl shadow-inner">5</div>
+          <div class="absolute top-0.5 right-1 w-2.5 h-2.5 rounded-full bg-emerald-500 opacity-80"></div>
+        </button>
+        <button onclick="placeBet('Number 6')" class="relative rounded-2xl overflow-hidden shadow aspect-square bg-rose-100 flex items-center justify-center border border-rose-200 active:scale-95 transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br from-rose-400 to-red-600 flex items-center justify-center text-white font-black text-xl shadow-inner">6</div>
+        </button>
+        <button onclick="placeBet('Number 7')" class="relative rounded-2xl overflow-hidden shadow aspect-square bg-emerald-100 flex items-center justify-center border border-emerald-200 active:scale-95 transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white font-black text-xl shadow-inner">7</div>
+        </button>
+        <button onclick="placeBet('Number 8')" class="relative rounded-2xl overflow-hidden shadow aspect-square bg-rose-100 flex items-center justify-center border border-rose-200 active:scale-95 transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br from-rose-400 to-red-600 flex items-center justify-center text-white font-black text-xl shadow-inner">8</div>
+        </button>
+        <button onclick="placeBet('Number 9')" class="relative rounded-2xl overflow-hidden shadow aspect-square bg-emerald-100 flex items-center justify-center border border-emerald-200 active:scale-95 transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white font-black text-xl shadow-inner">9</div>
+        </button>
       </div>
 
       <!-- MULTIPLIERS (X1 to X100) & BIG/SMALL -->
