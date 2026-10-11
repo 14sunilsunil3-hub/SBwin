@@ -181,7 +181,7 @@
         .bg-violet { background: #9c27b0; }
         .bg-red { background: #d9534f; }
 
-        /* 100% Exact Raised 3D Glossy Spherical Balls with thick embossed borders */
+        /* Exact 3D Glass Balls Grid */
         .number-grid {
             background: white;
             margin: 0 15px 15px 15px;
@@ -193,65 +193,88 @@
             justify-items: center;
         }
         .ball {
-            width: 52px;
-            height: 52px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 20px;
-            cursor: pointer;
             position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.15);
             overflow: hidden;
-            /* Heavy 3D raised border shadow effect matching original */
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3), 
-                        inset 0 3px 5px rgba(255,255,255,0.8), 
-                        inset 0 -5px 8px rgba(0,0,0,0.4);
+            cursor: pointer;
         }
-        /* Top Glossy Highlight Overlay */
+        /* Top glossy white reflection */
         .ball::before {
             content: '';
             position: absolute;
-            top: 3px;
-            left: 8px;
-            right: 8px;
-            height: 16px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.75), rgba(255,255,255,0.1));
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 7px;
+            background: rgba(255, 255, 255, 0.6);
             border-radius: 50%;
-            pointer-events: none;
+        }
+        /* Side curved glass highlights */
+        .ball::after {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 16px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+        }
+        .right-glow::after {
+            left: auto;
+            right: -2px;
         }
 
-        /* Green Balls (1, 3, 7, 9) with thick raised green border */
-        .ball-green {
-            background: radial-gradient(circle at 35% 35%, #86efac 0%, #22c55e 50%, #15803d 100%);
-            color: #fff;
-            border: 4px solid #16a34a;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        /* Inner White Circle with gradient text */
+        .inner-circle {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(to bottom, #ffffff, #e6e6e6);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 2;
+            font-weight: bold;
+            font-size: 18px;
         }
 
-        /* Red Balls (2, 4, 6, 8) with thick raised red border */
-        .ball-red {
-            background: radial-gradient(circle at 35% 35%, #fca5a5 0%, #ef4444 50%, #b91c1c 100%);
-            color: #fff;
-            border: 4px solid #dc2626;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        /* Color Themes */
+        .ball.red {
+            background: radial-gradient(circle at 30% 30%, #ff6b6b, #cc0000 75%, #990000);
+        }
+        .ball.red .inner-circle {
+            color: #e53935;
         }
 
-        /* Ball 0 (Violet & Red split with thick raised border) */
-        .ball-0 {
-            background: linear-gradient(135deg, #a855f7 50%, #ef4444 50%);
-            color: #fff;
-            border: 4px solid #dc2626;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        .ball.green {
+            background: radial-gradient(circle at 30% 30%, #5cd685, #00b862 75%, #008040);
+        }
+        .ball.green .inner-circle {
+            color: #2e7d32;
         }
 
-        /* Ball 5 (Violet & Green split with thick raised border) */
-        .ball-5 {
-            background: linear-gradient(135deg, #a855f7 50%, #22c55e 50%);
-            color: #fff;
-            border: 4px solid #16a34a;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        .ball.mixed-0 {
+            background: linear-gradient(135deg, #ff4d4d 0%, #ff4d4d 38%, #b062ff 38%, #9c27b0 100%);
+        }
+        .ball.mixed-0 .inner-circle {
+            color: #8e24aa;
+        }
+
+        .ball.mixed-5 {
+            background: linear-gradient(135deg, #00b862 0%, #00b862 38%, #b062ff 38%, #9c27b0 100%);
+        }
+        .ball.mixed-5 .inner-circle {
+            color: #8e24aa;
         }
 
         /* Multiplier Buttons */
@@ -440,18 +463,38 @@
             <button class="c-btn bg-red" onclick="showToast('Bet placed on Red')">Red</button>
         </div>
 
-        <!-- Authentic Embossed 3D Glossy Spherical Number Balls -->
+        <!-- Exact 3D Glass Balls Number Grid -->
         <div class="number-grid">
-            <div class="ball ball-0" onclick="showToast('Bet placed on Number 0')">0</div>
-            <div class="ball ball-green" onclick="showToast('Bet placed on Number 1')">1</div>
-            <div class="ball ball-red" onclick="showToast('Bet placed on Number 2')">2</div>
-            <div class="ball ball-green" onclick="showToast('Bet placed on Number 3')">3</div>
-            <div class="ball ball-red" onclick="showToast('Bet placed on Number 4')">4</div>
-            <div class="ball ball-5" onclick="showToast('Bet placed on Number 5')">5</div>
-            <div class="ball ball-red" onclick="showToast('Bet placed on Number 6')">6</div>
-            <div class="ball ball-green" onclick="showToast('Bet placed on Number 7')">7</div>
-            <div class="ball ball-red" onclick="showToast('Bet placed on Number 8')">8</div>
-            <div class="ball ball-green" onclick="showToast('Bet placed on Number 9')">9</div>
+            <div class="ball mixed-0" onclick="showToast('Bet placed on Number 0')">
+                <div class="inner-circle"><span>0</span></div>
+            </div>
+            <div class="ball green right-glow" onclick="showToast('Bet placed on Number 1')">
+                <div class="inner-circle"><span>1</span></div>
+            </div>
+            <div class="ball red right-glow" onclick="showToast('Bet placed on Number 2')">
+                <div class="inner-circle"><span>2</span></div>
+            </div>
+            <div class="ball green right-glow" onclick="showToast('Bet placed on Number 3')">
+                <div class="inner-circle"><span>3</span></div>
+            </div>
+            <div class="ball red right-glow" onclick="showToast('Bet placed on Number 4')">
+                <div class="inner-circle"><span>4</span></div>
+            </div>
+            <div class="ball mixed-5" onclick="showToast('Bet placed on Number 5')">
+                <div class="inner-circle"><span>5</span></div>
+            </div>
+            <div class="ball red right-glow" onclick="showToast('Bet placed on Number 6')">
+                <div class="inner-circle"><span>6</span></div>
+            </div>
+            <div class="ball green right-glow" onclick="showToast('Bet placed on Number 7')">
+                <div class="inner-circle"><span>7</span></div>
+            </div>
+            <div class="ball red right-glow" onclick="showToast('Bet placed on Number 8')">
+                <div class="inner-circle"><span>8</span></div>
+            </div>
+            <div class="ball green right-glow" onclick="showToast('Bet placed on Number 9')">
+                <div class="inner-circle"><span>9</span></div>
+            </div>
         </div>
 
         <!-- Multipliers -->
@@ -488,19 +531,19 @@
             </div>
             <div class="table-row">
                 <div>20261011100051213</div>
-                <div style="color: #28a745; font-weight: bold;">9</div>
+                <div style="color: #00b862; font-weight: bold;">9</div>
                 <div>Big</div>
                 <div>🟢</div>
             </div>
             <div class="table-row">
                 <div>20261011100051212</div>
-                <div style="color: #d9534f; font-weight: bold;">8</div>
+                <div style="color: #cc0000; font-weight: bold;">8</div>
                 <div>Big</div>
                 <div>🔴</div>
             </div>
             <div class="table-row">
                 <div>20261011100051211</div>
-                <div style="color: #d9534f; font-weight: bold;">6</div>
+                <div style="color: #cc0000; font-weight: bold;">6</div>
                 <div>Big</div>
                 <div>🔴</div>
             </div>
