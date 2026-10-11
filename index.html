@@ -81,114 +81,50 @@
           <h3 class="text-xs font-black uppercase text-gray-700 tracking-wider">Popular Games</h3>
         </div>
 
-                                        <!-- Games Grid -->
+                                                <!-- Games Grid -->
         <div class="grid grid-cols-3 gap-2.5">
           
-          <!-- 1. Win Go (Pure CSS Card) -->
-          <a href="assist/win-go.html" onclick="showToast('Launching Win Go...')" class="block rounded-2xl overflow-hidden shadow-md h-32 relative bg-gradient-to-br from-sky-400 to-blue-700 flex flex-col items-center justify-end pb-2">
-            <div class="absolute -top-6 -left-6 w-20 h-20 bg-white/15 rounded-full"></div>
-            <div class="absolute top-2 left-2 w-5 h-5 rounded-full bg-gradient-to-br from-yellow-200 to-yellow-500 border border-yellow-600 flex items-center justify-center text-[9px] font-bold text-yellow-800 shadow">$</div>
-            <div class="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-[radial-gradient(circle_at_35%_35%,#ff85a2,#e11d48)] shadow-inner flex items-center justify-center">
-              <span class="text-3xl font-black italic text-rose-900 drop-shadow-sm">1</span>
-            </div>
-            <div class="absolute bottom-5 right-2 w-6 h-6 rounded-full bg-[radial-gradient(circle_at_35%_35%,#7dd3fc,#0284c7)] shadow-inner flex items-center justify-center">
-              <span class="text-[10px] font-extrabold text-white">8</span>
-            </div>
-            <span class="text-[11px] font-black uppercase text-white tracking-wider drop-shadow z-10">Win Go</span>
-          </a>
+          <!-- 1. Win Go -->
+          <a href="assist/win-go.html" onclick="showToast('Launching Win Go...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/wingo.png');"></a>
 
-          <!-- 2. K3 Lotre (Pure CSS Card) -->
-          <a href="assist/k3-lotre.html" onclick="showToast('Launching K3 Lotre...')" class="block rounded-2xl overflow-hidden shadow-md h-32 relative bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 flex flex-col items-center justify-end pb-2">
-            <div class="absolute top-2 left-2 w-5 h-5 rounded-full bg-gradient-to-br from-yellow-200 to-yellow-500 border border-yellow-600 flex items-center justify-center text-[9px] font-bold text-yellow-800 shadow">$</div>
-            <div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-gradient-to-br from-yellow-200 to-yellow-500 border border-yellow-600 flex items-center justify-center text-[9px] font-bold text-yellow-800 shadow">$</div>
-            <!-- Dice representation -->
-            <div class="absolute top-3 left-1/2 -translate-x-1/2 w-14 h-14 bg-white rounded-2xl shadow-lg border-2 border-red-100 flex items-center justify-center transform rotate-6">
-              <div class="grid grid-cols-2 gap-1.5 p-1">
-                <div class="w-2.5 h-2.5 bg-red-600 rounded-full"></div>
-                <div class="w-2.5 h-2.5 bg-red-600 rounded-full"></div>
-                <div class="w-2.5 h-2.5 bg-red-600 rounded-full"></div>
-                <div class="w-2.5 h-2.5 bg-red-600 rounded-full"></div>
-              </div>
-            </div>
-            <span class="text-[12px] font-black uppercase text-white tracking-wider drop-shadow z-10">K3</span>
-          </a>
+          <!-- 2. K3 Lotre -->
+          <a href="assist/k3-lotre.html" onclick="showToast('Launching K3 Lotre...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/k3.png');"></a>
 
-          <!-- 3. 5D Lotre (Pure CSS Card) -->
-          <a href="assist/5d-lotre.html" onclick="showToast('Launching 5D Lotre...')" class="block rounded-2xl overflow-hidden shadow-md h-32 relative bg-gradient-to-br from-emerald-400 to-teal-700 flex flex-col items-center justify-end pb-2">
-            <div class="absolute top-2 left-2 w-7 h-7 rounded-full bg-[radial-gradient(circle_at_35%_35%,#ff85a2,#e11d48)] shadow-inner flex items-center justify-center">
-              <span class="text-[9px] font-black text-white">D</span>
-            </div>
-            <div class="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-[radial-gradient(circle_at_35%_35%,#60a5fa,#1d4ed8)] shadow-inner flex items-center justify-center border-2 border-white/20">
-              <span class="text-xl font-black text-white tracking-tighter">5D</span>
-            </div>
-            <div class="absolute bottom-6 right-2 w-7 h-7 rounded-full bg-[radial-gradient(circle_at_35%_35%,#4ade80,#15803d)] shadow-inner flex items-center justify-center">
-              <span class="text-[10px] font-black text-white">5</span>
-            </div>
-            <span class="text-[12px] font-black uppercase text-white tracking-wider drop-shadow z-10">5D</span>
-          </a>
+          <!-- 3. 5D Lotre -->
+          <a href="assist/5d-lotre.html" onclick="showToast('Launching 5D Lotre...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/5d.png');"></a>
 
-          <!-- 4. TRX Wingo (Pure CSS Card) -->
-          <a href="assist/trx-win.html" onclick="showToast('Launching Trx Win...')" class="block rounded-2xl overflow-hidden shadow-md h-32 relative bg-gradient-to-br from-fuchsia-500 via-purple-600 to-indigo-800 flex flex-col items-center justify-end pb-2">
-            <div class="absolute top-2 left-2 w-6 h-6 rounded-full bg-gradient-to-br from-amber-300 to-yellow-600 border border-amber-200 flex items-center justify-center shadow">
-              <span class="text-[8px] font-black text-purple-950">TRX</span>
-            </div>
-            <div class="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-[radial-gradient(circle_at_35%_35%,#c084fc,#7e22ce)] shadow-inner flex items-center justify-center border border-white/20">
-              <span class="text-sm font-black text-white tracking-tight">Trx</span>
-            </div>
-            <span class="text-[10px] font-black uppercase text-white tracking-wider drop-shadow z-10">TRX Wingo</span>
-          </a>
+          <!-- 4. TRX Wingo -->
+          <a href="assist/trx-win.html" onclick="showToast('Launching Trx Win...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/trx_wingo.png');"></a>
 
-          <!-- 5. Moto Racing (Pure CSS Card) -->
-          <a href="assist/moto-racing.html" onclick="showToast('Launching MotoRace...')" class="block rounded-2xl overflow-hidden shadow-md h-32 relative bg-gradient-to-br from-rose-400 via-orange-400 to-amber-500 flex flex-col items-center justify-end pb-2">
-            <div class="absolute top-2 right-2 w-7 h-7 rounded-full bg-[radial-gradient(circle_at_35%_35%,#4ade80,#15803d)] shadow-inner flex items-center justify-center">
-              <span class="text-[11px] font-black text-white">7</span>
-            </div>
-            <div class="absolute top-3 left-1/2 -translate-x-1/2 text-3xl">
-              🏍️
-            </div>
-            <span class="text-[10px] font-black uppercase text-white tracking-wider drop-shadow z-10">Moto Race</span>
-          </a>
-
+          <!-- 5. Moto Racing -->
+          <a href="assist/moto-racing.html" onclick="showToast('Launching MotoRace...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/moto_racing.png');"></a>
 
           <!-- 6. Aviator Spribe -->
-          <a href="assist/aviator.html" onclick="showToast('Launching Aviator...')" class="block rounded-2xl overflow-hidden shadow-md bg-white h-32 relative">
-            <img src="assets/aviator.png" alt="Aviator Spribe" class="w-full h-full object-cover absolute inset-0">
-          </a>
+          <a href="assist/aviator.html" onclick="showToast('Launching Aviator...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/aviator.png');"></a>
 
           <!-- 7. Aviator TB -->
-          <a href="assist/aviator-tb.html" onclick="showToast('Launching Aviator...')" class="block rounded-2xl overflow-hidden shadow-md bg-white h-32 relative">
-            <img src="assets/aviator_tb.png" alt="Aviator TB" class="w-full h-full object-cover absolute inset-0">
-          </a>
+          <a href="assist/aviator-tb.html" onclick="showToast('Launching Aviator...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/aviator_tb.png');"></a>
 
           <!-- 8. Cricket -->
-          <a href="assist/cricket.html" onclick="showToast('Launching Cricket...')" class="block rounded-2xl overflow-hidden shadow-md bg-white h-32 relative">
-            <img src="assets/cricket.png" alt="Cricket" class="w-full h-full object-cover absolute inset-0">
-          </a>
+          <a href="assist/cricket.html" onclick="showToast('Launching Cricket...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/cricket.png');"></a>
 
           <!-- 9. Mines -->
-          <a href="assist/mines.html" onclick="showToast('Launching Mines...')" class="block rounded-2xl overflow-hidden shadow-md bg-white h-32 relative">
-            <img src="assets/mines.png" alt="Mines" class="w-full h-full object-cover absolute inset-0">
-          </a>
+          <a href="assist/mines.html" onclick="showToast('Launching Mines...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/mines.png');"></a>
 
           <!-- 10. Limbo -->
-          <a href="assist/limbo.html" onclick="showToast('Launching Limbo...')" class="block rounded-2xl overflow-hidden shadow-md bg-white h-32 relative">
-            <img src="assets/limbo.png" alt="Limbo" class="w-full h-full object-cover absolute inset-0">
-          </a>
+          <a href="assist/limbo.html" onclick="showToast('Launching Limbo...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/limbo.png');"></a>
 
           <!-- 11. Go Rush -->
-          <a href="assist/go-rush.html" onclick="showToast('Launching Go Rush...')" class="block rounded-2xl overflow-hidden shadow-md bg-white h-32 relative">
-            <img src="assets/go_rush.png" alt="Go Rush" class="w-full h-full object-cover absolute inset-0">
-          </a>
+          <a href="assist/go-rush.html" onclick="showToast('Launching Go Rush...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/go_rush.png');"></a>
 
           <!-- 12. Plinko -->
-          <a href="assist/plinko-1000.html" onclick="showToast('Launching Plinko 1000...')" class="block rounded-2xl overflow-hidden shadow-md bg-white h-32 relative">
-            <img src="assets/plinko.png" alt="Plinko 1000" class="w-full h-full object-cover absolute inset-0">
-          </a>
+          <a href="assist/plinko-1000.html" onclick="showToast('Launching Plinko 1000...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/plinko.png');"></a>
 
           <!-- 13. Chicken Road 2 -->
-          <a href="assist/chicken-road-2.html" onclick="showToast('Launching Chicken Road 2...')" class="block rounded-2xl overflow-hidden shadow-md bg-white h-32 relative">
-            <img src="assets/chicken_road_2.png" alt="Chicken Road 2" class="w-full h-full object-cover absolute inset-0">
-          </a>
+          <a href="assist/chicken-road-2.html" onclick="showToast('Launching Chicken Road 2...')" class="block rounded-2xl overflow-hidden shadow-md h-32 bg-cover bg-center" style="background-image: url('/assets/chicken_road_2.png');"></a>
+
+        </div>
+
 
         </div>
 
