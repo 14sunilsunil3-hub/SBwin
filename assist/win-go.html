@@ -148,21 +148,6 @@
             justify-content: space-between;
             align-items: center;
             border: 1px solid #34d399;
-            position: relative;
-        }
-        .lock-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            border-radius: 14px;
-            font-size: 24px;
-            font-weight: 900;
-            color: #34d399;
-            font-family: monospace;
         }
         .timer-left button {
             background: rgba(15, 23, 42, 0.7);
@@ -192,6 +177,27 @@
         }
         .period-id { font-size: 11px; color: #a7f3d0; margin-top: 4px; }
 
+        /* Betting Area Wrapper with Moderate Blur Lock Overlay */
+        .betting-area-wrapper {
+            position: relative;
+        }
+        .lock-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(2.5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            border-radius: 14px;
+            font-size: 42px;
+            font-weight: 900;
+            color: #34d399;
+            font-family: monospace;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+
         .color-btns { display: flex; gap: 10px; margin-bottom: 15px; }
         .c-btn {
             flex: 1;
@@ -208,7 +214,6 @@
         .bg-violet { background: linear-gradient(135deg, #7c3aed, #a855f7); border: 1px solid #c084fc; }
         .bg-red { background: linear-gradient(135deg, #dc2626, #ef4444); border: 1px solid #f87171; }
 
-        /* Exact Number Balls UI CSS Provided by You */
         .balls-container {
             background: rgba(15, 23, 42, 0.6);
             padding: 15px;
@@ -514,7 +519,6 @@
         </div>
 
         <div class="timer-section">
-            <div class="lock-overlay" id="lockOverlay">00:05</div>
             <div class="timer-left">
                 <button onclick="showToast('Opening Rules...')">📖 How to play</button>
                 <div class="period-id" id="periodId">Loading...</div>
@@ -527,32 +531,36 @@
             </div>
         </div>
 
-        <div class="color-btns">
-            <button class="c-btn bg-green" onclick="openBetModal('color', 'green')">Green</button>
-            <button class="c-btn bg-violet" onclick="openBetModal('color', 'violet')">Violet</button>
-            <button class="c-btn bg-red" onclick="openBetModal('color', 'red')">Red</button>
+        <!-- Betting Area Wrapper containing marked area (Color buttons, Balls, Big/Small) and Lock Overlay -->
+        <div class="betting-area-wrapper">
+            <div class="lock-overlay" id="lockOverlay">05</div>
+
+            <div class="color-btns">
+                <button class="c-btn bg-green" onclick="openBetModal('color', 'green')">Green</button>
+                <button class="c-btn bg-violet" onclick="openBetModal('color', 'violet')">Violet</button>
+                <button class="c-btn bg-red" onclick="openBetModal('color', 'red')">Red</button>
+            </div>
+
+            <div class="balls-container">
+                <div class="ball split-0" onclick="openBetModal('number', '0')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>0</span></div>
+                <div class="ball green" onclick="openBetModal('number', '1')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>1</span></div>
+                <div class="ball red" onclick="openBetModal('number', '2')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>2</span></div>
+                <div class="ball green" onclick="openBetModal('number', '3')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>3</span></div>
+                <div class="ball red" onclick="openBetModal('number', '4')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>4</span></div>
+                <div class="ball split-5" onclick="openBetModal('number', '5')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>5</span></div>
+                <div class="ball red" onclick="openBetModal('number', '6')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>6</span></div>
+                <div class="ball green" onclick="openBetModal('number', '7')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>7</span></div>
+                <div class="ball red" onclick="openBetModal('number', '8')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>8</span></div>
+                <div class="ball green" onclick="openBetModal('number', '9')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>9</span></div>
+            </div>
+
+            <div class="big-small">
+                <button class="bs-btn btn-big" onclick="openBetModal('size', 'big')">Big</button>
+                <button class="bs-btn btn-small" onclick="openBetModal('size', 'small')">Small</button>
+            </div>
         </div>
 
-        <!-- Exact Balls Container Provided by You -->
-        <div class="balls-container">
-            <div class="ball split-0" onclick="openBetModal('number', '0')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>0</span></div>
-            <div class="ball green" onclick="openBetModal('number', '1')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>1</span></div>
-            <div class="ball red" onclick="openBetModal('number', '2')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>2</span></div>
-            <div class="ball green" onclick="openBetModal('number', '3')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>3</span></div>
-            <div class="ball red" onclick="openBetModal('number', '4')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>4</span></div>
-            <div class="ball split-5" onclick="openBetModal('number', '5')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>5</span></div>
-            <div class="ball red" onclick="openBetModal('number', '6')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>6</span></div>
-            <div class="ball green" onclick="openBetModal('number', '7')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>7</span></div>
-            <div class="ball red" onclick="openBetModal('number', '8')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>8</span></div>
-            <div class="ball green" onclick="openBetModal('number', '9')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>9</span></div>
-        </div>
-
-        <div class="big-small">
-            <button class="bs-btn btn-big" onclick="openBetModal('size', 'big')">Big</button>
-            <button class="bs-btn btn-small" onclick="openBetModal('size', 'small')">Small</button>
-        </div>
-
-        <div class="tabs">
+        <div class="tabs" style="margin-top: 15px;">
             <div class="tab active" id="tabHist" onclick="switchHistoryTab('history')">Game history</div>
             <div class="tab" onclick="showToast('Chart feature active')">Chart</div>
             <div class="tab" id="tabMyHist" onclick="switchHistoryTab('myhistory')">My history</div>
@@ -633,7 +641,7 @@
                     const lockOverlay = document.getElementById('lockOverlay');
                     if (timeLeft <= 5) {
                         lockOverlay.style.display = 'flex';
-                        lockOverlay.innerText = `00:0${timeLeft}`;
+                        lockOverlay.innerText = `0${timeLeft}`;
                         closeBetModal();
                     } else {
                         lockOverlay.style.display = 'none';
