@@ -139,70 +139,95 @@
             box-shadow: 0 2px 10px rgba(168, 85, 247, 0.4);
         }
 
-        .timer-section {
+        /* Yarwin Style Ticket Timer Box */
+        .timer-ticket {
             background: linear-gradient(135deg, #064e3b, #022c22);
-            margin-bottom: 15px;
-            padding: 15px;
+            border: 1px solid #34d399;
             border-radius: 14px;
-            display: flex;
-            justify-content: space-between;
+            padding: 12px 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             align-items: center;
-            border: 1px solid #34d399;
+            margin-bottom: 15px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(52,211,153,0.2);
         }
-        .timer-left button {
-            background: rgba(15, 23, 42, 0.7);
-            color: #34d399;
+        .ticket-left {
+            border-right: 1px dashed rgba(52, 211, 153, 0.4);
+            padding-right: 10px;
+        }
+        .ticket-right {
+            padding-left: 12px;
+            text-align: right;
+        }
+        .how-to-play-btn {
+            background: rgba(15, 23, 42, 0.8);
             border: 1px solid #34d399;
-            padding: 6px 12px;
+            color: #34d399;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: bold;
             cursor: pointer;
+            display: inline-block;
+            margin-bottom: 6px;
         }
-        .timer-right { text-align: right; }
-        .time-box {
-            display: flex;
-            gap: 4px;
+        .ticket-mode-title {
+            font-size: 11px;
+            color: #a7f3d0;
+            margin-bottom: 6px;
             font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 4px;
-            justify-content: flex-end;
         }
-        .time-box div {
-            background: rgba(15, 23, 42, 0.9);
-            color: #34d399;
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid #7c3aed;
-        }
-        .period-id { font-size: 11px; color: #a7f3d0; margin-top: 4px; }
-
-        /* Last 5 Rounds Recent Balls Header Bar */
-        .recent-results-bar {
+        .recent-balls-row {
             display: flex;
-            gap: 8px;
+            gap: 5px;
             align-items: center;
-            margin-bottom: 12px;
-            justify-content: flex-start;
         }
         .mini-ball {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: bold;
             color: #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.3);
         }
         .mini-ball.red { background: #e60012; }
         .mini-ball.green { background: #00b050; }
         .mini-ball.violet { background: #7a00cc; }
 
-        /* Betting Area Wrapper with Yarwin Style Semi-Blur Countdown Overlay */
+        .time-remaining-label {
+            font-size: 10px;
+            color: #a7f3d0;
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .time-box {
+            display: flex;
+            gap: 3px;
+            font-weight: bold;
+            font-size: 16px;
+            justify-content: flex-end;
+            margin-bottom: 4px;
+        }
+        .time-box div {
+            background: rgba(15, 23, 42, 0.9);
+            color: #34d399;
+            padding: 3px 6px;
+            border-radius: 6px;
+            border: 1px solid #7c3aed;
+        }
+        .period-id {
+            font-size: 10px;
+            color: #a7f3d0;
+        }
+
+        /* Betting Area Wrapper with Semi-Blur Countdown Overlay */
         .betting-wrapper {
             position: relative;
         }
@@ -215,23 +240,22 @@
             display: none;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
             z-index: 50;
             border-radius: 14px;
         }
         .lock-box {
             background: #f9f9f9;
             color: #00b050;
-            width: 90px;
-            height: 110px;
-            border-radius: 16px;
+            width: 80px;
+            height: 100px;
+            border-radius: 14px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 65px;
+            font-size: 60px;
             font-weight: 900;
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             border: 2px solid #fff;
         }
 
@@ -251,6 +275,7 @@
         .bg-violet { background: linear-gradient(135deg, #7c3aed, #a855f7); border: 1px solid #c084fc; }
         .bg-red { background: linear-gradient(135deg, #dc2626, #ef4444); border: 1px solid #f87171; }
 
+        /* Exact Number Balls UI CSS Provided by You */
         .balls-container {
             background: rgba(15, 23, 42, 0.6);
             padding: 15px;
@@ -264,8 +289,8 @@
         }
         .ball {
             position: relative;
-            width: 55px;
-            height: 55px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -279,8 +304,8 @@
         .ball::before {
             content: '';
             position: absolute;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             z-index: 1;
         }
@@ -555,25 +580,25 @@
             </div>
         </div>
 
-        <div class="timer-section">
-            <div class="timer-left">
-                <button onclick="showToast('Opening Rules...')">📖 How to play</button>
-                <div class="period-id" id="periodId">Loading...</div>
+        <!-- Yarwin Style Ticket Timer Box with Recent 5 Balls Inside -->
+        <div class="timer-ticket">
+            <div class="ticket-left">
+                <button class="how-to-play-btn" onclick="showToast('Opening Rules...')">📖 How to play</button>
+                <div class="ticket-mode-title" id="ticketModeTitle">WinGo 30sec</div>
+                <div class="recent-balls-row" id="recentResultsBar">
+                    <!-- Dynamic Recent 5 Balls -->
+                </div>
             </div>
-            <div class="timer-right">
-                <p style="font-size: 10px; color: #a7f3d0; margin-bottom: 4px; font-weight: bold;">Time remaining</p>
+            <div class="ticket-right">
+                <div class="time-remaining-label">Time remaining</div>
                 <div class="time-box" id="countdownBox">
                     <div>0</div><div>0</div><span>:</span><div>3</div><div>0</div>
                 </div>
+                <div class="period-id" id="periodId">Loading...</div>
             </div>
         </div>
 
-        <!-- Last 5 Rounds Recent Balls Header Bar -->
-        <div class="recent-results-bar" id="recentResultsBar">
-            <!-- Dynamically populated latest 5 balls -->
-        </div>
-
-        <!-- Betting Area Wrapper containing Marked Area with Yarwin Style Semi-Blur Countdown -->
+        <!-- Betting Area Wrapper containing Semi-Blur Countdown & Exact Balls -->
         <div class="betting-wrapper">
             <div class="lock-overlay" id="lockOverlay">
                 <div class="lock-box" id="lockBoxTens">0</div>
@@ -586,6 +611,7 @@
                 <button class="c-btn bg-red" onclick="openBetModal('color', 'red')">Red</button>
             </div>
 
+            <!-- Exact Balls Container Provided by You -->
             <div class="balls-container">
                 <div class="ball split-0" onclick="openBetModal('number', '0')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>0</span></div>
                 <div class="ball green" onclick="openBetModal('number', '1')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>1</span></div>
@@ -663,12 +689,13 @@
         }
         fetchUserData();
 
-        function switchTimer(type, seconds) {
+        function switchTimer(type, seconds, label) {
             currentTimerType = type;
             timeLeft = seconds;
             currentPage = 1;
             document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
             document.getElementById(`mode-${type}`).classList.add('active');
+            document.getElementById('ticketModeTitle').innerText = label;
             loadHistoryData();
         }
 
@@ -705,6 +732,12 @@
                 }
             });
         });
+
+        // Update onclick handlers for mode cards to pass label
+        document.getElementById('mode-30s').setAttribute("onclick", "switchTimer('30s', 30, 'WinGo 30sec')");
+        document.getElementById('mode-60s').setAttribute("onclick", "switchTimer('60s', 60, 'WinGo 1 Min')");
+        document.getElementById('mode-3m').setAttribute("onclick", "switchTimer('3m', 180, 'WinGo 3 Min')");
+        document.getElementById('mode-5m').setAttribute("onclick", "switchTimer('5m', 300, 'WinGo 5 Min')");
 
         function openBetModal(type, val) {
             if (timeLeft <= 5) return showToast('Betting closed for this round!');
@@ -796,7 +829,6 @@
                     if (data.success && data.history) {
                         const bar = document.getElementById('recentResultsBar');
                         bar.innerHTML = '';
-                        // Render latest 5 results as mini balls
                         data.history.slice(0, 5).forEach(item => {
                             let bColor = item.color === 'green' ? 'green' : (item.color === 'red' ? 'red' : 'violet');
                             bar.innerHTML += `<div class="mini-ball ${bColor}">${item.number}</div>`;
