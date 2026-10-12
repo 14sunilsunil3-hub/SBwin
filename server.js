@@ -539,7 +539,7 @@ function startTimerLoop(timerType, intervalSeconds) {
         
         state.startTime = startOfDay + (currentIntervalIndex * intervalMs);
         const elapsedIntoInterval = now - state.startTime;
-        state.countdown = intervalSeconds - 1 - Math.floor(elapsedIntoInterval / 1000);
+        state.countdown = intervalSeconds - Math.floor(elapsedIntoInterval / 1000) - 1;
         if (state.countdown < 0) state.countdown = 0;
 
         state.period = getPeriodCodeForTime(timerType, state.startTime);
@@ -552,17 +552,16 @@ function startTimerLoop(timerType, intervalSeconds) {
         try {
             const now = Date.now();
             const elapsedIntoInterval = now - state.startTime;
-            let countdown = intervalSeconds - 1 - Math.floor(elapsedIntoInterval / 1000);
+            let countdown = intervalSeconds - Math.floor(elapsedIntoInterval / 1000) - 1;
 
             if (countdown < 0) {
                 countdown = 0;
             }
 
-            // Check if interval has completely finished (reached next period boundary)
+            // Server leading buffer: triggers result processing exactly when interval completes
             if (now >= state.startTime + intervalMs) {
                 const oldPeriod = state.period;
 
-                // Process result for the completed period
                 const outcome = await getGameOutcome(oldPeriod, timerType);
 
                 const existingResult = await GameResult.findOne({ period: oldPeriod });
@@ -579,14 +578,14 @@ function startTimerLoop(timerType, intervalSeconds) {
                     period: oldPeriod, number: outcome.number, color: outcome.color, size: outcome.size
                 });
 
-                // Shift to new period
+                // Advance to next period instantly
                 state.startTime += intervalMs;
                 state.period = getPeriodCodeForTime(timerType, state.startTime);
                 state.isBettingOpen = true;
                 io.emit(`bettingStatus_${timerType}`, { isOpen: true, period: state.period });
 
                 const newElapsedIntoInterval = now - state.startTime;
-                countdown = intervalSeconds - 1 - Math.floor(newElapsedIntoInterval / 1000);
+                countdown = intervalSeconds - Math.floor(newElapsedIntoInterval / 1000) - 1;
             }
 
             if (countdown <= 5 && state.isBettingOpen) {
