@@ -22,7 +22,6 @@
             min-height: 100vh;
             touch-action: manipulation;
         }
-        /* Full Screen Width App Container (No outer shrink) */
         .container {
             width: 100%;
             max-width: 500px;
@@ -136,6 +135,7 @@
             box-shadow: 0 2px 10px rgba(168, 85, 247, 0.4);
         }
 
+        /* YaarWin Style Integrated Timer & Result Card */
         .timer-section {
             background: linear-gradient(135deg, #064e3b, #022c22);
             margin-bottom: 12px;
@@ -143,8 +143,14 @@
             border-radius: 16px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             border: 1px solid #34d399;
+            position: relative;
+        }
+        .timer-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
         .timer-left button {
             background: rgba(15, 23, 42, 0.7);
@@ -155,15 +161,50 @@
             font-size: 12px;
             font-weight: bold;
             cursor: pointer;
+            align-self: flex-start;
         }
-        .timer-right { text-align: right; }
+        .mode-title-text {
+            font-size: 12px;
+            color: #a7f3d0;
+            font-weight: bold;
+        }
+        .recent-results-bar {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-top: 2px;
+        }
+        .mini-ball {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+            box-shadow: inset 0 -3px 4px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+        .mini-ball.red { background: radial-gradient(circle, #f87171 20%, #e60012 80%); }
+        .mini-ball.green { background: radial-gradient(circle, #34d399 20%, #00b050 80%); }
+        .mini-ball.violet { background: radial-gradient(circle, #c084fc 20%, #7a00cc 80%); }
+        .mini-ball.split-0 { background: linear-gradient(135deg, #e60012 50%, #7a00cc 50%); }
+        .mini-ball.split-5 { background: linear-gradient(135deg, #00b050 50%, #7a00cc 50%); }
+
+        .timer-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
         .time-box {
             display: flex;
             gap: 4px;
             font-weight: bold;
             font-size: 20px;
-            margin-bottom: 4px;
-            justify-content: flex-end;
         }
         .time-box div {
             background: rgba(15, 23, 42, 0.9);
@@ -172,32 +213,12 @@
             border-radius: 6px;
             border: 1px solid #7c3aed;
         }
-        .period-id { font-size: 12px; color: #a7f3d0; margin-top: 4px; }
-
-        /* Recent Results mini balls bar */
-        .recent-results-bar {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-left: 2px;
+        .period-id {
+            font-size: 12px;
+            color: #a7f3d0;
+            font-family: monospace;
+            letter-spacing: 0.5px;
         }
-        .mini-ball {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: bold;
-            color: #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-        .mini-ball.red { background: #e60012; }
-        .mini-ball.green { background: #00b050; }
-        .mini-ball.violet { background: #7a00cc; }
 
         /* Betting Wrapper & Semi-Blur Countdown Overlay */
         .betting-wrapper {
@@ -321,7 +342,7 @@
         .ball.split-5::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(179,102,255,0.3) 100%); }
         .ball.split-5 span { background: linear-gradient(135deg, #008033, #800080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* Multipliers Bar as seen in YaarWin */
+        /* Multipliers Bar */
         .multiplier-bar {
             display: flex;
             gap: 6px;
@@ -579,22 +600,21 @@
             </div>
         </div>
 
+        <!-- Timer & Integrated Recent Results Section (Exact YaarWin Layout) -->
         <div class="timer-section">
             <div class="timer-left">
                 <button onclick="showToast('Opening Rules...')">📖 How to play</button>
-                <div class="period-id" id="periodId">Loading...</div>
+                <div class="mode-title-text" id="modeTitleText">WinGo 30sec</div>
+                <!-- Dynamic 5 Recent Result Balls Inside Timer Box -->
+                <div class="recent-results-bar" id="recentResultsBar"></div>
             </div>
             <div class="timer-right">
-                <p style="font-size: 10px; color: #a7f3d0; margin-bottom: 4px; font-weight: bold;">Time remaining</p>
+                <p style="font-size: 11px; color: #a7f3d0; font-weight: bold;">Time remaining</p>
                 <div class="time-box" id="countdownBox">
                     <div>0</div><div>0</div><span>:</span><div>3</div><div>0</div>
                 </div>
+                <div class="period-id" id="periodId">Loading...</div>
             </div>
-        </div>
-
-        <!-- Recent Results Header Bar -->
-        <div class="recent-results-bar" id="recentResultsBar">
-            <!-- Dynamically populated latest 5 mini balls -->
         </div>
 
         <!-- Betting Area Wrapper -->
@@ -623,7 +643,7 @@
                 <div class="ball green" onclick="openBetModal('number', '9')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>9</span></div>
             </div>
 
-            <!-- Multipliers Bar (Matching YaarWin UI) -->
+            <!-- Multipliers Bar -->
             <div class="multiplier-bar">
                 <button class="m-btn" onclick="showToast('Random multiplier')">Random</button>
                 <button class="m-btn active" onclick="showToast('Selected X1')">X1</button>
@@ -704,6 +724,9 @@
             currentPage = 1;
             document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
             document.getElementById(`mode-${type}`).classList.add('active');
+            
+            let labelMap = { '30s': 'WinGo 30sec', '60s': 'WinGo 1Min', '3m': 'WinGo 3Min', '5m': 'WinGo 5Min' };
+            document.getElementById('modeTitleText').innerText = labelMap[type] || 'WinGo';
             loadHistoryData();
         }
 
@@ -832,8 +855,13 @@
                         const bar = document.getElementById('recentResultsBar');
                         bar.innerHTML = '';
                         data.history.slice(0, 5).forEach(item => {
-                            let bColor = item.color === 'green' ? 'green' : (item.color === 'red' ? 'red' : 'violet');
-                            bar.innerHTML += `<div class="mini-ball ${bColor}">${item.number}</div>`;
+                            let bClass = 'mini-ball ';
+                            if (item.number === 0) bClass += 'split-0';
+                            else if (item.number === 5) bClass += 'split-5';
+                            else if (item.color === 'green') bClass += 'green';
+                            else bClass += 'red';
+
+                            bar.innerHTML += `<div class="${bClass}">${item.number}</div>`;
                         });
                     }
                 });
