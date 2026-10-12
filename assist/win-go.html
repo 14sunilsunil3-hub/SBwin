@@ -986,13 +986,19 @@
             }
         }
 
-        /* Seamless Local Client Tick with 00 to 01 Buffer Flow */
+        /* Pre-refresh Trigger at 01 sec so that by 00 it is completely updated */
         function startClientCountdown() {
             if (clientTimerInterval) clearInterval(clientTimerInterval);
             clientTimerInterval = setInterval(() => {
                 if (timeLeft > 0) {
                     timeLeft--;
                     updateDisplayTime(timeLeft);
+                    
+                    // Trigger early background data load when timer hits 1 second remaining
+                    if (timeLeft === 1) {
+                        loadHistoryData();
+                        fetchUserData();
+                    }
                 }
             }, 1000);
         }
@@ -1001,7 +1007,6 @@
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
                 if (currentTimerType === type) {
-                    // Sync precisely with server buffer (server leads by 1 sec to ensure smooth 00 transition)
                     timeLeft = data.countdown;
                     updateDisplayTime(timeLeft);
                     document.getElementById('periodId').innerText = data.period;
@@ -1018,7 +1023,6 @@
             });
         });
 
-        /* Force Index Page Redirect on Phone / Browser Back Navigation */
         window.addEventListener('popstate', function () {
             window.location.href = '../index.html';
         });
