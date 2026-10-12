@@ -295,35 +295,34 @@
             position: relative;
             margin-bottom: 14px;
         }
-        /* YaarWin Style Center Popup for 5,4,3,2,1,0 Countdown */
         .lock-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             display: none;
             justify-content: center;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             z-index: 50;
             border-radius: 16px;
-            border: 1px solid rgba(52, 211, 153, 0.4);
+            border: 1px solid rgba(52, 211, 153, 0.3);
         }
         .lock-box {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #fff;
-            width: 110px;
-            height: 140px;
-            border-radius: 20px;
+            background: linear-gradient(135deg, #1e1b4b, #064e3b);
+            color: #34d399;
+            width: 100px;
+            height: 120px;
+            border-radius: 18px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 85px;
+            font-size: 75px;
             font-weight: 900;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7), inset 0 0 20px rgba(255, 255, 255, 0.3);
-            border: 3px solid #34d399;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 0 15px rgba(52, 211, 153, 0.2);
+            border: 2px solid #7c3aed;
+            text-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
         }
 
         .color-btns { display: flex; gap: 10px; margin-bottom: 12px; }
@@ -800,7 +799,7 @@
     <!-- Fixed Header Screen Navigation Bar -->
     <div class="header">
         <div class="header-left"><a href="../index.html">&lt;</a></div>
-        <div class="header-center"><h2>YAARWIN</h2></div>
+        <div class="header-center"><h2>SBWIN</h2></div>
         <div class="header-right"><span style="font-size: 18px; cursor: pointer;" onclick="showToast('Audio & Support Active')">🎵</span></div>
     </div>
 
@@ -815,7 +814,7 @@
         </div>
 
         <div class="notice">
-            <p>Welcome to YaarWin! Official secure platform active...</p>
+            <p>Welcome to sbwin! Official secure platform active...</p>
             <span onclick="showToast('Support details opened')">Detail</span>
         </div>
 
@@ -966,7 +965,7 @@
             loadHistoryData();
         }
 
-        /* Socket Listeners for YaarWin Style 5 to 0 Center Countdown & Smooth Result Fetch */
+        /* Socket Listeners for 5 to 0 Lock Overlay & Smooth Result Fetch */
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
                 if (currentTimerType === type) {
@@ -974,12 +973,12 @@
                     let min = Math.floor(timeLeft / 60);
                     let sec = timeLeft % 60;
                     document.getElementById('countdownBox').innerHTML = `
-                        <div>0</div><div>${min}</div><span>:</span><div>${Math.floor(sec/10)}</div><div>${sec%10}</div>
+                        <div>${Math.floor(min/10)}</div><div>${min%10}</div><span>:</span><div>${Math.floor(sec/10)}</div><div>${sec%10}</div>
                     `;
                     document.getElementById('periodId').innerText = data.period;
 
                     const lockOverlay = document.getElementById('lockOverlay');
-                    // Lock from 5 down to 0 displaying center big boxes
+                    // Lock from 5 down to 0 (5, 4, 3, 2, 1, 0)
                     if (timeLeft <= 5) {
                         lockOverlay.style.display = 'flex';
                         let sStr = String(timeLeft).padStart(2, '0');
