@@ -30,7 +30,6 @@
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: none;
             backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
@@ -209,37 +208,78 @@
         .bg-violet { background: linear-gradient(135deg, #7c3aed, #a855f7); border: 1px solid #c084fc; }
         .bg-red { background: linear-gradient(135deg, #dc2626, #ef4444); border: 1px solid #f87171; }
 
-        .number-grid-container {
+        /* Exact Number Balls UI CSS Provided by You */
+        .balls-container {
             background: rgba(15, 23, 42, 0.6);
             padding: 15px;
             border-radius: 14px;
-            border: 1px solid #7c3aed;
-            margin-bottom: 15px;
-        }
-        .number-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 12px 8px;
             justify-items: center;
+            border: 1px solid #7c3aed;
+            margin-bottom: 15px;
         }
         .ball {
             position: relative;
-            width: 52px;
-            height: 52px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             overflow: hidden;
-            box-shadow: inset 0 -6px 8px rgba(0,0,0,0.35), 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: inset 0 -6px 8px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.1);
             cursor: pointer;
         }
-        .ball.red { background: radial-gradient(circle, rgba(255,107,107,0.3) 30%, #dc2626 80%); color: #fff; }
-        .ball.green { background: radial-gradient(circle, rgba(92,214,133,0.3) 30%, #059669 80%); color: #fff; }
-        .ball.split-0 { background: linear-gradient(135deg, #ef4444 0%, #dc2626 45%, #a855f7 55%, #7c3aed 100%); color: #fff; }
-        .ball.split-5 { background: linear-gradient(135deg, #059669 0%, #047857 45%, #a855f7 55%, #7c3aed 100%); color: #fff; }
+        .ball::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .ball::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            z-index: 3;
+        }
+        .side-glow-left, .side-glow-right, .bottom-glow {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            z-index: 3;
+        }
+        .side-glow-left { top: 50%; left: 2px; transform: translateY(-50%); width: 7px; height: 14px; }
+        .side-glow-right { top: 50%; right: 2px; transform: translateY(-50%); width: 7px; height: 14px; }
+        .bottom-glow { bottom: 2px; left: 50%; transform: translateX(-50%); width: 12px; height: 4px; }
+        .ball span { position: relative; z-index: 2; }
+
+        .ball.red { background: radial-gradient(circle, rgba(255,107,107,0.3) 30%, #e60012 80%); }
+        .ball.red::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(255,107,107,0.3) 100%); }
+        .ball.red span { color: #e60012; }
+
+        .ball.green { background: radial-gradient(circle, rgba(92,214,133,0.3) 30%, #00b050 80%); }
+        .ball.green::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(92,214,133,0.3) 100%); }
+        .ball.green span { color: #00b050; }
+
+        .ball.split-0 { background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 45%, #b366ff 55%, #7a00cc 100%); }
+        .ball.split-0::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(179,102,255,0.3) 100%); }
+        .ball.split-0 span { background: linear-gradient(135deg, #cc0000, #800080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .ball.split-5 { background: linear-gradient(135deg, #00b050 0%, #008033 45%, #b366ff 55%, #7a00cc 100%); }
+        .ball.split-5::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(179,102,255,0.3) 100%); }
+        .ball.split-5 span { background: linear-gradient(135deg, #008033, #800080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         .big-small { display: flex; gap: 10px; margin-bottom: 15px; }
         .bs-btn {
@@ -310,7 +350,6 @@
         }
         .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* Bet Modal */
         .bet-modal-overlay {
             position: fixed;
             inset: 0;
@@ -350,7 +389,6 @@
         .qty-btn { background: #7c3aed; color: #fff; border: none; width: 35px; height: 35px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
         .qty-input { width: 60px; text-align: center; background: rgba(15, 23, 42, 0.7); border: 1px solid #7c3aed; color: #fff; padding: 6px; border-radius: 8px; font-weight: bold; }
 
-        /* Result Popup */
         .result-popup-overlay {
             position: fixed;
             inset: 0;
@@ -394,7 +432,6 @@
 
     <div id="toast">Action performed!</div>
 
-    <!-- Result Popup -->
     <div id="resultPopupOverlay" class="result-popup-overlay">
         <div id="resultPopupBox" class="result-popup-box win">
             <div id="resPopupTitle" style="font-size: 24px; font-weight: 900; margin-bottom: 15px;">WIN</div>
@@ -408,7 +445,6 @@
         </div>
     </div>
 
-    <!-- Bet Modal -->
     <div id="betModalOverlay" class="bet-modal-overlay" onclick="closeBetModal()"></div>
     <div id="betModal" class="bet-modal">
         <div id="modalTitle" style="font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 15px; color: #34d399;">Select Bet</div>
@@ -497,19 +533,18 @@
             <button class="c-btn bg-red" onclick="openBetModal('color', 'red')">Red</button>
         </div>
 
-        <div class="number-grid-container">
-            <div class="number-grid">
-                <div class="ball split-0" onclick="openBetModal('number', '0')"><span>0</span></div>
-                <div class="ball green" onclick="openBetModal('number', '1')"><span>1</span></div>
-                <div class="ball red" onclick="openBetModal('number', '2')"><span>2</span></div>
-                <div class="ball green" onclick="openBetModal('number', '3')"><span>3</span></div>
-                <div class="ball red" onclick="openBetModal('number', '4')"><span>4</span></div>
-                <div class="ball split-5" onclick="openBetModal('number', '5')"><span>5</span></div>
-                <div class="ball red" onclick="openBetModal('number', '6')"><span>6</span></div>
-                <div class="ball green" onclick="openBetModal('number', '7')"><span>7</span></div>
-                <div class="ball red" onclick="openBetModal('number', '8')"><span>8</span></div>
-                <div class="ball green" onclick="openBetModal('number', '9')"><span>9</span></div>
-            </div>
+        <!-- Exact Balls Container Provided by You -->
+        <div class="balls-container">
+            <div class="ball split-0" onclick="openBetModal('number', '0')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>0</span></div>
+            <div class="ball green" onclick="openBetModal('number', '1')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>1</span></div>
+            <div class="ball red" onclick="openBetModal('number', '2')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>2</span></div>
+            <div class="ball green" onclick="openBetModal('number', '3')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>3</span></div>
+            <div class="ball red" onclick="openBetModal('number', '4')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>4</span></div>
+            <div class="ball split-5" onclick="openBetModal('number', '5')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>5</span></div>
+            <div class="ball red" onclick="openBetModal('number', '6')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>6</span></div>
+            <div class="ball green" onclick="openBetModal('number', '7')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>7</span></div>
+            <div class="ball red" onclick="openBetModal('number', '8')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>8</span></div>
+            <div class="ball green" onclick="openBetModal('number', '9')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>9</span></div>
         </div>
 
         <div class="big-small">
@@ -543,7 +578,6 @@
         </div>
     </div>
 
-    <audio id="beepAudio" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
