@@ -1002,16 +1002,20 @@
                 }
             }, 1000);
         }
-        startClientCountdown();
+        startClientCountdow();
 
-        ['30s', '60s', '3m', '5m'].forEach(type => {
+                ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
                 if (currentTimerType === type) {
-                    timeLeft = data.countdown;
-                    updateDisplayTime(timeLeft);
                     document.getElementById('periodId').innerText = data.period;
+                    // Sirf tabhi timeLeft sync karein agar bada time gap ho, warna local smooth chalne dein
+                    if (Math.abs(timeLeft - data.countdown) > 2) {
+                        timeLeft = data.countdown;
+                        updateDisplayTime(timeLeft);
+                    }
                 }
             });
+
 
             socket.on(`gameResult_${type}`, (resultData) => {
                 if (currentTimerType === type) {
