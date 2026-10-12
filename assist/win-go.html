@@ -737,9 +737,54 @@
             z-index: 100000;
         }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* Full Screen Theme Loading Overlay */
+        #fullPageLoader {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.3s ease;
+        }
+        .spinner-theme {
+            width: 90px;
+            height: 90px;
+            border: 4px solid rgba(124, 58, 237, 0.2);
+            border-top: 4px solid #34d399;
+            border-right: 4px solid #a855f7;
+            border-radius: 50%;
+            animation: spinTheme 1s linear infinite;
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.4);
+        }
+        @keyframes spinTheme {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes dotBlink {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+        .dot-anim {
+            animation: dotBlink 1.4s infinite;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Theme Loading Overlay -->
+    <div id="fullPageLoader">
+        <div class="spinner-theme"></div>
+        <div style="margin-top: 18px; font-weight: 800; font-size: 16px; color: #34d399; letter-spacing: 1px;">
+            Loading<span class="dot-anim">...</span>
+        </div>
+    </div>
 
     <div id="toast">Action performed!</div>
 
@@ -837,7 +882,7 @@
         <div class="timer-section">
             <div class="timer-left">
                 <button onclick="showToast('Opening Rules...')">📖 How to play</button>
-                <div class="period-id-left" id="periodId">Loading...</div>
+                <div class="period-id-left" id="periodId">---</div>
                 <div class="recent-results-bar" id="recentResultsBar"></div>
             </div>
             <div class="timer-right">
@@ -941,6 +986,7 @@
         let currentPage = 1;
         let maxAllowedPages = 50;
         let totalPages = 1;
+        let isFirstLoadSync = false;
 
         async function fetchUserData() {
             if (!loggedInMobile && !userId) return;
@@ -1002,12 +1048,23 @@
                 }
             }, 1000);
         }
-        startClientCountdow();
+        startClientCountdown();
 
-                ['30s', '60s', '3m', '5m'].forEach(type => {
+        ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
                 if (currentTimerType === type) {
                     document.getElementById('periodId').innerText = data.period;
+
+                    // Pehli baar live socket connection se data milte hi loader hata do
+                    if (!isFirstLoadSync) {
+                        isFirstLoadSync = true;
+                        const loader = document.getElementById('fullPageLoader');
+                        if (loader) {
+                            loader.style.opacity = '0';
+                            setTimeout(() => { loader.style.display = 'none'; }, 300);
+                        }
+                    }
+
                     // Sirf tabhi timeLeft sync karein agar bada time gap ho, warna local smooth chalne dein
                     if (Math.abs(timeLeft - data.countdown) > 2) {
                         timeLeft = data.countdown;
@@ -1015,7 +1072,6 @@
                     }
                 }
             });
-
 
             socket.on(`gameResult_${type}`, (resultData) => {
                 if (currentTimerType === type) {
