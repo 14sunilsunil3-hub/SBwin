@@ -33,7 +33,6 @@
             overflow-x: hidden;
         }
 
-        /* Fixed Screen Brand Header & Navigation */
         .header {
             position: fixed;
             top: 0;
@@ -154,7 +153,6 @@
             box-shadow: 0 2px 10px rgba(168, 85, 247, 0.4);
         }
 
-        /* Timer Section */
         .timer-section {
             background: linear-gradient(135deg, #064e3b, #022c22);
             margin-bottom: 12px;
@@ -191,7 +189,6 @@
             margin-top: 2px;
         }
 
-        /* Time Remaining Section Mini Glass Balls */
         .recent-results-bar {
             display: flex;
             gap: 6px;
@@ -294,7 +291,6 @@
             border: 1px solid #7c3aed;
         }
 
-        /* Betting Area Wrapper */
         .betting-wrapper {
             position: relative;
             margin-bottom: 14px;
@@ -345,7 +341,6 @@
         .bg-violet { background: linear-gradient(135deg, #7c3aed, #a855f7); border: 1px solid #c084fc; }
         .bg-red { background: linear-gradient(135deg, #dc2626, #ef4444); border: 1px solid #f87171; }
 
-        /* Full Width 3D Glass Balls Container */
         .balls-container {
             background: rgba(15, 23, 42, 0.6);
             padding: 16px 10px;
@@ -492,7 +487,6 @@
         .history-table th { color: #a7f3d0; padding: 10px 4px; border-bottom: 1px solid #7c3aed; font-weight: bold; }
         .history-table td { padding: 10px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e2e8f0; word-break: break-all; }
 
-        /* Card Layout for My History */
         .my-history-list {
             display: flex;
             flex-direction: column;
@@ -607,7 +601,6 @@
         }
         .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* Dynamic Color Glass Betting Sheet/Modal */
         .bet-modal-overlay {
             position: fixed;
             inset: 0;
@@ -633,7 +626,6 @@
         }
         .bet-modal.active { bottom: 0; }
 
-        /* Dynamic Color Themes for Bet Sheet */
         .bet-modal.theme-green { border-top-color: #10b981; }
         .bet-modal.theme-green #modalTitle, .bet-modal.theme-green #totalBetCalc { color: #10b981; }
         .bet-modal.theme-green .confirm-btn { background: linear-gradient(135deg, #059669, #10b981); }
@@ -973,7 +965,7 @@
             loadHistoryData();
         }
 
-        /* Socket Listeners for Real-Time Instant Update */
+        /* Socket Listeners for 6-second lock and instant refresh */
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
                 if (currentTimerType === type) {
@@ -986,7 +978,7 @@
                     document.getElementById('periodId').innerText = data.period;
 
                     const lockOverlay = document.getElementById('lockOverlay');
-                    if (timeLeft <= 5) {
+                    if (timeLeft <= 6) {
                         lockOverlay.style.display = 'flex';
                         let sStr = String(timeLeft).padStart(2, '0');
                         document.getElementById('lockBoxTens').innerText = sStr[0];
@@ -998,7 +990,6 @@
                 }
             });
 
-            /* Instant 0s Lag-Free Round Result Event */
             socket.on(`gameResult_${type}`, (resultData) => {
                 if (currentTimerType === type) {
                     currentPage = 1;
@@ -1009,15 +1000,19 @@
             });
         });
 
+        /* Force Index Page Redirect on Phone / Browser Back */
+        window.addEventListener('popstate', function () {
+            window.location.href = '../index.html';
+        });
+
         function openBetModal(type, val) {
-            if (timeLeft <= 5) return showToast('Betting closed for this round!');
+            if (timeLeft <= 6) return showToast('Betting closed for this round!');
             activeBetType = type;
             activeBetValue = val;
 
             const modal = document.getElementById('betModal');
             modal.className = 'bet-modal';
 
-            /* Dynamic Theme Matching based on Choice */
             let v = String(val).toLowerCase();
             if (['green', '1', '3', '7', '9'].includes(v)) modal.classList.add('theme-green');
             else if (['red', '2', '4', '6', '8'].includes(v)) modal.classList.add('theme-red');
@@ -1031,13 +1026,11 @@
             calcTotal();
         }
 
-        /* Close & Reset Modal Values */
         function closeBetModal() {
             const modal = document.getElementById('betModal');
             modal.classList.remove('active');
             document.getElementById('betModalOverlay').style.display = 'none';
 
-            /* Reset values on close */
             baseAmount = 1;
             multiplier = 1;
             quantity = 1;
@@ -1132,7 +1125,6 @@
         }
 
         function loadHistoryData() {
-            /* Instant Recent Balls Fetch */
             fetch(`/api/game-history/${currentTimerType}?page=1&limit=5`)
                 .then(r => r.json())
                 .then(data => {
