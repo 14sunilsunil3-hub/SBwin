@@ -18,27 +18,26 @@
             color: #fff;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
-            padding: 10px;
             touch-action: manipulation;
         }
+        /* Full Screen Width App Container (No outer shrink) */
         .container {
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
             background: linear-gradient(135deg, #1e1b4b, #064e3b);
-            border-radius: 20px;
-            padding: 20px;
+            min-height: 100vh;
+            padding: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         .header {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .header-left { justify-self: start; }
         .header-center { justify-self: center; }
@@ -51,50 +50,48 @@
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-align: center;
+            font-size: 20px;
         }
         .header a {
             background: rgba(15, 23, 42, 0.7);
             border: 1px solid #7c3aed;
             color: #fff;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 10px;
             text-decoration: none;
             font-size: 13px;
             font-weight: bold;
         }
-        .header a:hover { border-color: #34d399; }
 
         .wallet-card {
             background: rgba(15, 23, 42, 0.7);
             border: 1px solid #34d399;
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 14px;
+            margin-bottom: 12px;
+            padding: 14px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(52, 211, 153, 0.15);
         }
         .balance {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 900;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             color: #34d399;
         }
         .wallet-title {
             color: #a7f3d0;
             font-size: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             text-transform: uppercase;
             font-weight: bold;
         }
         .wallet-btns { display: flex; gap: 10px; }
         .btn {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
             color: white;
         }
@@ -104,10 +101,10 @@
         .notice {
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid #7c3aed;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             padding: 10px 12px;
             border-radius: 10px;
-            font-size: 11px;
+            font-size: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -118,15 +115,15 @@
         .game-modes {
             display: flex;
             gap: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .mode-card {
             flex: 1;
             background: rgba(15, 23, 42, 0.7);
-            padding: 10px 6px;
-            border-radius: 10px;
+            padding: 10px 4px;
+            border-radius: 12px;
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             border: 1px solid #7c3aed;
             color: #a7f3d0;
             cursor: pointer;
@@ -141,9 +138,9 @@
 
         .timer-section {
             background: linear-gradient(135deg, #064e3b, #022c22);
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 14px;
+            margin-bottom: 12px;
+            padding: 14px;
+            border-radius: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -153,9 +150,9 @@
             background: rgba(15, 23, 42, 0.7);
             color: #34d399;
             border: 1px solid #34d399;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
             cursor: pointer;
         }
@@ -164,7 +161,7 @@
             display: flex;
             gap: 4px;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 20px;
             margin-bottom: 4px;
             justify-content: flex-end;
         }
@@ -175,24 +172,24 @@
             border-radius: 6px;
             border: 1px solid #7c3aed;
         }
-        .period-id { font-size: 11px; color: #a7f3d0; margin-top: 4px; }
+        .period-id { font-size: 12px; color: #a7f3d0; margin-top: 4px; }
 
-        /* Last 5 Rounds Recent Balls Header Bar */
+        /* Recent Results mini balls bar */
         .recent-results-bar {
             display: flex;
             gap: 8px;
             align-items: center;
             margin-bottom: 12px;
-            justify-content: flex-start;
+            padding-left: 2px;
         }
         .mini-ball {
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             color: #fff;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
@@ -202,9 +199,10 @@
         .mini-ball.green { background: #00b050; }
         .mini-ball.violet { background: #7a00cc; }
 
-        /* Betting Area Wrapper with Yarwin Style Semi-Blur Countdown Overlay */
+        /* Betting Wrapper & Semi-Blur Countdown Overlay */
         .betting-wrapper {
             position: relative;
+            margin-bottom: 14px;
         }
         .lock-overlay {
             position: absolute;
@@ -217,33 +215,32 @@
             align-items: center;
             gap: 20px;
             z-index: 50;
-            border-radius: 14px;
+            border-radius: 16px;
         }
         .lock-box {
             background: #f9f9f9;
             color: #00b050;
-            width: 90px;
-            height: 110px;
-            border-radius: 16px;
+            width: 100px;
+            height: 120px;
+            border-radius: 18px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 65px;
+            font-size: 75px;
             font-weight: 900;
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             border: 2px solid #fff;
         }
 
-        .color-btns { display: flex; gap: 10px; margin-bottom: 15px; }
+        .color-btns { display: flex; gap: 10px; margin-bottom: 12px; }
         .c-btn {
             flex: 1;
-            padding: 12px;
+            padding: 14px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             color: white;
             font-weight: 800;
-            font-size: 13px;
+            font-size: 15px;
             cursor: pointer;
             text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
@@ -251,26 +248,27 @@
         .bg-violet { background: linear-gradient(135deg, #7c3aed, #a855f7); border: 1px solid #c084fc; }
         .bg-red { background: linear-gradient(135deg, #dc2626, #ef4444); border: 1px solid #f87171; }
 
+        /* Full Width 3D Glass Balls Container */
         .balls-container {
             background: rgba(15, 23, 42, 0.6);
-            padding: 15px;
-            border-radius: 14px;
+            padding: 16px 10px;
+            border-radius: 16px;
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 12px 8px;
+            gap: 14px 10px;
             justify-items: center;
             border: 1px solid #7c3aed;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .ball {
             position: relative;
-            width: 55px;
-            height: 55px;
+            width: 62px;
+            height: 62px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 26px;
             font-weight: bold;
             overflow: hidden;
             box-shadow: inset 0 -6px 8px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.1);
@@ -279,8 +277,8 @@
         .ball::before {
             content: '';
             position: absolute;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             z-index: 1;
         }
@@ -290,8 +288,8 @@
             top: 2px;
             left: 50%;
             transform: translateX(-50%);
-            width: 16px;
-            height: 6px;
+            width: 18px;
+            height: 7px;
             background: rgba(255, 255, 255, 0.6);
             border-radius: 50%;
             z-index: 3;
@@ -302,9 +300,9 @@
             border-radius: 50%;
             z-index: 3;
         }
-        .side-glow-left { top: 50%; left: 2px; transform: translateY(-50%); width: 7px; height: 14px; }
-        .side-glow-right { top: 50%; right: 2px; transform: translateY(-50%); width: 7px; height: 14px; }
-        .bottom-glow { bottom: 2px; left: 50%; transform: translateX(-50%); width: 12px; height: 4px; }
+        .side-glow-left { top: 50%; left: 2px; transform: translateY(-50%); width: 8px; height: 16px; }
+        .side-glow-right { top: 50%; right: 2px; transform: translateY(-50%); width: 8px; height: 16px; }
+        .bottom-glow { bottom: 2px; left: 50%; transform: translateX(-50%); width: 14px; height: 5px; }
         .ball span { position: relative; z-index: 2; }
 
         .ball.red { background: radial-gradient(circle, rgba(255,107,107,0.3) 30%, #e60012 80%); }
@@ -323,13 +321,39 @@
         .ball.split-5::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(179,102,255,0.3) 100%); }
         .ball.split-5 span { background: linear-gradient(135deg, #008033, #800080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .big-small { display: flex; gap: 10px; margin-bottom: 15px; }
+        /* Multipliers Bar as seen in YaarWin */
+        .multiplier-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+        }
+        .m-btn {
+            flex: 1;
+            padding: 8px 4px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid #7c3aed;
+            color: #a7f3d0;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            min-width: 48px;
+        }
+        .m-btn.active {
+            background: #10b981;
+            color: white;
+            border-color: #34d399;
+        }
+
+        .big-small { display: flex; gap: 10px; margin-bottom: 12px; }
         .bs-btn {
             flex: 1;
-            padding: 12px;
+            padding: 14px;
             border: none;
-            border-radius: 10px;
-            font-size: 15px;
+            border-radius: 12px;
+            font-size: 16px;
             font-weight: 900;
             cursor: pointer;
             text-transform: uppercase;
@@ -341,15 +365,15 @@
             display: flex;
             background: rgba(15, 23, 42, 0.7);
             border: 1px solid #7c3aed;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 4px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .tab {
             flex: 1;
             text-align: center;
-            padding: 8px;
-            font-size: 12px;
+            padding: 10px;
+            font-size: 13px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
@@ -359,34 +383,34 @@
 
         .history-card {
             background: rgba(15, 23, 42, 0.6);
-            border-radius: 14px;
-            padding: 12px;
+            border-radius: 16px;
+            padding: 14px;
             border: 1px solid #7c3aed;
         }
         .history-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 13px;
             text-align: center;
         }
-        .history-table th { color: #a7f3d0; padding: 8px; border-bottom: 1px solid #7c3aed; font-weight: bold; }
-        .history-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e2e8f0; }
+        .history-table th { color: #a7f3d0; padding: 10px; border-bottom: 1px solid #7c3aed; font-weight: bold; }
+        .history-table td { padding: 10px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e2e8f0; }
 
         .pagination-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 10px;
-            padding-top: 8px;
+            margin-top: 12px;
+            padding-top: 10px;
             border-top: 1px solid #7c3aed;
         }
         .page-btn {
             background: rgba(15, 23, 42, 0.7);
             border: 1px solid #7c3aed;
             color: #a7f3d0;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
             cursor: pointer;
             font-weight: bold;
         }
@@ -568,12 +592,12 @@
             </div>
         </div>
 
-        <!-- Last 5 Rounds Recent Balls Header Bar -->
+        <!-- Recent Results Header Bar -->
         <div class="recent-results-bar" id="recentResultsBar">
-            <!-- Dynamically populated latest 5 balls -->
+            <!-- Dynamically populated latest 5 mini balls -->
         </div>
 
-        <!-- Betting Area Wrapper containing Marked Area with Yarwin Style Semi-Blur Countdown -->
+        <!-- Betting Area Wrapper -->
         <div class="betting-wrapper">
             <div class="lock-overlay" id="lockOverlay">
                 <div class="lock-box" id="lockBoxTens">0</div>
@@ -597,6 +621,17 @@
                 <div class="ball green" onclick="openBetModal('number', '7')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>7</span></div>
                 <div class="ball red" onclick="openBetModal('number', '8')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>8</span></div>
                 <div class="ball green" onclick="openBetModal('number', '9')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>9</span></div>
+            </div>
+
+            <!-- Multipliers Bar (Matching YaarWin UI) -->
+            <div class="multiplier-bar">
+                <button class="m-btn" onclick="showToast('Random multiplier')">Random</button>
+                <button class="m-btn active" onclick="showToast('Selected X1')">X1</button>
+                <button class="m-btn" onclick="showToast('Selected X5')">X5</button>
+                <button class="m-btn" onclick="showToast('Selected X10')">X10</button>
+                <button class="m-btn" onclick="showToast('Selected X20')">X20</button>
+                <button class="m-btn" onclick="showToast('Selected X50')">X50</button>
+                <button class="m-btn" onclick="showToast('Selected X100')">X100</button>
             </div>
 
             <div class="big-small">
@@ -625,7 +660,7 @@
             </table>
             <div class="pagination-row">
                 <button class="page-btn" id="prevPageBtn" onclick="changePage(-1)">Previous</button>
-                <span id="pageIndicator" style="font-size: 11px; color: #a7f3d0;">Page 1</span>
+                <span id="pageIndicator" style="font-size: 12px; color: #a7f3d0;">Page 1</span>
                 <button class="page-btn" id="nextPageBtn" onclick="changePage(1)">Next</button>
             </div>
         </div>
@@ -796,7 +831,6 @@
                     if (data.success && data.history) {
                         const bar = document.getElementById('recentResultsBar');
                         bar.innerHTML = '';
-                        // Render latest 5 results as mini balls
                         data.history.slice(0, 5).forEach(item => {
                             let bColor = item.color === 'green' ? 'green' : (item.color === 'red' ? 'red' : 'violet');
                             bar.innerHTML += `<div class="mini-ball ${bColor}">${item.number}</div>`;
