@@ -819,16 +819,16 @@
         </div>
 
         <div class="game-modes">
-            <div class="mode-card active" id="mode-30s" onclick="switchTimer('30s', 30)">
+            <div class="mode-card active" id="mode-30s" onclick="switchTimer('30s', 29)">
                 <p>🕧 30sec</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
-            <div class="mode-card" id="mode-60s" onclick="switchTimer('60s', 60)">
+            <div class="mode-card" id="mode-60s" onclick="switchTimer('60s', 59)">
                 <p>🕛 1 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
-            <div class="mode-card" id="mode-3m" onclick="switchTimer('3m', 180)">
+            <div class="mode-card" id="mode-3m" onclick="switchTimer('3m', 179)">
                 <p>🕒 3 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
-            <div class="mode-card" id="mode-5m" onclick="switchTimer('5m', 300)">
+            <div class="mode-card" id="mode-5m" onclick="switchTimer('5m', 299)">
                 <p>🕔 5 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
         </div>
@@ -843,7 +843,7 @@
             <div class="timer-right">
                 <p style="font-size: 11px; color: #a7f3d0; font-weight: bold;">Time remaining</p>
                 <div class="time-box" id="countdownBox">
-                    <div>0</div><div>0</div><span>:</span><div>3</div><div>0</div>
+                    <div>0</div><div>0</div><span>:</span><div>2</div><div>9</div>
                 </div>
             </div>
         </div>
@@ -930,7 +930,7 @@
         let userId = localStorage.getItem('rewards_userId') || sessionStorage.getItem('rewards_userId');
 
         let currentTimerType = '30s';
-        let timeLeft = 30;
+        let timeLeft = 29;
         let activeBetType = '';
         let activeBetValue = '';
         let baseAmount = 1;
@@ -965,7 +965,7 @@
             loadHistoryData();
         }
 
-        /* Socket Listeners for 6-second lock and instant refresh */
+        /* Socket Listeners for 5 to 0 Lock Overlay & Smooth Result Fetch */
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
                 if (currentTimerType === type) {
@@ -978,7 +978,8 @@
                     document.getElementById('periodId').innerText = data.period;
 
                     const lockOverlay = document.getElementById('lockOverlay');
-                    if (timeLeft <= 6) {
+                    // Lock from 5 down to 0
+                    if (timeLeft <= 5) {
                         lockOverlay.style.display = 'flex';
                         let sStr = String(timeLeft).padStart(2, '0');
                         document.getElementById('lockBoxTens').innerText = sStr[0];
@@ -1000,13 +1001,13 @@
             });
         });
 
-        /* Force Index Page Redirect on Phone / Browser Back */
+        /* Force Index Page Redirect on Phone / Browser Back Navigation */
         window.addEventListener('popstate', function () {
             window.location.href = '../index.html';
         });
 
         function openBetModal(type, val) {
-            if (timeLeft <= 6) return showToast('Betting closed for this round!');
+            if (timeLeft <= 5) return showToast('Betting closed for this round!');
             activeBetType = type;
             activeBetValue = val;
 
