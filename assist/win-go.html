@@ -27,15 +27,25 @@
             max-width: 500px;
             background: linear-gradient(135deg, #1e1b4b, #064e3b);
             min-height: 100vh;
-            padding: 12px;
+            padding: 0 12px 12px 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             position: relative;
             overflow-x: hidden;
         }
+
+        /* Sticky Header Navigation */
         .header {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(30, 27, 75, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(124, 58, 237, 0.3);
             margin-bottom: 12px;
         }
         .header-left { justify-self: start; }
@@ -55,10 +65,14 @@
             background: rgba(15, 23, 42, 0.7);
             border: 1px solid #7c3aed;
             color: #fff;
-            padding: 6px 14px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 10px;
             text-decoration: none;
-            font-size: 13px;
+            font-size: 18px;
             font-weight: bold;
         }
 
@@ -135,7 +149,7 @@
             box-shadow: 0 2px 10px rgba(168, 85, 247, 0.4);
         }
 
-        /* YaarWin Style Integrated Timer & Result Card */
+        /* Timer Section */
         .timer-section {
             background: linear-gradient(135deg, #064e3b, #022c22);
             margin-bottom: 12px;
@@ -150,7 +164,7 @@
         .timer-left {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
         .timer-left button {
             background: rgba(15, 23, 42, 0.7);
@@ -163,35 +177,73 @@
             cursor: pointer;
             align-self: flex-start;
         }
-        .mode-title-text {
-            font-size: 12px;
+        .period-id-left {
+            font-size: 13px;
             color: #a7f3d0;
             font-weight: bold;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
         }
+
+        /* Mini Balls with Soft White Center Core and Glass Water Flow */
         .recent-results-bar {
             display: flex;
             gap: 6px;
             align-items: center;
-            margin-top: 2px;
+            margin-top: 4px;
         }
         .mini-ball {
-            width: 26px;
-            height: 26px;
+            position: relative;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
-            color: #fff;
-            box-shadow: inset 0 -3px 4px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.4);
+            color: #111;
+            overflow: hidden;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
         }
-        .mini-ball.red { background: radial-gradient(circle, #f87171 20%, #e60012 80%); }
-        .mini-ball.green { background: radial-gradient(circle, #34d399 20%, #00b050 80%); }
-        .mini-ball.violet { background: radial-gradient(circle, #c084fc 20%, #7a00cc 80%); }
-        .mini-ball.split-0 { background: linear-gradient(135deg, #e60012 50%, #7a00cc 50%); }
-        .mini-ball.split-5 { background: linear-gradient(135deg, #00b050 50%, #7a00cc 50%); }
+        .mini-ball::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.95) 45%, rgba(255,255,255,0.3) 100%);
+            z-index: 1;
+        }
+        .mini-ball span {
+            position: relative;
+            z-index: 2;
+            font-weight: 900;
+        }
+        .mini-ball.red {
+            background: #e60012;
+            border: 1.5px solid #ff4d4d;
+        }
+        .mini-ball.red span { color: #cc0000; }
+
+        .mini-ball.green {
+            background: #00b050;
+            border: 1.5px solid #34d399;
+        }
+        .mini-ball.green span { color: #008033; }
+
+        .mini-ball.split-0 {
+            background: linear-gradient(135deg, #e60012 50%, #7a00cc 50%);
+            border: 1.5px solid #c084fc;
+        }
+        .mini-ball.split-0 span { color: #800080; }
+
+        .mini-ball.split-5 {
+            background: linear-gradient(135deg, #00b050 50%, #7a00cc 50%);
+            border: 1.5px solid #c084fc;
+        }
+        .mini-ball.split-5 span { color: #008033; }
 
         .timer-right {
             text-align: right;
@@ -213,14 +265,8 @@
             border-radius: 6px;
             border: 1px solid #7c3aed;
         }
-        .period-id {
-            font-size: 12px;
-            color: #a7f3d0;
-            font-family: monospace;
-            letter-spacing: 0.5px;
-        }
 
-        /* Betting Wrapper & Semi-Blur Countdown Overlay */
+        /* Betting Wrapper & Semi-Blur Overlay */
         .betting-wrapper {
             position: relative;
             margin-bottom: 14px;
@@ -414,9 +460,10 @@
             font-size: 13px;
             text-align: center;
         }
-        .history-table th { color: #a7f3d0; padding: 10px; border-bottom: 1px solid #7c3aed; font-weight: bold; }
-        .history-table td { padding: 10px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e2e8f0; }
+        .history-table th { color: #a7f3d0; padding: 10px 4px; border-bottom: 1px solid #7c3aed; font-weight: bold; }
+        .history-table td { padding: 10px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e2e8f0; word-break: break-all; }
 
+        /* Pagination Style */
         .pagination-row {
             display: flex;
             justify-content: space-between;
@@ -426,16 +473,20 @@
             border-top: 1px solid #7c3aed;
         }
         .page-btn {
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(15, 23, 42, 0.8);
             border: 1px solid #7c3aed;
-            color: #a7f3d0;
-            padding: 6px 14px;
+            color: #34d399;
+            width: 36px;
+            height: 36px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 16px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .bet-modal-overlay {
             position: fixed;
@@ -565,9 +616,10 @@
     </div>
 
     <div class="container">
+        <!-- Sticky Header Navigation with Back Symbol '<' -->
         <div class="header">
-            <div class="header-left"><a href="../index.html">&lt; Back</a></div>
-            <div class="header-center"><h2>sbwin</h2></div>
+            <div class="header-left"><a href="../index.html">&lt;</a></div>
+            <div class="header-center"><h2>SBWIN</h2></div>
             <div class="header-right"><span style="font-size: 18px; cursor: pointer;" onclick="showToast('Audio & Support Active')">🎵</span></div>
         </div>
 
@@ -600,12 +652,11 @@
             </div>
         </div>
 
-        <!-- Timer & Integrated Recent Results Section (Exact YaarWin Layout) -->
+        <!-- Timer Box with Period Number Below How To Play -->
         <div class="timer-section">
             <div class="timer-left">
                 <button onclick="showToast('Opening Rules...')">📖 How to play</button>
-                <div class="mode-title-text" id="modeTitleText">WinGo 30sec</div>
-                <!-- Dynamic 5 Recent Result Balls Inside Timer Box -->
+                <div class="period-id-left" id="periodId">Loading...</div>
                 <div class="recent-results-bar" id="recentResultsBar"></div>
             </div>
             <div class="timer-right">
@@ -613,7 +664,6 @@
                 <div class="time-box" id="countdownBox">
                     <div>0</div><div>0</div><span>:</span><div>3</div><div>0</div>
                 </div>
-                <div class="period-id" id="periodId">Loading...</div>
             </div>
         </div>
 
@@ -643,7 +693,6 @@
                 <div class="ball green" onclick="openBetModal('number', '9')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>9</span></div>
             </div>
 
-            <!-- Multipliers Bar -->
             <div class="multiplier-bar">
                 <button class="m-btn" onclick="showToast('Random multiplier')">Random</button>
                 <button class="m-btn active" onclick="showToast('Selected X1')">X1</button>
@@ -678,10 +727,11 @@
                 </thead>
                 <tbody id="historyBody"></tbody>
             </table>
+            <!-- Pagination with < > buttons -->
             <div class="pagination-row">
-                <button class="page-btn" id="prevPageBtn" onclick="changePage(-1)">Previous</button>
-                <span id="pageIndicator" style="font-size: 12px; color: #a7f3d0;">Page 1</span>
-                <button class="page-btn" id="nextPageBtn" onclick="changePage(1)">Next</button>
+                <button class="page-btn" id="prevPageBtn" onclick="changePage(-1)">&lt;</button>
+                <span id="pageIndicator" style="font-size: 12px; color: #a7f3d0;">Page 1 of 50</span>
+                <button class="page-btn" id="nextPageBtn" onclick="changePage(1)">&gt;</button>
             </div>
         </div>
     </div>
@@ -701,6 +751,7 @@
         let quantity = 1;
         let currentHistoryTab = 'history';
         let currentPage = 1;
+        let maxAllowedPages = 50;
         let totalPages = 1;
 
         async function fetchUserData() {
@@ -724,9 +775,6 @@
             currentPage = 1;
             document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
             document.getElementById(`mode-${type}`).classList.add('active');
-            
-            let labelMap = { '30s': 'WinGo 30sec', '60s': 'WinGo 1Min', '3m': 'WinGo 3Min', '5m': 'WinGo 5Min' };
-            document.getElementById('modeTitleText').innerText = labelMap[type] || 'WinGo';
             loadHistoryData();
         }
 
@@ -754,6 +802,7 @@
                 }
             });
 
+            /* On Round Finish: Auto Reset to Page 1 and Refresh Table */
             socket.on(`gameResult_${type}`, (resultData) => {
                 if (currentTimerType === type) {
                     currentPage = 1;
@@ -861,7 +910,7 @@
                             else if (item.color === 'green') bClass += 'green';
                             else bClass += 'red';
 
-                            bar.innerHTML += `<div class="${bClass}">${item.number}</div>`;
+                            bar.innerHTML += `<div class="${bClass}"><span>${item.number}</span></div>`;
                         });
                     }
                 });
@@ -874,7 +923,8 @@
                     .then(r => r.json())
                     .then(data => {
                         if (data.success && data.history) {
-                            totalPages = data.totalPages || 1;
+                            // Max 50 pages restriction
+                            totalPages = Math.min(data.totalPages || 1, maxAllowedPages);
                             document.getElementById('pageIndicator').innerText = `Page ${currentPage} of ${totalPages}`;
                             document.getElementById('prevPageBtn').disabled = currentPage <= 1;
                             document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
@@ -884,7 +934,7 @@
                             data.history.forEach(item => {
                                 let dotColor = item.color === 'green' ? '#34d399' : (item.color === 'red' ? '#f87171' : '#c084fc');
                                 tbody.innerHTML += `<tr>
-                                    <td>${item.period.slice(-6)}</td>
+                                    <td>${item.period}</td>
                                     <td style="font-weight:bold; color:${dotColor};">${item.number}</td>
                                     <td style="text-transform:uppercase;">${item.size}</td>
                                     <td><span style="height:10px; width:10px; border-radius:50%; display:inline-block; background:${dotColor}"></span></td>
@@ -901,7 +951,7 @@
                     .then(r => r.json())
                     .then(data => {
                         if (data.success && data.bets) {
-                            totalPages = data.totalPages || 1;
+                            totalPages = Math.min(data.totalPages || 1, maxAllowedPages);
                             document.getElementById('pageIndicator').innerText = `Page ${currentPage} of ${totalPages}`;
                             document.getElementById('prevPageBtn').disabled = currentPage <= 1;
                             document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
@@ -912,7 +962,7 @@
                                 let statusColor = bet.status === 'win' ? '#34d399' : (bet.status === 'loss' ? '#ef4444' : '#fbbf24');
                                 let statusText = bet.status === 'win' ? `+₹${bet.payout}` : (bet.status === 'loss' ? `-₹${bet.amount}` : 'Pending');
                                 tbody.innerHTML += `<tr>
-                                    <td>${bet.period.slice(-6)}</td>
+                                    <td>${bet.period}</td>
                                     <td style="text-transform:uppercase;">${bet.betValue}</td>
                                     <td>₹${bet.amount}</td>
                                     <td style="font-weight:bold; color:${statusColor};">${statusText}</td>
@@ -930,7 +980,7 @@
                 let data = res.betData;
                 const popup = document.getElementById('resultPopupOverlay');
                 const box = document.getElementById('resultPopupBox');
-                document.getElementById('resPeriod').innerText = period.slice(-6);
+                document.getElementById('resPeriod').innerText = period;
                 document.getElementById('resNum').innerText = data.number;
                 document.getElementById('resSizeColor').innerText = `${data.size.toUpperCase()} / ${data.color}`;
 
