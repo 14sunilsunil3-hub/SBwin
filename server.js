@@ -152,10 +152,10 @@ function getPeriodCodeForTime(timerType, timestamp = Date.now()) {
 }
 
 const gameStates = {
-    '30s': { countdown: 30, isBettingOpen: true, period: '', startTime: 0 },
-    '60s': { countdown: 60, isBettingOpen: true, period: '', startTime: 0 },
-    '3m':  { countdown: 180, isBettingOpen: true, period: '', startTime: 0 },
-    '5m':  { countdown: 300, isBettingOpen: true, period: '', startTime: 0 }
+    '30s': { countdown: 29, isBettingOpen: true, period: '', startTime: 0 },
+    '60s': { countdown: 59, isBettingOpen: true, period: '', startTime: 0 },
+    '3m':  { countdown: 179, isBettingOpen: true, period: '', startTime: 0 },
+    '5m':  { countdown: 299, isBettingOpen: true, period: '', startTime: 0 }
 };
 
 app.post('/api/register', async (req, res) => {
@@ -539,7 +539,7 @@ function startTimerLoop(timerType, intervalSeconds) {
         
         state.startTime = startOfDay + (currentIntervalIndex * intervalMs);
         const elapsedIntoInterval = now - state.startTime;
-        state.countdown = intervalSeconds - Math.floor(elapsedIntoInterval / 1000);
+        state.countdown = intervalSeconds - 1 - Math.floor(elapsedIntoInterval / 1000);
         if (state.countdown < 0) state.countdown = 0;
 
         state.period = getPeriodCodeForTime(timerType, state.startTime);
@@ -552,14 +552,15 @@ function startTimerLoop(timerType, intervalSeconds) {
         try {
             const now = Date.now();
             const elapsedIntoInterval = now - state.startTime;
-            let countdown = intervalSeconds - Math.floor(elapsedIntoInterval / 1000);
+            let countdown = intervalSeconds - 1 - Math.floor(elapsedIntoInterval / 1000);
 
-            if (countdown <= 0 || now >= state.startTime + intervalMs) {
+            // When countdown drops below 0 (after hitting 0), process previous period and roll to next interval
+            if (countdown < 0 || now >= state.startTime + intervalMs) {
                 const oldPeriod = state.period;
 
                 state.startTime += intervalMs;
                 const newElapsedIntoInterval = now - state.startTime;
-                countdown = intervalSeconds - Math.floor(newElapsedIntoInterval / 1000);
+                countdown = intervalSeconds - 1 - Math.floor(newElapsedIntoInterval / 1000);
 
                 const newPeriod = getPeriodCodeForTime(timerType, state.startTime);
 
