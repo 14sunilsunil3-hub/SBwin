@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Win Go - sbwin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -34,22 +35,15 @@
             position: relative;
             overflow: hidden;
         }
-        /* Header Grid for Perfect Center Alignment */
         .header {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
             margin-bottom: 15px;
         }
-        .header-left {
-            justify-self: start;
-        }
-        .header-center {
-            justify-self: center;
-        }
-        .header-right {
-            justify-self: end;
-        }
+        .header-left { justify-self: start; }
+        .header-center { justify-self: center; }
+        .header-right { justify-self: end; }
         .header h2 {
             font-style: italic;
             font-weight: 800;
@@ -72,7 +66,6 @@
         }
         .header a:hover { border-color: #34d399; }
 
-        /* Wallet Section */
         .wallet-card {
             background: rgba(15, 23, 42, 0.7);
             border: 1px solid #34d399;
@@ -95,10 +88,7 @@
             text-transform: uppercase;
             font-weight: bold;
         }
-        .wallet-btns {
-            display: flex;
-            gap: 10px;
-        }
+        .wallet-btns { display: flex; gap: 10px; }
         .btn {
             flex: 1;
             padding: 10px;
@@ -112,7 +102,6 @@
         .btn-withdraw { background: linear-gradient(135deg, #dc2626, #ef4444); border: 1px solid #f87171; }
         .btn-deposit { background: linear-gradient(135deg, #059669, #10b981); border: 1px solid #34d399; }
 
-        /* Notice Bar */
         .notice {
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid #7c3aed;
@@ -127,12 +116,10 @@
         }
         .notice span { color: #34d399; font-weight: bold; cursor: pointer; }
 
-        /* Game Modes */
         .game-modes {
             display: flex;
             gap: 8px;
             margin-bottom: 15px;
-            overflow-x: auto;
         }
         .mode-card {
             flex: 1;
@@ -140,7 +127,6 @@
             padding: 10px 6px;
             border-radius: 10px;
             text-align: center;
-            min-width: 80px;
             font-size: 11px;
             border: 1px solid #7c3aed;
             color: #a7f3d0;
@@ -154,7 +140,6 @@
             box-shadow: 0 2px 10px rgba(168, 85, 247, 0.4);
         }
 
-        /* Timer Box */
         .timer-section {
             background: linear-gradient(135deg, #064e3b, #022c22);
             margin-bottom: 15px;
@@ -164,6 +149,21 @@
             justify-content: space-between;
             align-items: center;
             border: 1px solid #34d399;
+            position: relative;
+        }
+        .lock-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            border-radius: 14px;
+            font-size: 24px;
+            font-weight: 900;
+            color: #34d399;
+            font-family: monospace;
         }
         .timer-left button {
             background: rgba(15, 23, 42, 0.7);
@@ -175,9 +175,7 @@
             font-weight: bold;
             cursor: pointer;
         }
-        .timer-right {
-            text-align: right;
-        }
+        .timer-right { text-align: right; }
         .time-box {
             display: flex;
             gap: 4px;
@@ -193,17 +191,9 @@
             border-radius: 6px;
             border: 1px solid #7c3aed;
         }
-        .period-id {
-            font-size: 11px;
-            color: #a7f3d0;
-        }
+        .period-id { font-size: 11px; color: #a7f3d0; margin-top: 4px; }
 
-        /* Color Buttons */
-        .color-btns {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+        .color-btns { display: flex; gap: 10px; margin-bottom: 15px; }
         .c-btn {
             flex: 1;
             padding: 12px;
@@ -215,11 +205,10 @@
             cursor: pointer;
             text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
-        .bg-green { background: linear-gradient(135deg, #059669, #10b981); border: 1px solid #34d399; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
-        .bg-violet { background: linear-gradient(135deg, #7c3aed, #a855f7); border: 1px solid #c084fc; box-shadow: 0 4px 12px rgba(168,85,247,0.3); }
-        .bg-red { background: linear-gradient(135deg, #dc2626, #ef4444); border: 1px solid #f87171; box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
+        .bg-green { background: linear-gradient(135deg, #059669, #10b981); border: 1px solid #34d399; }
+        .bg-violet { background: linear-gradient(135deg, #7c3aed, #a855f7); border: 1px solid #c084fc; }
+        .bg-red { background: linear-gradient(135deg, #dc2626, #ef4444); border: 1px solid #f87171; }
 
-        /* Exact 3D Water-flow Glass Balls Grid */
         .number-grid-container {
             background: rgba(15, 23, 42, 0.6);
             padding: 15px;
@@ -247,100 +236,25 @@
             box-shadow: inset 0 -6px 8px rgba(0,0,0,0.35), 0 4px 8px rgba(0,0,0,0.2);
             cursor: pointer;
         }
-        .ball::before {
-            content: '';
-            position: absolute;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            z-index: 1;
-        }
-        .ball::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 14px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.65);
-            border-radius: 50%;
-            z-index: 3;
-        }
-        .side-glow-left, .side-glow-right, .bottom-glow {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            z-index: 3;
-        }
-        .side-glow-left { top: 50%; left: 2px; transform: translateY(-50%); width: 6px; height: 12px; }
-        .side-glow-right { top: 50%; right: 2px; transform: translateY(-50%); width: 6px; height: 12px; }
-        .bottom-glow { bottom: 2px; left: 50%; transform: translateX(-50%); width: 10px; height: 3px; }
-        .ball span { position: relative; z-index: 2; }
+        .ball.red { background: radial-gradient(circle, rgba(255,107,107,0.3) 30%, #dc2626 80%); color: #fff; }
+        .ball.green { background: radial-gradient(circle, rgba(92,214,133,0.3) 30%, #059669 80%); color: #fff; }
+        .ball.split-0 { background: linear-gradient(135deg, #ef4444 0%, #dc2626 45%, #a855f7 55%, #7c3aed 100%); color: #fff; }
+        .ball.split-5 { background: linear-gradient(135deg, #059669 0%, #047857 45%, #a855f7 55%, #7c3aed 100%); color: #fff; }
 
-        /* Ball Color Themes */
-        .ball.red { background: radial-gradient(circle, rgba(255,107,107,0.3) 30%, #dc2626 80%); }
-        .ball.red::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(255,107,107,0.3) 100%); }
-        .ball.red span { color: #dc2626; }
-
-        .ball.green { background: radial-gradient(circle, rgba(92,214,133,0.3) 30%, #059669 80%); }
-        .ball.green::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(92,214,133,0.3) 100%); }
-        .ball.green span { color: #059669; }
-
-        .ball.split-0 { background: linear-gradient(135deg, #ef4444 0%, #dc2626 45%, #a855f7 55%, #7c3aed 100%); }
-        .ball.split-0::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(168,85,247,0.3) 100%); }
-        .ball.split-0 span { background: linear-gradient(135deg, #dc2626, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .ball.split-5 { background: linear-gradient(135deg, #059669 0%, #047857 45%, #a855f7 55%, #7c3aed 100%); }
-        .ball.split-5::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(168,85,247,0.3) 100%); }
-        .ball.split-5 span { background: linear-gradient(135deg, #047857, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        /* Multiplier Buttons */
-        .multiplier {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 15px;
-            overflow-x: auto;
-        }
-        .m-btn {
-            padding: 8px 10px;
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid #7c3aed;
-            color: #a7f3d0;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-        }
-        .m-btn.active {
-            background: #10b981;
-            color: white;
-            border-color: #34d399;
-            box-shadow: 0 0 10px rgba(16,185,129,0.4);
-        }
-
-        /* Big / Small */
-        .big-small {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+        .big-small { display: flex; gap: 10px; margin-bottom: 15px; }
         .bs-btn {
             flex: 1;
             padding: 12px;
             border: none;
             border-radius: 10px;
-            color: #1e1b4b;
             font-size: 15px;
             font-weight: 900;
             cursor: pointer;
             text-transform: uppercase;
         }
-        .btn-big { background: linear-gradient(135deg, #d97706, #fbbf24); border: 1px solid #fbbf24; box-shadow: 0 4px 12px rgba(251,191,36,0.3); }
-        .btn-small { background: linear-gradient(135deg, #2563eb, #3b82f6); border: 1px solid #60a5fa; box-shadow: 0 4px 12px rgba(59,130,246,0.3); color: #fff; }
+        .btn-big { background: linear-gradient(135deg, #d97706, #fbbf24); border: 1px solid #fbbf24; color: #1e1b4b; }
+        .btn-small { background: linear-gradient(135deg, #2563eb, #3b82f6); border: 1px solid #60a5fa; color: #fff; }
 
-        /* Tabs */
         .tabs {
             display: flex;
             background: rgba(15, 23, 42, 0.7);
@@ -359,13 +273,8 @@
             cursor: pointer;
             color: #a7f3d0;
         }
-        .tab.active {
-            background: #7c3aed;
-            color: white;
-            border: 1px solid #34d399;
-        }
+        .tab.active { background: #7c3aed; color: white; border: 1px solid #34d399; }
 
-        /* History Table */
         .history-card {
             background: rgba(15, 23, 42, 0.6);
             border-radius: 14px;
@@ -381,7 +290,87 @@
         .history-table th { color: #a7f3d0; padding: 8px; border-bottom: 1px solid #7c3aed; font-weight: bold; }
         .history-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e2e8f0; }
 
-        /* Toast Popup */
+        .pagination-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #7c3aed;
+        }
+        .page-btn {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid #7c3aed;
+            color: #a7f3d0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* Bet Modal */
+        .bet-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            z-index: 999;
+            backdrop-filter: blur(3px);
+        }
+        .bet-modal {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            background: rgba(30, 27, 75, 0.98);
+            border-radius: 25px 25px 0 0;
+            padding: 20px;
+            z-index: 1000;
+            transition: bottom 0.3s;
+            border-top: 2px solid #34d399;
+        }
+        .bet-modal.active { bottom: 0; }
+        .chip-selector, .multiplier-selector { display: flex; gap: 8px; margin-bottom: 12px; }
+        .chip-btn, .mult-btn {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid #7c3aed;
+            color: #a7f3d0;
+            padding: 8px 0;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .chip-btn.active, .mult-btn.active { background: #10b981; color: #fff; border-color: #34d399; }
+        .qty-control { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 15px 0; }
+        .qty-btn { background: #7c3aed; color: #fff; border: none; width: 35px; height: 35px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .qty-input { width: 60px; text-align: center; background: rgba(15, 23, 42, 0.7); border: 1px solid #7c3aed; color: #fff; padding: 6px; border-radius: 8px; font-weight: bold; }
+
+        /* Result Popup */
+        .result-popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 30000;
+        }
+        .result-popup-box {
+            width: 85%;
+            max-width: 320px;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            color: #fff;
+        }
+        .result-popup-box.win { background: linear-gradient(135deg, #1e1b4b, #064e3b); border: 2px solid #34d399; }
+        .result-popup-box.loss { background: linear-gradient(135deg, #7f8c8d, #34495e); border: 2px solid #bdc3c7; }
+
         #toast {
             position: fixed;
             top: 20px;
@@ -393,209 +382,420 @@
             border-radius: 30px;
             font-size: 13px;
             font-weight: bold;
-            box-shadow: 0 5px 15px rgba(16,185,129,0.4);
-            border: 1px solid #34d399;
             opacity: 0;
             pointer-events: none;
             transition: all 0.3s ease;
-            z-index: 1000;
+            z-index: 10000;
         }
-        #toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-    <!-- Toast Notification -->
     <div id="toast">Action performed!</div>
 
+    <!-- Result Popup -->
+    <div id="resultPopupOverlay" class="result-popup-overlay">
+        <div id="resultPopupBox" class="result-popup-box win">
+            <div id="resPopupTitle" style="font-size: 24px; font-weight: 900; margin-bottom: 15px;">WIN</div>
+            <div style="background: rgba(15,23,42,0.7); padding: 12px; border-radius: 10px; text-align: left; font-size: 13px; margin-bottom: 15px;">
+                <p>Period: <strong id="resPeriod">---</strong></p>
+                <p>Result Number: <strong id="resNum">---</strong></p>
+                <p>Size / Color: <strong id="resSizeColor">---</strong></p>
+                <p id="resAmountLabel">Amount: <strong id="resAmount" style="color: #34d399;">₹0.00</strong></p>
+            </div>
+            <button onclick="closeResultPopup()" style="width:100%; background:#10b981; color:#fff; border:none; padding:10px; border-radius:20px; font-weight:bold; cursor:pointer;">OK</button>
+        </div>
+    </div>
+
+    <!-- Bet Modal -->
+    <div id="betModalOverlay" class="bet-modal-overlay" onclick="closeBetModal()"></div>
+    <div id="betModal" class="bet-modal">
+        <div id="modalTitle" style="font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 15px; color: #34d399;">Select Bet</div>
+        <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 5px;">Base Amount</p>
+        <div class="chip-selector">
+            <div class="chip-btn active" onclick="selectBase(1, this)">₹1</div>
+            <div class="chip-btn" onclick="selectBase(10, this)">₹10</div>
+            <div class="chip-btn" onclick="selectBase(100, this)">₹100</div>
+            <div class="chip-btn" onclick="selectBase(1000, this)">₹1000</div>
+        </div>
+        <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 5px;">Multiplier</p>
+        <div class="multiplier-selector">
+            <div class="mult-btn active" onclick="selectMult(1, this)">X1</div>
+            <div class="mult-btn" onclick="selectMult(5, this)">X5</div>
+            <div class="mult-btn" onclick="selectMult(10, this)">X10</div>
+            <div class="mult-btn" onclick="selectMult(20, this)">X20</div>
+            <div class="mult-btn" onclick="selectMult(50, this)">X50</div>
+        </div>
+        <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty(-1)">-</button>
+            <input type="number" class="qty-input" id="betQty" value="1" readonly>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <div style="text-align: center; font-weight: bold; margin-bottom: 15px; color: #a7f3d0;">
+            Total Amount: <span id="totalBetCalc" style="color: #34d399;">₹ 1.00</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="closeBetModal()" style="flex:1; background:rgba(15,23,42,0.7); border:1px solid #7c3aed; padding:12px; border-radius:10px; color:#fff; font-weight:bold; cursor:pointer;">Cancel</button>
+            <button onclick="submitBet()" style="flex:2; background:linear-gradient(135deg, #a855f7, #10b981); border:none; padding:12px; border-radius:10px; color:#fff; font-weight:bold; cursor:pointer;">Confirm Bet</button>
+        </div>
+    </div>
+
     <div class="container">
-        <!-- Centered Header Grid -->
         <div class="header">
-            <div class="header-left">
-                <a href="../index.html">&lt; Back</a>
-            </div>
-            <div class="header-center">
-                <h2>sbwin</h2>
-            </div>
-            <div class="header-right">
-                <span style="font-size: 18px; cursor: pointer;" onclick="showToast('Audio & Support Active')">🎵</span>
-            </div>
+            <div class="header-left"><a href="../index.html">&lt; Back</a></div>
+            <div class="header-center"><h2>sbwin</h2></div>
+            <div class="header-right"><span style="font-size: 18px; cursor: pointer;" onclick="showToast('Audio & Support Active')">🎵</span></div>
         </div>
 
-        <!-- Wallet Card -->
         <div class="wallet-card">
             <div class="wallet-title">Wallet balance</div>
-            <div class="balance">₹327.40</div>
+            <div class="balance" id="userWallet">₹0.00</div>
             <div class="wallet-btns" style="margin-top: 12px;">
                 <button class="btn btn-withdraw" onclick="showToast('Opening Withdraw...')">Withdraw</button>
                 <button class="btn btn-deposit" onclick="showToast('Opening Deposit...')">Deposit</button>
             </div>
         </div>
 
-        <!-- Notice -->
         <div class="notice">
             <p>Welcome to sbwin! Official secure platform active...</p>
             <span onclick="showToast('Support details opened')">Detail</span>
         </div>
 
-        <!-- Game Modes -->
         <div class="game-modes">
-            <div class="mode-card active" onclick="showToast('Switched to WinGo 30sec')">
-                <p>🕧 30sec</p>
-                <p style="font-size: 10px; opacity: 0.8;">WinGo</p>
+            <div class="mode-card active" id="mode-30s" onclick="switchTimer('30s', 30)">
+                <p>🕧 30sec</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
-            <div class="mode-card" onclick="showToast('Switched to WinGo 1 Min')">
-                <p>🕛 1 Min</p>
-                <p style="font-size: 10px; opacity: 0.8;">WinGo</p>
+            <div class="mode-card" id="mode-60s" onclick="switchTimer('60s', 60)">
+                <p>🕛 1 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
-            <div class="mode-card" onclick="showToast('Switched to WinGo 3 Min')">
-                <p>🕒 3 Min</p>
-                <p style="font-size: 10px; opacity: 0.8;">WinGo</p>
+            <div class="mode-card" id="mode-3m" onclick="switchTimer('3m', 180)">
+                <p>🕒 3 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
-            <div class="mode-card" onclick="showToast('Switched to WinGo 5 Min')">
-                <p>🕔 5 Min</p>
-                <p style="font-size: 10px; opacity: 0.8;">WinGo</p>
+            <div class="mode-card" id="mode-5m" onclick="switchTimer('5m', 300)">
+                <p>🕔 5 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
         </div>
 
-        <!-- Timer Section -->
         <div class="timer-section">
+            <div class="lock-overlay" id="lockOverlay">00:05</div>
             <div class="timer-left">
                 <button onclick="showToast('Opening Rules...')">📖 How to play</button>
-                <div class="period-no">20261011100051214</div>
+                <div class="period-id" id="periodId">Loading...</div>
             </div>
             <div class="timer-right">
                 <p style="font-size: 10px; color: #a7f3d0; margin-bottom: 4px; font-weight: bold;">Time remaining</p>
-                <div class="time-box">
-                    <div>0</div><div>0</div><span>:</span><div>2</div><div>9</div>
+                <div class="time-box" id="countdownBox">
+                    <div>0</div><div>0</div><span>:</span><div>3</div><div>0</div>
                 </div>
             </div>
         </div>
 
-        <!-- Color Buttons -->
         <div class="color-btns">
-            <button class="c-btn bg-green" onclick="showToast('Bet placed on Green')">Green</button>
-            <button class="c-btn bg-violet" onclick="showToast('Bet placed on Violet')">Violet</button>
-            <button class="c-btn bg-red" onclick="showToast('Bet placed on Red')">Red</button>
+            <button class="c-btn bg-green" onclick="openBetModal('color', 'green')">Green</button>
+            <button class="c-btn bg-violet" onclick="openBetModal('color', 'violet')">Violet</button>
+            <button class="c-btn bg-red" onclick="openBetModal('color', 'red')">Red</button>
         </div>
 
-        <!-- Exact 3D Water-flow Glass Balls Grid -->
         <div class="number-grid-container">
             <div class="number-grid">
-                <div class="ball split-0" onclick="showToast('Bet placed on Number 0')">
-                    <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
-                    <span>0</span>
-                </div>
-                <div class="ball green" onclick="showToast('Bet placed on Number 1')">
-                    <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
-                    <span>1</span>
-                </div>
-                <div class="ball red" onclick="showToast('Bet placed on Number 2')">
-                    <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
-                    <span>2</span>
-                </div>
-                <div class="ball green" onclick="showToast('Bet placed on Number 3')">
-                    <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
-                    <span>3</span>
-                </div>
-                <div class="ball red" onclick="showToast('Bet placed on Number 4')">
-                    <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
-                    <span>4</span>
-                </div>
-                <div class="ball split-5" onclick="showToast('Bet placed on Number 5')">
-                    <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
-                    <span>5</span>
-                </div>
-                <div class="ball red" onclick="showToast('Bet placed on Number 6')">
-                    <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
-                    <span>6</span>
-                </div>
-                <div class="ball green" onclick="showToast('Bet placed on Number 7')">
-                    <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
-                    <span>7</span>
-                </div>
-                <div class="ball red" onclick="showToast('Bet placed on Number 8')">
-                    <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
-                    <span>8</span>
-                </div>
-                <div class="ball green" onclick="showToast('Bet placed on Number 9')">
-                    <div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div>
-                    <span>9</span>
-                </div>
+                <div class="ball split-0" onclick="openBetModal('number', '0')"><span>0</span></div>
+                <div class="ball green" onclick="openBetModal('number', '1')"><span>1</span></div>
+                <div class="ball red" onclick="openBetModal('number', '2')"><span>2</span></div>
+                <div class="ball green" onclick="openBetModal('number', '3')"><span>3</span></div>
+                <div class="ball red" onclick="openBetModal('number', '4')"><span>4</span></div>
+                <div class="ball split-5" onclick="openBetModal('number', '5')"><span>5</span></div>
+                <div class="ball red" onclick="openBetModal('number', '6')"><span>6</span></div>
+                <div class="ball green" onclick="openBetModal('number', '7')"><span>7</span></div>
+                <div class="ball red" onclick="openBetModal('number', '8')"><span>8</span></div>
+                <div class="ball green" onclick="openBetModal('number', '9')"><span>9</span></div>
             </div>
         </div>
 
-        <!-- Multipliers -->
-        <div class="multiplier">
-            <button class="m-btn" onclick="showToast('Multiplier: Random')">Random</button>
-            <button class="m-btn active" onclick="showToast('Multiplier: X1')">X1</button>
-            <button class="m-btn" onclick="showToast('Multiplier: X5')">X5</button>
-            <button class="m-btn" onclick="showToast('Multiplier: X10')">X10</button>
-            <button class="m-btn" onclick="showToast('Multiplier: X20')">X20</button>
-            <button class="m-btn" onclick="showToast('Multiplier: X50')">X50</button>
-            <button class="m-btn" onclick="showToast('Multiplier: X100')">X100</button>
-        </div>
-
-        <!-- Big Small -->
         <div class="big-small">
-            <button class="bs-btn btn-big" onclick="showToast('Bet placed on Big')">Big</button>
-            <button class="bs-btn btn-small" onclick="showToast('Bet placed on Small')">Small</button>
+            <button class="bs-btn btn-big" onclick="openBetModal('size', 'big')">Big</button>
+            <button class="bs-btn btn-small" onclick="openBetModal('size', 'small')">Small</button>
         </div>
 
-        <!-- Tabs -->
         <div class="tabs">
-            <div class="tab active">Game history</div>
-            <div class="tab">Chart</div>
-            <div class="tab">My history</div>
+            <div class="tab active" id="tabHist" onclick="switchHistoryTab('history')">Game history</div>
+            <div class="tab" onclick="showToast('Chart feature active')">Chart</div>
+            <div class="tab" id="tabMyHist" onclick="switchHistoryTab('myhistory')">My history</div>
         </div>
 
-        <!-- History Table -->
         <div class="history-card">
             <table class="history-table">
                 <thead>
-                    <tr>
+                    <tr id="historyTableHeader">
                         <th>Period</th>
                         <th>Number</th>
                         <th>Big Small</th>
                         <th>Color</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>20261011100051213</td>
-                        <td style="color: #34d399; font-weight: bold;">9</td>
-                        <td>Big</td>
-                        <td>🟢</td>
-                    </tr>
-                    <tr>
-                        <td>20261011100051212</td>
-                        <td style="color: #f87171; font-weight: bold;">8</td>
-                        <td>Big</td>
-                        <td>🔴</td>
-                    </tr>
-                    <tr>
-                        <td>20261011100051211</td>
-                        <td style="color: #f87171; font-weight: bold;">6</td>
-                        <td>Big</td>
-                        <td>🔴</td>
-                    </tr>
-                </tbody>
+                <tbody id="historyBody"></tbody>
             </table>
+            <div class="pagination-row">
+                <button class="page-btn" id="prevPageBtn" onclick="changePage(-1)">Previous</button>
+                <span id="pageIndicator" style="font-size: 11px; color: #a7f3d0;">Page 1</span>
+                <button class="page-btn" id="nextPageBtn" onclick="changePage(1)">Next</button>
+            </div>
         </div>
     </div>
 
+    <audio id="beepAudio" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+    <script src="/socket.io/socket.io.js"></script>
     <script>
+        const socket = io();
+        let loggedInMobile = localStorage.getItem('rewards_loggedMobile') || sessionStorage.getItem('rewards_loggedMobile');
+        let userId = localStorage.getItem('rewards_userId') || sessionStorage.getItem('rewards_userId');
+
+        let currentTimerType = '30s';
+        let timeLeft = 30;
+        let activeBetType = '';
+        let activeBetValue = '';
+        let baseAmount = 1;
+        let multiplier = 1;
+        let quantity = 1;
+        let currentHistoryTab = 'history';
+        let currentPage = 1;
+        let totalPages = 1;
+
+        async function fetchUserData() {
+            if (!loggedInMobile && !userId) return;
+            let url = userId ? `/api/user/${userId}` : `/api/user/mobile/${loggedInMobile}`;
+            try {
+                let res = await fetch(url).then(r => r.json());
+                if (res.success) {
+                    let u = res.user;
+                    userId = u._id;
+                    let totalBal = (u.balance || 0) + (u.winningsBalance || 0);
+                    document.getElementById('userWallet').innerText = `₹${totalBal.toFixed(2)}`;
+                }
+            } catch(e) {}
+        }
+        fetchUserData();
+
+        function switchTimer(type, seconds) {
+            currentTimerType = type;
+            timeLeft = seconds;
+            currentPage = 1;
+            document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+            document.getElementById(`mode-${type}`).classList.add('active');
+            loadHistoryData();
+        }
+
+        ['30s', '60s', '3m', '5m'].forEach(type => {
+            socket.on(`timerTick_${type}`, (data) => {
+                if (currentTimerType === type) {
+                    timeLeft = data.countdown;
+                    let min = Math.floor(timeLeft / 60);
+                    let sec = timeLeft % 60;
+                    document.getElementById('countdownBox').innerHTML = `
+                        <div>0</div><div>${min}</div><span>:</span><div>${Math.floor(sec/10)}</div><div>${sec%10}</div>
+                    `;
+                    document.getElementById('periodId').innerText = data.period;
+
+                    const lockOverlay = document.getElementById('lockOverlay');
+                    if (timeLeft <= 5) {
+                        lockOverlay.style.display = 'flex';
+                        lockOverlay.innerText = `00:0${timeLeft}`;
+                        closeBetModal();
+                    } else {
+                        lockOverlay.style.display = 'none';
+                    }
+                }
+            });
+
+            socket.on(`gameResult_${type}`, (resultData) => {
+                if (currentTimerType === type) {
+                    currentPage = 1;
+                    loadHistoryData();
+                    fetchUserData();
+                    checkUserRoundResult(resultData.period);
+                }
+            });
+        });
+
+        function openBetModal(type, val) {
+            if (timeLeft <= 5) return showToast('Betting closed for this round!');
+            activeBetType = type;
+            activeBetValue = val;
+            document.getElementById('modalTitle').innerText = `Select ${val.toUpperCase()}`;
+            document.getElementById('betModal').classList.add('active');
+            document.getElementById('betModalOverlay').classList.add('active');
+            calcTotal();
+        }
+
+        function closeBetModal() {
+            document.getElementById('betModal').classList.remove('active');
+            document.getElementById('betModalOverlay').classList.remove('active');
+        }
+
+        function selectBase(amt, el) {
+            baseAmount = amt;
+            document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            calcTotal();
+        }
+
+        function selectMult(m, el) {
+            multiplier = m;
+            document.querySelectorAll('.mult-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            calcTotal();
+        }
+
+        function changeQty(val) {
+            quantity = Math.max(1, quantity + val);
+            document.getElementById('betQty').value = quantity;
+            calcTotal();
+        }
+
+        function calcTotal() {
+            let total = baseAmount * multiplier * quantity;
+            document.getElementById('totalBetCalc').innerText = `₹ ${total.toFixed(2)}`;
+        }
+
+        async function submitBet() {
+            let finalAmount = baseAmount * multiplier * quantity;
+            const period = document.getElementById('periodId').innerText;
+            if (!userId) {
+                showToast('Please login first!');
+                return;
+            }
+            try {
+                const response = await fetch('/api/bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, timerType: currentTimerType, period, betType: activeBetType, betValue: activeBetValue, amount: finalAmount })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    let totalBal = (data.newBalance || 0) + (data.newWinnings || 0);
+                    document.getElementById('userWallet').innerText = `₹${totalBal.toFixed(2)}`;
+                    closeBetModal();
+                    showToast('Bet placed successfully!');
+                    if (currentHistoryTab === 'myhistory') loadHistoryData();
+                } else {
+                    showToast(data.message);
+                }
+            } catch(e) {
+                showToast('Error placing bet');
+            }
+        }
+
+        function switchHistoryTab(tab) {
+            currentHistoryTab = tab;
+            currentPage = 1;
+            document.getElementById('tabHist').classList.toggle('active', tab === 'history');
+            document.getElementById('tabMyHist').classList.toggle('active', tab === 'myhistory');
+            loadHistoryData();
+        }
+
+        function changePage(dir) {
+            currentPage += dir;
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            loadHistoryData();
+        }
+
+        function loadHistoryData() {
+            if (currentHistoryTab === 'history') {
+                document.getElementById('historyTableHeader').innerHTML = `
+                    <th>Period</th><th>Number</th><th>Big Small</th><th>Color</th>
+                `;
+                fetch(`/api/game-history/${currentTimerType}?page=${currentPage}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success && data.history) {
+                            totalPages = data.totalPages || 1;
+                            document.getElementById('pageIndicator').innerText = `Page ${currentPage} of ${totalPages}`;
+                            document.getElementById('prevPageBtn').disabled = currentPage <= 1;
+                            document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
+
+                            const tbody = document.getElementById('historyBody');
+                            tbody.innerHTML = '';
+                            data.history.forEach(item => {
+                                let dotColor = item.color === 'green' ? '#34d399' : (item.color === 'red' ? '#f87171' : '#c084fc');
+                                tbody.innerHTML += `<tr>
+                                    <td>${item.period.slice(-6)}</td>
+                                    <td style="font-weight:bold; color:${dotColor};">${item.number}</td>
+                                    <td style="text-transform:uppercase;">${item.size}</td>
+                                    <td><span style="height:10px; width:10px; border-radius:50%; display:inline-block; background:${dotColor}"></span></td>
+                                </tr>`;
+                            });
+                        }
+                    });
+            } else {
+                document.getElementById('historyTableHeader').innerHTML = `
+                    <th>Period</th><th>Bet</th><th>Amount</th><th>Result</th>
+                `;
+                if (!userId) return;
+                fetch(`/api/user-bets/${userId}/${currentTimerType}?page=${currentPage}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success && data.bets) {
+                            totalPages = data.totalPages || 1;
+                            document.getElementById('pageIndicator').innerText = `Page ${currentPage} of ${totalPages}`;
+                            document.getElementById('prevPageBtn').disabled = currentPage <= 1;
+                            document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
+
+                            const tbody = document.getElementById('historyBody');
+                            tbody.innerHTML = '';
+                            data.bets.forEach(bet => {
+                                let statusColor = bet.status === 'win' ? '#34d399' : (bet.status === 'loss' ? '#ef4444' : '#fbbf24');
+                                let statusText = bet.status === 'win' ? `+₹${bet.payout}` : (bet.status === 'loss' ? `-₹${bet.amount}` : 'Pending');
+                                tbody.innerHTML += `<tr>
+                                    <td>${bet.period.slice(-6)}</td>
+                                    <td style="text-transform:uppercase;">${bet.betValue}</td>
+                                    <td>₹${bet.amount}</td>
+                                    <td style="font-weight:bold; color:${statusColor};">${statusText}</td>
+                                </tr>`;
+                            });
+                        }
+                    });
+            }
+        }
+
+        async function checkUserRoundResult(period) {
+            if (!userId) return;
+            let res = await fetch(`/api/user-round-result?userId=${userId}&period=${period}&timerType=${currentTimerType}`).then(r => r.json());
+            if (res.success && res.hasBet) {
+                let data = res.betData;
+                const popup = document.getElementById('resultPopupOverlay');
+                const box = document.getElementById('resultPopupBox');
+                document.getElementById('resPeriod').innerText = period.slice(-6);
+                document.getElementById('resNum').innerText = data.number;
+                document.getElementById('resSizeColor').innerText = `${data.size.toUpperCase()} / ${data.color}`;
+
+                if (data.status === 'win') {
+                    box.className = 'result-popup-box win';
+                    document.getElementById('resPopupTitle').innerText = 'WIN';
+                    document.getElementById('resAmountLabel').innerText = 'Winning Amount:';
+                    document.getElementById('resAmount').innerText = `₹ ${data.payout.toFixed(2)}`;
+                } else {
+                    box.className = 'result-popup-box loss';
+                    document.getElementById('resPopupTitle').innerText = 'LOSS';
+                    document.getElementById('resAmountLabel').innerText = 'Loss Amount:';
+                    document.getElementById('resAmount').innerText = `₹ ${data.amount.toFixed(2)}`;
+                }
+                popup.style.display = 'flex';
+            }
+        }
+
+        function closeResultPopup() {
+            document.getElementById('resultPopupOverlay').style.display = 'none';
+        }
+
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
+            setTimeout(() => { toast.classList.remove('show'); }, 2000);
         }
+
+        loadHistoryData();
     </script>
 </body>
 </html>
