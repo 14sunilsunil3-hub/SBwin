@@ -33,7 +33,7 @@
             overflow-x: hidden;
         }
 
-        /* 1. Fixed Screen Brand Header & Navigation */
+        /* Fixed Screen Brand Header & Navigation */
         .header {
             position: fixed;
             top: 0;
@@ -191,7 +191,7 @@
             margin-top: 2px;
         }
 
-        /* 2. Time Remaining Section Mini Glass Balls with Glass Reflection */
+        /* Time Remaining Section Mini Glass Balls */
         .recent-results-bar {
             display: flex;
             gap: 6px;
@@ -294,7 +294,7 @@
             border: 1px solid #7c3aed;
         }
 
-        /* 3. Betting Wrapper & Matching Dark SBWIN Theme Lock Overlay */
+        /* Betting Area Wrapper */
         .betting-wrapper {
             position: relative;
             margin-bottom: 14px;
@@ -492,7 +492,7 @@
         .history-table th { color: #a7f3d0; padding: 10px 4px; border-bottom: 1px solid #7c3aed; font-weight: bold; }
         .history-table td { padding: 10px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e2e8f0; word-break: break-all; }
 
-        /* 4. YaarWin Style Card Layout for My History */
+        /* Card Layout for My History */
         .my-history-list {
             display: flex;
             flex-direction: column;
@@ -607,44 +607,106 @@
         }
         .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
+        /* Dynamic Color Glass Betting Sheet/Modal */
         .bet-modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.65);
             display: none;
-            z-index: 999;
-            backdrop-filter: blur(3px);
+            z-index: 10000;
+            backdrop-filter: blur(4px);
         }
         .bet-modal {
             position: fixed;
             bottom: -100%;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
-            background: rgba(30, 27, 75, 0.98);
+            max-width: 500px;
+            background: rgba(20, 18, 55, 0.98);
             border-radius: 25px 25px 0 0;
-            padding: 20px;
-            z-index: 1000;
-            transition: bottom 0.3s;
-            border-top: 2px solid #34d399;
+            padding: 22px 18px;
+            z-index: 10001;
+            transition: bottom 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+            border-top: 3px solid #34d399;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.7);
         }
         .bet-modal.active { bottom: 0; }
-        .chip-selector, .multiplier-selector { display: flex; gap: 8px; margin-bottom: 12px; }
+
+        /* Dynamic Color Themes for Bet Sheet */
+        .bet-modal.theme-green { border-top-color: #10b981; }
+        .bet-modal.theme-green #modalTitle, .bet-modal.theme-green #totalBetCalc { color: #10b981; }
+        .bet-modal.theme-green .confirm-btn { background: linear-gradient(135deg, #059669, #10b981); }
+
+        .bet-modal.theme-red { border-top-color: #ef4444; }
+        .bet-modal.theme-red #modalTitle, .bet-modal.theme-red #totalBetCalc { color: #ef4444; }
+        .bet-modal.theme-red .confirm-btn { background: linear-gradient(135deg, #dc2626, #ef4444); }
+
+        .bet-modal.theme-violet { border-top-color: #a855f7; }
+        .bet-modal.theme-violet #modalTitle, .bet-modal.theme-violet #totalBetCalc { color: #a855f7; }
+        .bet-modal.theme-violet .confirm-btn { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+
+        .bet-modal.theme-big { border-top-color: #fbbf24; }
+        .bet-modal.theme-big #modalTitle, .bet-modal.theme-big #totalBetCalc { color: #fbbf24; }
+        .bet-modal.theme-big .confirm-btn { background: linear-gradient(135deg, #d97706, #fbbf24); color: #1e1b4b; }
+
+        .bet-modal.theme-small { border-top-color: #3b82f6; }
+        .bet-modal.theme-small #modalTitle, .bet-modal.theme-small #totalBetCalc { color: #3b82f6; }
+        .bet-modal.theme-small .confirm-btn { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+
+        .chip-selector, .multiplier-selector {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
         .chip-btn, .mult-btn {
             flex: 1;
             background: rgba(15, 23, 42, 0.7);
-            border: 1px solid #7c3aed;
+            border: 1px solid rgba(124, 58, 237, 0.5);
             color: #a7f3d0;
-            padding: 8px 0;
+            padding: 8px 2px;
             border-radius: 8px;
             font-weight: bold;
             font-size: 12px;
             cursor: pointer;
             text-align: center;
         }
-        .chip-btn.active, .mult-btn.active { background: #10b981; color: #fff; border-color: #34d399; }
-        .qty-control { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 15px 0; }
-        .qty-btn { background: #7c3aed; color: #fff; border: none; width: 35px; height: 35px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        .qty-input { width: 60px; text-align: center; background: rgba(15, 23, 42, 0.7); border: 1px solid #7c3aed; color: #fff; padding: 6px; border-radius: 8px; font-weight: bold; }
+        .chip-btn.active, .mult-btn.active {
+            background: #10b981;
+            color: #fff;
+            border-color: #34d399;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 16px 0;
+        }
+        .qty-btn {
+            background: #7c3aed;
+            color: #fff;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .qty-input {
+            width: 80px;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1.5px solid #7c3aed;
+            color: #fff;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
 
         .result-popup-overlay {
             position: fixed;
@@ -680,7 +742,7 @@
             opacity: 0;
             pointer-events: none;
             transition: all 0.3s ease;
-            z-index: 10000;
+            z-index: 100000;
         }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
@@ -702,35 +764,43 @@
         </div>
     </div>
 
+    <!-- Bet Sheet Modal & Click-Outside Overlay -->
     <div id="betModalOverlay" class="bet-modal-overlay" onclick="closeBetModal()"></div>
     <div id="betModal" class="bet-modal">
-        <div id="modalTitle" style="font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 15px; color: #34d399;">Select Bet</div>
-        <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 5px;">Base Amount</p>
+        <div id="modalTitle" style="font-size: 18px; font-weight: 900; text-align: center; margin-bottom: 15px;">Select Bet</div>
+        
+        <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 5px; font-weight: bold;">Base Amount</p>
         <div class="chip-selector">
             <div class="chip-btn active" onclick="selectBase(1, this)">₹1</div>
             <div class="chip-btn" onclick="selectBase(10, this)">₹10</div>
+            <div class="chip-btn" onclick="selectBase(50, this)">₹50</div>
             <div class="chip-btn" onclick="selectBase(100, this)">₹100</div>
             <div class="chip-btn" onclick="selectBase(1000, this)">₹1000</div>
         </div>
-        <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 5px;">Multiplier</p>
+
+        <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 5px; font-weight: bold;">Multiplier</p>
         <div class="multiplier-selector">
             <div class="mult-btn active" onclick="selectMult(1, this)">X1</div>
             <div class="mult-btn" onclick="selectMult(5, this)">X5</div>
             <div class="mult-btn" onclick="selectMult(10, this)">X10</div>
             <div class="mult-btn" onclick="selectMult(20, this)">X20</div>
             <div class="mult-btn" onclick="selectMult(50, this)">X50</div>
+            <div class="mult-btn" onclick="selectMult(100, this)">X100</div>
         </div>
+
         <div class="qty-control">
             <button class="qty-btn" onclick="changeQty(-1)">-</button>
-            <input type="number" class="qty-input" id="betQty" value="1" readonly>
+            <input type="number" inputmode="numeric" pattern="[0-9]*" class="qty-input" id="betQty" value="1" oninput="onQtyInput(this)">
             <button class="qty-btn" onclick="changeQty(1)">+</button>
         </div>
-        <div style="text-align: center; font-weight: bold; margin-bottom: 15px; color: #a7f3d0;">
-            Total Amount: <span id="totalBetCalc" style="color: #34d399;">₹ 1.00</span>
+
+        <div style="text-align: center; font-weight: bold; margin-bottom: 15px; color: #a7f3d0; font-size: 15px;">
+            Total Amount: <span id="totalBetCalc" style="font-weight: 900;">₹ 1.00</span>
         </div>
+
         <div style="display: flex; gap: 10px;">
-            <button onclick="closeBetModal()" style="flex:1; background:rgba(15,23,42,0.7); border:1px solid #7c3aed; padding:12px; border-radius:10px; color:#fff; font-weight:bold; cursor:pointer;">Cancel</button>
-            <button onclick="submitBet()" style="flex:2; background:linear-gradient(135deg, #a855f7, #10b981); border:none; padding:12px; border-radius:10px; color:#fff; font-weight:bold; cursor:pointer;">Confirm Bet</button>
+            <button onclick="closeBetModal()" style="flex:1; background:rgba(15,23,42,0.8); border:1px solid #7c3aed; padding:12px; border-radius:12px; color:#fff; font-weight:bold; cursor:pointer;">Cancel</button>
+            <button class="confirm-btn" onclick="submitBet()" style="flex:2; border:none; padding:12px; border-radius:12px; color:#fff; font-weight:bold; cursor:pointer; font-size:15px;">Confirm Bet</button>
         </div>
     </div>
 
@@ -771,7 +841,7 @@
             </div>
         </div>
 
-        <!-- Timer Box with Period Number Below How To Play -->
+        <!-- Timer Box -->
         <div class="timer-section">
             <div class="timer-left">
                 <button onclick="showToast('Opening Rules...')">📖 How to play</button>
@@ -786,7 +856,7 @@
             </div>
         </div>
 
-        <!-- Betting Area Wrapper with Matching Theme Lock Overlay -->
+        <!-- Betting Area Wrapper -->
         <div class="betting-wrapper">
             <div class="lock-overlay" id="lockOverlay">
                 <div class="lock-box" id="lockBoxTens">0</div>
@@ -835,7 +905,6 @@
         </div>
 
         <div class="history-card" id="historyCardContainer">
-            <!-- Table Container for Game History -->
             <div id="gameHistoryView">
                 <table class="history-table">
                     <thead>
@@ -850,12 +919,10 @@
                 </table>
             </div>
 
-            <!-- List Container for My History (YaarWin Card Style) -->
             <div id="myHistoryView" style="display: none;">
                 <div class="my-history-list" id="myHistoryList"></div>
             </div>
 
-            <!-- Pagination -->
             <div class="pagination-row">
                 <button class="page-btn" id="prevPageBtn" onclick="changePage(-1)">&lt;</button>
                 <span id="pageIndicator" style="font-size: 12px; color: #a7f3d0;">Page 1 of 50</span>
@@ -906,6 +973,7 @@
             loadHistoryData();
         }
 
+        /* Socket Listeners for Real-Time Instant Update */
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
                 if (currentTimerType === type) {
@@ -930,6 +998,7 @@
                 }
             });
 
+            /* Instant 0s Lag-Free Round Result Event */
             socket.on(`gameResult_${type}`, (resultData) => {
                 if (currentTimerType === type) {
                     currentPage = 1;
@@ -944,15 +1013,39 @@
             if (timeLeft <= 5) return showToast('Betting closed for this round!');
             activeBetType = type;
             activeBetValue = val;
+
+            const modal = document.getElementById('betModal');
+            modal.className = 'bet-modal';
+
+            /* Dynamic Theme Matching based on Choice */
+            let v = String(val).toLowerCase();
+            if (['green', '1', '3', '7', '9'].includes(v)) modal.classList.add('theme-green');
+            else if (['red', '2', '4', '6', '8'].includes(v)) modal.classList.add('theme-red');
+            else if (['violet', '0', '5'].includes(v)) modal.classList.add('theme-violet');
+            else if (v === 'big') modal.classList.add('theme-big');
+            else if (v === 'small') modal.classList.add('theme-small');
+
             document.getElementById('modalTitle').innerText = `Select ${val.toUpperCase()}`;
-            document.getElementById('betModal').classList.add('active');
-            document.getElementById('betModalOverlay').classList.add('active');
+            modal.classList.add('active');
+            document.getElementById('betModalOverlay').style.display = 'block';
             calcTotal();
         }
 
+        /* Close & Reset Modal Values */
         function closeBetModal() {
-            document.getElementById('betModal').classList.remove('active');
-            document.getElementById('betModalOverlay').classList.remove('active');
+            const modal = document.getElementById('betModal');
+            modal.classList.remove('active');
+            document.getElementById('betModalOverlay').style.display = 'none';
+
+            /* Reset values on close */
+            baseAmount = 1;
+            multiplier = 1;
+            quantity = 1;
+            document.getElementById('betQty').value = 1;
+
+            document.querySelectorAll('.chip-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+            document.querySelectorAll('.mult-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+            calcTotal();
         }
 
         function selectBase(amt, el) {
@@ -972,6 +1065,13 @@
         function changeQty(val) {
             quantity = Math.max(1, quantity + val);
             document.getElementById('betQty').value = quantity;
+            calcTotal();
+        }
+
+        function onQtyInput(el) {
+            let val = parseInt(el.value);
+            if (isNaN(val) || val < 1) quantity = 1;
+            else quantity = val;
             calcTotal();
         }
 
@@ -1032,6 +1132,7 @@
         }
 
         function loadHistoryData() {
+            /* Instant Recent Balls Fetch */
             fetch(`/api/game-history/${currentTimerType}?page=1&limit=5`)
                 .then(r => r.json())
                 .then(data => {
