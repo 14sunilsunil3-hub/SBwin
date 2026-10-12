@@ -27,26 +27,30 @@
             max-width: 500px;
             background: linear-gradient(135deg, #1e1b4b, #064e3b);
             min-height: 100vh;
-            padding: 0 12px 12px 12px;
+            padding: 60px 12px 12px 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Sticky Header Navigation */
+        /* 1. Fixed Screen Brand Header & Navigation */
         .header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 500px;
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            padding: 12px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(30, 27, 75, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(124, 58, 237, 0.3);
-            margin-bottom: 12px;
+            padding: 10px 12px;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(124, 58, 237, 0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         .header-left { justify-self: start; }
         .header-center { justify-self: center; }
@@ -62,7 +66,7 @@
             font-size: 20px;
         }
         .header a {
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(30, 27, 75, 0.8);
             border: 1px solid #7c3aed;
             color: #fff;
             width: 36px;
@@ -83,6 +87,7 @@
             padding: 14px;
             border-radius: 16px;
             text-align: center;
+            margin-top: 5px;
         }
         .balance {
             font-size: 26px;
@@ -186,7 +191,7 @@
             margin-top: 2px;
         }
 
-        /* Mini Balls with Soft White Center Core and Glass Water Flow */
+        /* 2. Time Remaining Section Mini Glass Balls with Glass Reflection */
         .recent-results-bar {
             display: flex;
             gap: 6px;
@@ -195,55 +200,78 @@
         }
         .mini-ball {
             position: relative;
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 13px;
             font-weight: bold;
-            color: #111;
+            color: #fff;
             overflow: hidden;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+            box-shadow: inset 0 -3px 4px rgba(0,0,0,0.3), 0 3px 6px rgba(0,0,0,0.3);
         }
         .mini-ball::before {
             content: '';
             position: absolute;
-            width: 18px;
-            height: 18px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.95) 45%, rgba(255,255,255,0.3) 100%);
             z-index: 1;
         }
-        .mini-ball span {
-            position: relative;
-            z-index: 2;
-            font-weight: 900;
+        .mini-ball::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            z-index: 3;
         }
-        .mini-ball.red {
-            background: #e60012;
-            border: 1.5px solid #ff4d4d;
+        .mini-glow-side {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 10px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            z-index: 3;
         }
-        .mini-ball.red span { color: #cc0000; }
+        .mini-glow-left { left: 1px; }
+        .mini-glow-right { right: 1px; }
+        .mini-glow-bottom {
+            position: absolute;
+            bottom: 1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 3px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            z-index: 3;
+        }
+        .mini-ball span { position: relative; z-index: 2; font-weight: 900; }
 
-        .mini-ball.green {
-            background: #00b050;
-            border: 1.5px solid #34d399;
-        }
-        .mini-ball.green span { color: #008033; }
+        .mini-ball.red { background: radial-gradient(circle, rgba(255,107,107,0.3) 30%, #e60012 80%); }
+        .mini-ball.red::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(255,107,107,0.3) 100%); }
+        .mini-ball.red span { color: #e60012; }
 
-        .mini-ball.split-0 {
-            background: linear-gradient(135deg, #e60012 50%, #7a00cc 50%);
-            border: 1.5px solid #c084fc;
-        }
-        .mini-ball.split-0 span { color: #800080; }
+        .mini-ball.green { background: radial-gradient(circle, rgba(92,214,133,0.3) 30%, #00b050 80%); }
+        .mini-ball.green::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(92,214,133,0.3) 100%); }
+        .mini-ball.green span { color: #00b050; }
 
-        .mini-ball.split-5 {
-            background: linear-gradient(135deg, #00b050 50%, #7a00cc 50%);
-            border: 1.5px solid #c084fc;
-        }
-        .mini-ball.split-5 span { color: #008033; }
+        .mini-ball.split-0 { background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 45%, #b366ff 55%, #7a00cc 100%); }
+        .mini-ball.split-0::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(179,102,255,0.3) 100%); }
+        .mini-ball.split-0 span { background: linear-gradient(135deg, #cc0000, #800080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .mini-ball.split-5 { background: linear-gradient(135deg, #00b050 0%, #008033 45%, #b366ff 55%, #7a00cc 100%); }
+        .mini-ball.split-5::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(179,102,255,0.3) 100%); }
+        .mini-ball.split-5 span { background: linear-gradient(135deg, #008033, #800080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         .timer-right {
             text-align: right;
@@ -266,7 +294,7 @@
             border: 1px solid #7c3aed;
         }
 
-        /* Betting Wrapper & Semi-Blur Overlay */
+        /* 3. Betting Wrapper & Matching Dark SBWIN Theme Lock Overlay */
         .betting-wrapper {
             position: relative;
             margin-bottom: 14px;
@@ -274,19 +302,20 @@
         .lock-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(15, 23, 42, 0.45);
-            backdrop-filter: blur(2.5px);
-            -webkit-backdrop-filter: blur(2.5px);
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             display: none;
             justify-content: center;
             align-items: center;
             gap: 20px;
             z-index: 50;
             border-radius: 16px;
+            border: 1px solid rgba(52, 211, 153, 0.3);
         }
         .lock-box {
-            background: #f9f9f9;
-            color: #00b050;
+            background: linear-gradient(135deg, #1e1b4b, #064e3b);
+            color: #34d399;
             width: 100px;
             height: 120px;
             border-radius: 18px;
@@ -295,8 +324,9 @@
             align-items: center;
             font-size: 75px;
             font-weight: 900;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            border: 2px solid #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 0 15px rgba(52, 211, 153, 0.2);
+            border: 2px solid #7c3aed;
+            text-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
         }
 
         .color-btns { display: flex; gap: 10px; margin-bottom: 12px; }
@@ -388,7 +418,6 @@
         .ball.split-5::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(179,102,255,0.3) 100%); }
         .ball.split-5 span { background: linear-gradient(135deg, #008033, #800080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* Multipliers Bar */
         .multiplier-bar {
             display: flex;
             gap: 6px;
@@ -463,7 +492,97 @@
         .history-table th { color: #a7f3d0; padding: 10px 4px; border-bottom: 1px solid #7c3aed; font-weight: bold; }
         .history-table td { padding: 10px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e2e8f0; word-break: break-all; }
 
-        /* Pagination Style */
+        /* 4. YaarWin Style Card Layout for My History */
+        .my-history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .my-history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #7c3aed;
+            padding: 10px 12px;
+            border-radius: 12px;
+        }
+        .my-hist-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .my-hist-badge {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+            color: #fff;
+            text-transform: capitalize;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .my-hist-badge.green { background: #00b050; }
+        .my-hist-badge.red { background: #e60012; }
+        .my-hist-badge.violet { background: #7a00cc; }
+        .my-hist-badge.big { background: #d97706; }
+        .my-hist-badge.small { background: #2563eb; }
+        .my-hist-badge.num { background: linear-gradient(135deg, #7c3aed, #10b981); }
+
+        .my-hist-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .my-hist-period {
+            font-size: 13px;
+            font-weight: bold;
+            color: #fff;
+            font-family: monospace;
+        }
+        .my-hist-time {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .my-hist-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+        .status-pill {
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid transparent;
+        }
+        .status-pill.succeed {
+            color: #34d399;
+            border-color: #34d399;
+            background: rgba(52, 211, 153, 0.1);
+        }
+        .status-pill.failed {
+            color: #f87171;
+            border-color: #f87171;
+            background: rgba(248, 113, 113, 0.1);
+        }
+        .status-pill.pending {
+            color: #fbbf24;
+            border-color: #fbbf24;
+            background: rgba(251, 191, 36, 0.1);
+        }
+        .my-hist-amount {
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .my-hist-amount.win { color: #34d399; }
+        .my-hist-amount.loss { color: #f87171; }
+
         .pagination-row {
             display: flex;
             justify-content: space-between;
@@ -615,14 +734,14 @@
         </div>
     </div>
 
-    <div class="container">
-        <!-- Sticky Header Navigation with Back Symbol '<' -->
-        <div class="header">
-            <div class="header-left"><a href="../index.html">&lt;</a></div>
-            <div class="header-center"><h2>SBWIN</h2></div>
-            <div class="header-right"><span style="font-size: 18px; cursor: pointer;" onclick="showToast('Audio & Support Active')">🎵</span></div>
-        </div>
+    <!-- Fixed Header Screen Navigation Bar -->
+    <div class="header">
+        <div class="header-left"><a href="../index.html">&lt;</a></div>
+        <div class="header-center"><h2>SBWIN</h2></div>
+        <div class="header-right"><span style="font-size: 18px; cursor: pointer;" onclick="showToast('Audio & Support Active')">🎵</span></div>
+    </div>
 
+    <div class="container">
         <div class="wallet-card">
             <div class="wallet-title">Wallet balance</div>
             <div class="balance" id="userWallet">₹0.00</div>
@@ -667,7 +786,7 @@
             </div>
         </div>
 
-        <!-- Betting Area Wrapper -->
+        <!-- Betting Area Wrapper with Matching Theme Lock Overlay -->
         <div class="betting-wrapper">
             <div class="lock-overlay" id="lockOverlay">
                 <div class="lock-box" id="lockBoxTens">0</div>
@@ -715,19 +834,28 @@
             <div class="tab" id="tabMyHist" onclick="switchHistoryTab('myhistory')">My history</div>
         </div>
 
-        <div class="history-card">
-            <table class="history-table">
-                <thead>
-                    <tr id="historyTableHeader">
-                        <th>Period</th>
-                        <th>Number</th>
-                        <th>Big Small</th>
-                        <th>Color</th>
-                    </tr>
-                </thead>
-                <tbody id="historyBody"></tbody>
-            </table>
-            <!-- Pagination with < > buttons -->
+        <div class="history-card" id="historyCardContainer">
+            <!-- Table Container for Game History -->
+            <div id="gameHistoryView">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th>Number</th>
+                            <th>Big Small</th>
+                            <th>Color</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody"></tbody>
+                </table>
+            </div>
+
+            <!-- List Container for My History (YaarWin Card Style) -->
+            <div id="myHistoryView" style="display: none;">
+                <div class="my-history-list" id="myHistoryList"></div>
+            </div>
+
+            <!-- Pagination -->
             <div class="pagination-row">
                 <button class="page-btn" id="prevPageBtn" onclick="changePage(-1)">&lt;</button>
                 <span id="pageIndicator" style="font-size: 12px; color: #a7f3d0;">Page 1 of 50</span>
@@ -802,7 +930,6 @@
                 }
             });
 
-            /* On Round Finish: Auto Reset to Page 1 and Refresh Table */
             socket.on(`gameResult_${type}`, (resultData) => {
                 if (currentTimerType === type) {
                     currentPage = 1;
@@ -886,6 +1013,14 @@
             currentPage = 1;
             document.getElementById('tabHist').classList.toggle('active', tab === 'history');
             document.getElementById('tabMyHist').classList.toggle('active', tab === 'myhistory');
+            
+            if (tab === 'history') {
+                document.getElementById('gameHistoryView').style.display = 'block';
+                document.getElementById('myHistoryView').style.display = 'none';
+            } else {
+                document.getElementById('gameHistoryView').style.display = 'none';
+                document.getElementById('myHistoryView').style.display = 'block';
+            }
             loadHistoryData();
         }
 
@@ -910,20 +1045,21 @@
                             else if (item.color === 'green') bClass += 'green';
                             else bClass += 'red';
 
-                            bar.innerHTML += `<div class="${bClass}"><span>${item.number}</span></div>`;
+                            bar.innerHTML += `<div class="${bClass}">
+                                <div class="mini-glow-side mini-glow-left"></div>
+                                <div class="mini-glow-side mini-glow-right"></div>
+                                <div class="mini-glow-bottom"></div>
+                                <span>${item.number}</span>
+                            </div>`;
                         });
                     }
                 });
 
             if (currentHistoryTab === 'history') {
-                document.getElementById('historyTableHeader').innerHTML = `
-                    <th>Period</th><th>Number</th><th>Big Small</th><th>Color</th>
-                `;
                 fetch(`/api/game-history/${currentTimerType}?page=${currentPage}`)
                     .then(r => r.json())
                     .then(data => {
                         if (data.success && data.history) {
-                            // Max 50 pages restriction
                             totalPages = Math.min(data.totalPages || 1, maxAllowedPages);
                             document.getElementById('pageIndicator').innerText = `Page ${currentPage} of ${totalPages}`;
                             document.getElementById('prevPageBtn').disabled = currentPage <= 1;
@@ -943,9 +1079,6 @@
                         }
                     });
             } else {
-                document.getElementById('historyTableHeader').innerHTML = `
-                    <th>Period</th><th>Bet</th><th>Amount</th><th>Result</th>
-                `;
                 if (!userId) return;
                 fetch(`/api/user-bets/${userId}/${currentTimerType}?page=${currentPage}`)
                     .then(r => r.json())
@@ -956,17 +1089,53 @@
                             document.getElementById('prevPageBtn').disabled = currentPage <= 1;
                             document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
 
-                            const tbody = document.getElementById('historyBody');
-                            tbody.innerHTML = '';
+                            const list = document.getElementById('myHistoryList');
+                            list.innerHTML = '';
+                            if (data.bets.length === 0) {
+                                list.innerHTML = `<div style="text-align:center; padding:20px; color:#a7f3d0;">No betting records found</div>`;
+                                return;
+                            }
                             data.bets.forEach(bet => {
-                                let statusColor = bet.status === 'win' ? '#34d399' : (bet.status === 'loss' ? '#ef4444' : '#fbbf24');
-                                let statusText = bet.status === 'win' ? `+₹${bet.payout}` : (bet.status === 'loss' ? `-₹${bet.amount}` : 'Pending');
-                                tbody.innerHTML += `<tr>
-                                    <td>${bet.period}</td>
-                                    <td style="text-transform:uppercase;">${bet.betValue}</td>
-                                    <td>₹${bet.amount}</td>
-                                    <td style="font-weight:bold; color:${statusColor};">${statusText}</td>
-                                </tr>`;
+                                let badgeClass = 'num';
+                                let betValText = bet.betValue;
+                                if (['green', 'red', 'violet', 'big', 'small'].includes(bet.betValue.toLowerCase())) {
+                                    badgeClass = bet.betValue.toLowerCase();
+                                }
+                                
+                                let statusClass = 'pending';
+                                let statusText = 'Pending';
+                                let amtClass = '';
+                                let amtDisplay = `₹${bet.amount}`;
+
+                                if (bet.status === 'win') {
+                                    statusClass = 'succeed';
+                                    statusText = 'Succeed';
+                                    amtClass = 'win';
+                                    amtDisplay = `+₹${bet.payout.toFixed(2)}`;
+                                } else if (bet.status === 'loss') {
+                                    statusClass = 'failed';
+                                    statusText = 'Failed';
+                                    amtClass = 'loss';
+                                    amtDisplay = `-₹${bet.amount.toFixed(2)}`;
+                                }
+
+                                let betTime = bet.createdAt ? new Date(bet.createdAt).toLocaleString() : 'Recently';
+
+                                list.innerHTML += `
+                                    <div class="my-history-item">
+                                        <div class="my-hist-left">
+                                            <div class="my-hist-badge ${badgeClass}">${betValText}</div>
+                                            <div class="my-hist-details">
+                                                <div class="my-hist-period">${bet.period}</div>
+                                                <div class="my-hist-time">${betTime}</div>
+                                            </div>
+                                        </div>
+                                        <div class="my-hist-right">
+                                            <span class="status-pill ${statusClass}">${statusText}</span>
+                                            <span class="my-hist-amount ${amtClass}">${amtDisplay}</span>
+                                        </div>
+                                    </div>
+                                `;
                             });
                         }
                     });
