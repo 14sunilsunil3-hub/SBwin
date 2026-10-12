@@ -967,16 +967,17 @@
         }
 
         function updateDisplayTime(secLeft) {
-            let min = Math.floor(secLeft / 60);
-            let sec = secLeft % 60;
+            let displaySec = Math.max(0, secLeft);
+            let min = Math.floor(displaySec / 60);
+            let sec = displaySec % 60;
             document.getElementById('countdownBox').innerHTML = `
                 <div>${Math.floor(min/10)}</div><div>${min%10}</div><span>:</span><div>${Math.floor(sec/10)}</div><div>${sec%10}</div>
             `;
 
             const lockOverlay = document.getElementById('lockOverlay');
-            if (secLeft <= 5) {
+            if (displaySec <= 5 && displaySec >= 0) {
                 lockOverlay.style.display = 'flex';
-                let sStr = String(secLeft).padStart(2, '0');
+                let sStr = String(displaySec).padStart(2, '0');
                 document.getElementById('lockBoxTens').innerText = sStr[0];
                 document.getElementById('lockBoxSingles').innerText = sStr[1];
                 closeBetModal();
@@ -985,7 +986,7 @@
             }
         }
 
-        /* Start local interval so 0 is strictly rendered smoothly */
+        /* Seamless Local Client Tick with 00 to 01 Buffer Flow */
         function startClientCountdown() {
             if (clientTimerInterval) clearInterval(clientTimerInterval);
             clientTimerInterval = setInterval(() => {
@@ -1000,6 +1001,7 @@
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
                 if (currentTimerType === type) {
+                    // Sync precisely with server buffer (server leads by 1 sec to ensure smooth 00 transition)
                     timeLeft = data.countdown;
                     updateDisplayTime(timeLeft);
                     document.getElementById('periodId').innerText = data.period;
