@@ -554,16 +554,15 @@ function startTimerLoop(timerType, intervalSeconds) {
             const elapsedIntoInterval = now - state.startTime;
             let countdown = intervalSeconds - 1 - Math.floor(elapsedIntoInterval / 1000);
 
-            // When countdown drops below 0 (after hitting 0), process previous period and roll to next interval
-            if (countdown < 0 || now >= state.startTime + intervalMs) {
+            if (countdown < 0) {
+                countdown = 0;
+            }
+
+            // Check if interval has completely finished (reached next period boundary)
+            if (now >= state.startTime + intervalMs) {
                 const oldPeriod = state.period;
 
-                state.startTime += intervalMs;
-                const newElapsedIntoInterval = now - state.startTime;
-                countdown = intervalSeconds - 1 - Math.floor(newElapsedIntoInterval / 1000);
-
-                const newPeriod = getPeriodCodeForTime(timerType, state.startTime);
-
+                // Process result for the completed period
                 const outcome = await getGameOutcome(oldPeriod, timerType);
 
                 const existingResult = await GameResult.findOne({ period: oldPeriod });
@@ -580,9 +579,14 @@ function startTimerLoop(timerType, intervalSeconds) {
                     period: oldPeriod, number: outcome.number, color: outcome.color, size: outcome.size
                 });
 
-                state.period = newPeriod;
+                // Shift to new period
+                state.startTime += intervalMs;
+                state.period = getPeriodCodeForTime(timerType, state.startTime);
                 state.isBettingOpen = true;
                 io.emit(`bettingStatus_${timerType}`, { isOpen: true, period: state.period });
+
+                const newElapsedIntoInterval = now - state.startTime;
+                countdown = intervalSeconds - 1 - Math.floor(newElapsedIntoInterval / 1000);
             }
 
             if (countdown <= 5 && state.isBettingOpen) {
