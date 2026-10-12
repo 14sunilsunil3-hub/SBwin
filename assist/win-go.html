@@ -141,7 +141,7 @@
 
         .timer-section {
             background: linear-gradient(135deg, #064e3b, #022c22);
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             padding: 15px;
             border-radius: 14px;
             display: flex;
@@ -182,17 +182,17 @@
             display: flex;
             gap: 8px;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             justify-content: flex-start;
         }
         .mini-ball {
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             color: #fff;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
@@ -251,7 +251,6 @@
         .bg-violet { background: linear-gradient(135deg, #7c3aed, #a855f7); border: 1px solid #c084fc; }
         .bg-red { background: linear-gradient(135deg, #dc2626, #ef4444); border: 1px solid #f87171; }
 
-        /* Exact Number Balls UI CSS Provided */
         .balls-container {
             background: rgba(15, 23, 42, 0.6);
             padding: 15px;
@@ -265,13 +264,13 @@
         }
         .ball {
             position: relative;
-            width: 52px;
-            height: 52px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             overflow: hidden;
             box-shadow: inset 0 -6px 8px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.1);
@@ -280,8 +279,8 @@
         .ball::before {
             content: '';
             position: absolute;
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             z-index: 1;
         }
@@ -291,8 +290,8 @@
             top: 2px;
             left: 50%;
             transform: translateX(-50%);
-            width: 14px;
-            height: 5px;
+            width: 16px;
+            height: 6px;
             background: rgba(255, 255, 255, 0.6);
             border-radius: 50%;
             z-index: 3;
@@ -303,9 +302,9 @@
             border-radius: 50%;
             z-index: 3;
         }
-        .side-glow-left { top: 50%; left: 2px; transform: translateY(-50%); width: 6px; height: 12px; }
-        .side-glow-right { top: 50%; right: 2px; transform: translateY(-50%); width: 6px; height: 12px; }
-        .bottom-glow { bottom: 2px; left: 50%; transform: translateX(-50%); width: 10px; height: 4px; }
+        .side-glow-left { top: 50%; left: 2px; transform: translateY(-50%); width: 7px; height: 14px; }
+        .side-glow-right { top: 50%; right: 2px; transform: translateY(-50%); width: 7px; height: 14px; }
+        .bottom-glow { bottom: 2px; left: 50%; transform: translateX(-50%); width: 12px; height: 4px; }
         .ball span { position: relative; z-index: 2; }
 
         .ball.red { background: radial-gradient(circle, rgba(255,107,107,0.3) 30%, #e60012 80%); }
@@ -570,7 +569,9 @@
         </div>
 
         <!-- Last 5 Rounds Recent Balls Header Bar -->
-        <div class="recent-results-bar" id="recentResultsBar"></div>
+        <div class="recent-results-bar" id="recentResultsBar">
+            <!-- Dynamically populated latest 5 balls -->
+        </div>
 
         <!-- Betting Area Wrapper containing Marked Area with Yarwin Style Semi-Blur Countdown -->
         <div class="betting-wrapper">
@@ -795,6 +796,7 @@
                     if (data.success && data.history) {
                         const bar = document.getElementById('recentResultsBar');
                         bar.innerHTML = '';
+                        // Render latest 5 results as mini balls
                         data.history.slice(0, 5).forEach(item => {
                             let bColor = item.color === 'green' ? 'green' : (item.color === 'red' ? 'red' : 'violet');
                             bar.innerHTML += `<div class="mini-ball ${bColor}">${item.number}</div>`;
