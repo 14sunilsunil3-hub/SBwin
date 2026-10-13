@@ -13,52 +13,64 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-        body {
-            background: linear-gradient(135deg, #2e1065, #022c22);
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
             color: #fff;
+            overflow-x: hidden;
+        }
+        body {
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 16px;
+            align-items: flex-start;
         }
-        .auth-container {
+        .auth-fullscreen {
             width: 100%;
-            max-width: 400px;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(12px);
-            border: 1px solid #7c3aed;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            max-width: 500px;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .app-header {
+            text-align: center;
+            padding: 20px 0 30px 0;
         }
         .brand-title {
-            text-align: center;
-            font-size: 26px;
+            font-size: 32px;
             font-weight: 900;
             font-style: italic;
             background: linear-gradient(135deg, #c084fc, #34d399);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
             text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .brand-subtitle {
+            font-size: 12px;
+            color: #a7f3d0;
+            margin-top: 4px;
             letter-spacing: 1px;
+            text-transform: uppercase;
         }
         .auth-tabs {
             display: flex;
-            background: rgba(30, 27, 75, 0.6);
-            border: 1px solid #7c3aed;
-            border-radius: 12px;
+            background: rgba(30, 27, 75, 0.8);
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            border-radius: 14px;
             padding: 4px;
-            margin-bottom: 20px;
+            margin-bottom: 28px;
         }
         .auth-tab {
             flex: 1;
             text-align: center;
-            padding: 10px;
-            font-size: 13px;
+            padding: 12px;
+            font-size: 14px;
             font-weight: bold;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             color: #a7f3d0;
             transition: all 0.3s ease;
@@ -66,52 +78,57 @@
         .auth-tab.active {
             background: #7c3aed;
             color: white;
-            border: 1px solid #34d399;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
         }
         .form-group {
-            margin-bottom: 14px;
+            margin-bottom: 18px;
         }
         .form-label {
             font-size: 11px;
-            color: #a7f3d0;
+            color: #34d399;
             font-weight: bold;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: block;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .form-input {
             width: 100%;
-            background: rgba(15, 23, 42, 0.9);
-            border: 1.5px solid #7c3aed;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(124, 58, 237, 0.5);
             color: #fff;
-            padding: 12px 14px;
+            padding: 14px 16px;
             border-radius: 12px;
             font-size: 15px;
             outline: none;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
         .form-input:focus {
             border-color: #34d399;
+            box-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
         }
         .submit-btn {
             width: 100%;
             background: linear-gradient(135deg, #059669, #10b981);
-            border: 1px solid #34d399;
+            border: none;
             color: white;
-            padding: 14px;
+            padding: 16px;
             border-radius: 12px;
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
-            margin-top: 10px;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            margin-top: 12px;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+            transition: transform 0.2s;
+        }
+        .submit-btn:active {
+            transform: scale(0.98);
         }
         .forgot-link {
             text-align: right;
             font-size: 12px;
             color: #34d399;
-            margin-top: 8px;
+            margin-top: 10px;
             cursor: pointer;
             font-weight: bold;
         }
@@ -122,7 +139,7 @@
             transform: translateX(-50%) translateY(-20px);
             background: #10b981;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 30px;
             font-size: 13px;
             font-weight: bold;
@@ -130,6 +147,7 @@
             pointer-events: none;
             transition: all 0.3s ease;
             z-index: 100000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
@@ -138,8 +156,11 @@
 
     <div id="toast">Notification</div>
 
-    <div class="auth-container">
-        <div class="brand-title">SBWIN</div>
+    <div class="auth-fullscreen">
+        <div class="app-header">
+            <div class="brand-title">SBWIN</div>
+            <div class="brand-subtitle">Fair & Transparent Gaming</div>
+        </div>
 
         <div class="auth-tabs" id="authTabsContainer">
             <div class="auth-tab active" id="tabLoginBtn" onclick="switchMode('login')">Login</div>
@@ -191,7 +212,7 @@
                 <label class="form-label">6-Digit OTP</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="forgotOtp" class="form-input" placeholder="Enter 6-digit OTP" maxlength="6">
-                    <button onclick="sendOtp()" style="background:#7c3aed; border:none; color:#fff; padding:0 12px; border-radius:10px; font-weight:bold; cursor:pointer; font-size:12px;">Get OTP</button>
+                    <button onclick="sendOtp()" style="background:#7c3aed; border:none; color:#fff; padding:0 14px; border-radius:12px; font-weight:bold; cursor:pointer; font-size:12px; whitespace:nowrap;">Get OTP</button>
                 </div>
             </div>
             <div class="form-group">
@@ -203,7 +224,7 @@
                 <input type="password" id="forgotConfirmPassword" class="form-input" placeholder="Confirm new password">
             </div>
             <button class="submit-btn" onclick="handleResetPassword()">Reset Password</button>
-            <div class="forgot-link" style="text-align:center; margin-top:12px;" onclick="switchMode('login')">Back to Login</div>
+            <div class="forgot-link" style="text-align:center; margin-top:16px;" onclick="switchMode('login')">Back to Login</div>
         </div>
     </div>
 
@@ -253,7 +274,6 @@
                     localStorage.setItem('lastActiveTime', Date.now());
                     showToast('Login successful!');
                     setTimeout(() => {
-                        // User direct Home page (Popular Games) par jayega
                         window.location.href = 'index.html';
                     }, 800);
                 } else {
