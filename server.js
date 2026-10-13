@@ -98,6 +98,7 @@ const withdrawalSchema = new mongoose.Schema({
 });
 const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
+// Admin numbers configured as requested
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
 async function setupAdminAccount() {
@@ -313,6 +314,7 @@ app.post('/api/admin/action', async (req, res) => {
                 dep.status = 'approved';
                 await dep.save();
                 await User.findByIdAndUpdate(dep.userId, { $inc: { balance: dep.amount } });
+                io.emit('refreshBalance');
             } else {
                 dep.status = action;
                 await dep.save();
@@ -324,6 +326,7 @@ app.post('/api/admin/action', async (req, res) => {
                 wit.status = 'rejected';
                 await wit.save();
                 await User.findByIdAndUpdate(wit.userId, { $inc: { winningsBalance: wit.amount } });
+                io.emit('refreshBalance');
             } else {
                 wit.status = action;
                 await wit.save();
@@ -619,7 +622,7 @@ mongoose.connect(MONGO_URI).then(async () => {
 io.on('connection', (socket) => {
     ['30s', '60s', '3m', '5m'].forEach(type => {
         socket.emit(`timerTick_${type}`, { 
-            countdown: gameStates[type].countdown, isBettingOpen: gameStates[type].isBettingOpen, period: gameStates[type].period 
+            countdown: gameStates[type].countdown, isBettingOpen: state = gameStates[type].isBettingOpen, period: gameStates[type].period 
         });
     });
 });
