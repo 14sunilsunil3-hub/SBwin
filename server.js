@@ -98,13 +98,13 @@ const withdrawalSchema = new mongoose.Schema({
 });
 const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
-// Admin numbers configured as requested
+// Admin number configured as requested
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
 async function setupAdminAccount() {
     try {
         const adminPhone = "8093361993";
-        const adminPassword = "123123";
+        const adminPassword = "Admin123";
 
         let adminUser = await User.findOne({ phone: adminPhone });
         if (!adminUser) {
@@ -152,11 +152,18 @@ const gameStates = {
     '5m':  { countdown: 299, isBettingOpen: true, period: '', startTime: 0 }
 };
 
+// Root route redirects to auth.html first
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'auth.html'));
+});
+
 app.post('/api/register', async (req, res) => {
     try {
         const { phone, password, refUid } = req.body;
+        if (!phone || !password) return res.status(400).json({ success: false, message: "Phone and password required!" });
+
         const existingUser = await User.findOne({ phone });
-        if (existingUser) return res.status(400).json({ success: false, message: "User already exists!" });
+        if (existingUser) return res.status(400).json({ success: false, message: "This phone number is already registered!" });
 
         let referrer = null;
         if (refUid) {
@@ -166,7 +173,7 @@ app.post('/api/register', async (req, res) => {
         const newUser = new User({ 
             phone, 
             password, 
-            balance: 0, 
+            balance: 5, 
             winningsBalance: 0,
             rewardCoins: 100,
             referredBy: refUid || null 
@@ -189,7 +196,7 @@ app.post('/api/login', async (req, res) => {
     try {
         const { phone, password } = req.body;
         const user = await User.findOne({ phone, password });
-        if (!user) return res.status(400).json({ success: false, message: "Invalid phone or password!" });
+        if (!user) return res.status(400).json({ success: false, message: "Invalid phone number or password!" });
 
         const isAdmin = ADMIN_NUMBERS.includes(phone);
 
@@ -211,6 +218,21 @@ app.post('/api/login', async (req, res) => {
                 isAdmin: isAdmin
             } 
         });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+app.post('/api/reset-password', async (req, res) => {
+    try {
+        const { phone, newPassword } = req.body;
+        const user = await User.findOne({ phone });
+        if (!user) return res.status(404).json({ success: false, message: "Phone number not registered!" });
+
+        user.password = newPassword;
+        await user.save();
+
+        res.json({ success: true, message: "Password reset successful!" });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -597,12 +619,12 @@ function startTimerLoop(timerType, intervalSeconds) {
     }, 1000);
 }
 
-// Catch-all route
+// Fallback catch-all route for static assets and pages
 app.get('*', (req, res) => {
   if (req.path.startsWith('/assist/')) {
     res.sendFile(path.join(__dirname, req.path));
   } else {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, req.path.substring(1) || 'index.html'));
   }
 });
 
@@ -622,7 +644,7 @@ mongoose.connect(MONGO_URI).then(async () => {
 io.on('connection', (socket) => {
     ['30s', '60s', '3m', '5m'].forEach(type => {
         socket.emit(`timerTick_${type}`, { 
-            countdown: gameStates[type].countdown, isBettingOpen: state = gameStates[type].isBettingOpen, period: gameStates[type].period 
+            countdown: gameStates[type].countdown, isBettingOpen: gameStates[type].isBettingOpen, period: gameStates[type].period 
         });
     });
 });
