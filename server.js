@@ -32,15 +32,14 @@ function generateUID() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+// Simplified User Schema
 const userSchema = new mongoose.Schema({
     uid: { type: String, unique: true, default: generateUID },
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    balance: { type: Number, default: 5 }, 
+    balance: { type: Number, default: 0 }, 
     winningsBalance: { type: Number, default: 0 }, 
-    rewardCoins: { type: Number, default: 0 }, 
     referredBy: { type: String, default: null },
-    lastDailyClaim: { type: Date, default: null },
     createdAt: { type: Date, default: Date.now }
 });
 const User = mongoose.model('User', userSchema);
@@ -98,7 +97,7 @@ const withdrawalSchema = new mongoose.Schema({
 });
 const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
-// Admin number configured as requested
+// Admin Numbers Configuration
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
 async function setupAdminAccount() {
@@ -111,13 +110,14 @@ async function setupAdminAccount() {
             adminUser = new User({
                 phone: adminPhone,
                 password: adminPassword,
-                balance: 1000000,
-                winningsBalance: 500000,
-                rewardCoins: 50050
+                balance: 100, // Fixed admin balance to 100
+                winningsBalance: 0
             });
             await adminUser.save();
         } else {
             adminUser.password = adminPassword;
+            adminUser.balance = 100; // Reset existing admin balance to 100
+            adminUser.winningsBalance = 0;
             await adminUser.save();
         }
     } catch (err) {
@@ -165,27 +165,15 @@ app.post('/api/register', async (req, res) => {
         const existingUser = await User.findOne({ phone });
         if (existingUser) return res.status(400).json({ success: false, message: "This phone number is already registered!" });
 
-        let referrer = null;
-        if (refUid) {
-            referrer = await User.findOne({ uid: refUid });
-        }
-
         const newUser = new User({ 
             phone, 
             password, 
-            balance: 5, 
+            balance: 0, 
             winningsBalance: 0,
-            rewardCoins: 100,
             referredBy: refUid || null 
         });
 
         await newUser.save();
-
-        if (referrer) {
-            referrer.rewardCoins += 500;
-            await referrer.save();
-        }
-
         res.json({ success: true, message: "Registration successful!" });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
@@ -206,7 +194,6 @@ app.post('/api/login', async (req, res) => {
             userId: user._id, 
             balance: user.balance,
             winningsBalance: user.winningsBalance,
-            rewardCoins: user.rewardCoins,
             isAdmin: isAdmin,
             user: { 
                 _id: user._id, 
@@ -214,7 +201,6 @@ app.post('/api/login', async (req, res) => {
                 phone: user.phone, 
                 balance: user.balance, 
                 winningsBalance: user.winningsBalance,
-                rewardCoins: user.rewardCoins,
                 isAdmin: isAdmin
             } 
         });
@@ -238,36 +224,12 @@ app.post('/api/reset-password', async (req, res) => {
     }
 });
 
-app.post('/api/claim-daily', async (req, res) => {
-    try {
-        const { userId } = req.body;
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ success: false, message: "User not found!" });
-
-        const now = new Date();
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-        if (user.lastDailyClaim && new Date(user.lastDailyClaim) >= startOfToday) {
-            return res.status(400).json({ success: false, message: "You have already claimed your daily bonus today!" });
-        }
-
-        const earnedReward = parseFloat((Math.random() * (30 - 0.10) + 0.10).toFixed(2));
-        user.rewardCoins += earnedReward;
-        user.lastDailyClaim = now;
-        await user.save();
-
-        res.json({ success: true, reward: earnedReward, message: `Successfully claimed ${earnedReward} coins!` });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
 app.get('/api/user/:userId', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
         const isAdmin = ADMIN_NUMBERS.includes(user.phone);
-        res.json({ success: true, balance: user.balance, winningsBalance: user.winningsBalance, rewardCoins: user.rewardCoins, isAdmin, user });
+        res.json({ success: true, balance: user.balance, winningsBalance: user.winningsBalance, isAdmin, user });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -297,7 +259,7 @@ app.post('/api/deposit', async (req, res) => {
 
 app.post('/api/withdraw', async (req, res) => {
     try {
-        const { userId, amount, password, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile } = req.body;
+        const { userId, amount, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile } = req.body;
         const user = await User.findById(userId);
         
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
@@ -481,7 +443,7 @@ app.post('/api/bet', async (req, res) => {
         const newBet = new Bet({ userId, timerType, period, betType, betValue, amount });
         await newBet.save();
 
-        res.json({ success: true, message: "Bet successfully added!", newBalance: user.balance, newWinnings: user.winningsBalance, rewardCoins: user.rewardCoins });
+        res.json({ success: true, message: "Bet successfully added!", newBalance: user.balance, newWinnings: user.winningsBalance });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
