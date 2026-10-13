@@ -1,0 +1,45 @@
+GAME DESIGN DOCUMENT (GDD): ULTRA-REALISTIC VIRTUAL WORLD SIMULATOR
+​1. GAME OVERVIEW & CORE CONCEPT
+​Engine: Unreal Engine (Low-end device optimization & Ultra-HD support ke liye Dynamic Resolution Scaling aur LOD systems ke saath).
+​Genre: Open-World MMORPG + Survival + Real-Life Simulation + Geopolitical Strategy.
+​Core Vision: Ek aisi zinda-jaagti duniya jahan player bachpan se lekar adult life tak real life ki tarah struggle karega, businesses chalayega, politics mein hissa lega, aur global wars/nuclear crises face karega.
+​2. LIFE CYCLE & AGE PHASES
+​Under-14 Players (Childhood Phase):
+​Chote bachche direct war ya politics mein nahi ja sakte. Inke liye game ek "virtual childhood & school life" hoga.
+​Teachers & Learning: School mein teachers honge jo bacho ko game ki basic mechanics seekhane mein help karenge.
+​Mini-Games & Tasks: Bacho ko game mein busy aur engaged rakhne ke liye special fun minigames aur tasks honge taaki wo bore na ho.
+​Wine/Bar Restrictions: Inke liye wine/beer shops par strict restriction rahegi (restricted area). Agar koi underage player wahan jata hai ya cigarette/daru leta hai, toh uski health dheere-dheere kharab hone lagegi.
+​Adult Life & Civilian Emotions:
+​Graduation ke baad resume ke hisab se job milegi, ya player apna khud ka chota startup/business khol sakega.
+​Emotions & Relationships: Real life ki tarah love, breakups, shadi, aur family planning hogi jisse country ki Population Growth hogi.
+​3. SURVIVAL & IN-CITY MECHANICS
+​Food & Water Needs: Har player ko din mein 3 se 4 baar khana aur sufficient paani pina padega, bilkul real-life ki tarah. Agar aisa nahi kiya toh HP (Health) kam hone lagegi.
+​Economy, Malls & Hotels: Real-life ki tarah hotels, malls, aur chhote shops chalenge jahan log khareedari aur hangouts karenge.
+​Medical & Healthcare System:
+​Doctors sirf border par war ke liye nahi, balki city ke andar bhi civilians ka ilaj karenge.
+​Bimariyan real life jaisi hongi—choti sardi-khasi-zukham se lekar cancer jaisi badi bimariyan bhi hongi jinka proper treatment hospitals mein hoga.
+​Internal Safety & Law Enforcement:
+​Police: Internal crime, riots, aur dange control karne ke liye police hogi. Police banne ke liye proper test exams aur training pass karni padegi.
+​Emergency Services: Fire Brigade (aag bujhane ke liye) aur EMS/Doctors.
+​4. ECONOMY, RESOURCES & TRADE (5 COUNTRIES)
+​The 5-Nation World: Pura map 5 alag-alag countries mein divided hoga.
+​Unique Resources & Mining:
+​Har country ke paas alag-alag resources milenge (jaise Minerals, Oil, etc.).
+​Zameen ke andar sirf minerals aur oil nahi, balki Underground Water bhi mine karke nikalna padega.
+​Import & Export (Trade Diplomacy):
+​Har country ke paas sab kuch nahi hota, isliye unko aapas mein friendship karke import-export karna padega.
+​Agar koi desh supply ke liye mana kar de, toh uss desh ki government par depend karta hai ki wo baat karke mamla suljhaye ya War karke resource chhene!
+​5. POLITICS, ELECTIONS & GOVERNMENT
+​Democratic Elections: Players apni marzi se voting karke apni country ke liye Leader/President choose karenge.
+​Political Drama: War se pehle politics, parties ka banna, campaigns, aur rallies hongi. Spies (Undercover agents) doosri country ki secret info nikalenge.
+​Tax System: Sabhi citizens aur businesses ko tax bharna padega jo seedha Government Treasury mein jayega. Is tax ke paise se government country ko safe rakhegi, roads banayegi, aur military/weapons fund karegi.
+​6. FULL-SCALE MILITARY, WARFARE & CRISIS
+​Military & Defense:
+​Soldiers banne ke liye rigorous training aur exams dene padenge.
+​Military Radar System: Country ke andar enemy ships, aircrafts, aur missiles ko track karne ke liye advanced radar system upgrade karna padega.
+​Land, Air & Sea Power:
+​Ground army (tanks, infantry), Air Force (fighter jets, bombers, airstrikes), aur Navy (aircraft carriers, battleships, aur underwater submarines).
+​Nuclear & Biological Warfare:
+​Secret labs mein research karke Nuclear Weapons banaye ja sakte hain.
+​Bunkers: Nuclear attack ke waqt government civilians ko underground bunkers mein bhej kar safe karegi.
+​Bio-War: Corona jaise deadly biological viruses (bio-warfare) bhi attack ke liye use ho sakte hain, jiske baad doctors ko quarantine aur vaccine par kaam karna padega.
