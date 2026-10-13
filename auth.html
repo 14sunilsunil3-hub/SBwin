@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Authentication - SBWIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: linear-gradient(135deg, #2e1065, #022c22);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid #7c3aed;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+        .brand-title {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 900;
+            font-style: italic;
+            background: linear-gradient(135deg, #c084fc, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .auth-tabs {
+            display: flex;
+            background: rgba(30, 27, 75, 0.6);
+            border: 1px solid #7c3aed;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #a7f3d0;
+            transition: all 0.3s ease;
+        }
+        .auth-tab.active {
+            background: #7c3aed;
+            color: white;
+            border: 1px solid #34d399;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-label {
+            font-size: 12px;
+            color: #a7f3d0;
+            font-weight: bold;
+            margin-bottom: 6px;
+            display: block;
+            text-transform: uppercase;
+        }
+        .form-input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1.5px solid #7c3aed;
+            color: #fff;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .form-input:focus {
+            border-color: #34d399;
+        }
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #059669, #10b981);
+            border: 1px solid #34d399;
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            transition: transform 0.2s;
+        }
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: bold;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 100000;
+        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div id="toast">Notification</div>
+
+    <div class="auth-container">
+        <div class="brand-title">SBWIN</div>
+
+        <div class="auth-tabs">
+            <div class="auth-tab active" id="tabLoginBtn" onclick="switchMode('login')">Login</div>
+            <div class="auth-tab" id="tabRegisterBtn" onclick="switchMode('register')">Register</div>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm">
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="loginPhone" class="form-input" placeholder="Enter mobile number">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="loginPassword" class="form-input" placeholder="Enter password">
+            </div>
+            <button class="submit-btn" onclick="handleLogin()">Login Now</button>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" style="display: none;">
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="regPhone" class="form-input" placeholder="Enter mobile number">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="regPassword" class="form-input" placeholder="Create password">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Invite Code (Optional)</label>
+                <input type="text" id="regRef" class="form-input" placeholder="Enter invite code">
+            </div>
+            <button class="submit-btn" onclick="handleRegister()">Register Account</button>
+        </div>
+    </div>
+
+    <script>
+        function switchMode(mode) {
+            if (mode === 'login') {
+                document.getElementById('tabLoginBtn').classList.add('active');
+                document.getElementById('tabRegisterBtn').classList.remove('active');
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('registerForm').style.display = 'none';
+            } else {
+                document.getElementById('tabRegisterBtn').classList.add('active');
+                document.getElementById('tabLoginBtn').classList.remove('active');
+                document.getElementById('registerForm').style.display = 'block';
+                document.getElementById('loginForm').style.display = 'none';
+            }
+        }
+
+        async function handleLogin() {
+            let phone = document.getElementById('loginPhone').value.trim();
+            let password = document.getElementById('loginPassword').value.trim();
+
+            if (!phone || !password) {
+                showToast('Please fill all fields!');
+                return;
+            }
+
+            try {
+                let res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password })
+                });
+                let data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('rewards_userId', data.userId);
+                    localStorage.setItem('rewards_loggedMobile', phone);
+                    showToast('Login successful!');
+                    setTimeout(() => {
+                        window.location.href = 'win-go.html';
+                    }, 1000);
+                } else {
+                    showToast(data.message || 'Login failed');
+                }
+            } catch(e) {
+                showToast('Server connection error');
+            }
+        }
+
+        async function handleRegister() {
+            let phone = document.getElementById('regPhone').value.trim();
+            let password = document.getElementById('regPassword').value.trim();
+            let refUid = document.getElementById('regRef').value.trim();
+
+            if (!phone || !password) {
+                showToast('Please fill required fields!');
+                return;
+            }
+
+            try {
+                let res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password, refUid })
+                });
+                let data = await res.json();
+                if (data.success) {
+                    showToast('Registration successful! Please login.');
+                    switchMode('login');
+                    document.getElementById('loginPhone').value = phone;
+                } else {
+                    showToast(data.message || 'Registration failed');
+                }
+            } catch(e) {
+                showToast('Server connection error');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2000);
+        }
+    </script>
+</body>
+</html>
