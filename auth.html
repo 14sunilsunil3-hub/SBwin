@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Authentication - SBWIN</title>
+    <title>SBWIN - Authentication</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -25,7 +25,7 @@
         .auth-container {
             width: 100%;
             max-width: 400px;
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.9);
             backdrop-filter: blur(12px);
             border: 1px solid #7c3aed;
             border-radius: 20px;
@@ -56,7 +56,7 @@
             flex: 1;
             text-align: center;
             padding: 10px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
@@ -73,7 +73,7 @@
             margin-bottom: 14px;
         }
         .form-label {
-            font-size: 12px;
+            font-size: 11px;
             color: #a7f3d0;
             font-weight: bold;
             margin-bottom: 6px;
@@ -106,10 +106,14 @@
             cursor: pointer;
             margin-top: 10px;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-            transition: transform 0.2s;
         }
-        .submit-btn:active {
-            transform: scale(0.98);
+        .forgot-link {
+            text-align: right;
+            font-size: 12px;
+            color: #34d399;
+            margin-top: 8px;
+            cursor: pointer;
+            font-weight: bold;
         }
         #toast {
             position: fixed;
@@ -137,7 +141,7 @@
     <div class="auth-container">
         <div class="brand-title">SBWIN</div>
 
-        <div class="auth-tabs">
+        <div class="auth-tabs" id="authTabsContainer">
             <div class="auth-tab active" id="tabLoginBtn" onclick="switchMode('login')">Login</div>
             <div class="auth-tab" id="tabRegisterBtn" onclick="switchMode('register')">Register</div>
         </div>
@@ -152,6 +156,7 @@
                 <label class="form-label">Password</label>
                 <input type="password" id="loginPassword" class="form-input" placeholder="Enter password">
             </div>
+            <div class="forgot-link" onclick="switchMode('forgot')">Forgot Password?</div>
             <button class="submit-btn" onclick="handleLogin()">Login Now</button>
         </div>
 
@@ -162,30 +167,68 @@
                 <input type="tel" id="regPhone" class="form-input" placeholder="Enter mobile number">
             </div>
             <div class="form-group">
-                <label class="form-label">Password</label>
+                <label class="form-label">Create Password (Min 6 chars, Letters + Numbers)</label>
                 <input type="password" id="regPassword" class="form-input" placeholder="Create password">
             </div>
             <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" id="regConfirmPassword" class="form-input" placeholder="Confirm password">
+            </div>
+            <div class="form-group">
                 <label class="form-label">Invite Code (Optional)</label>
-                <input type="text" id="regRef" class="form-input" placeholder="Enter invite code">
+                <input type="text" id="regRef" class="form-input" placeholder="Enter referral code">
             </div>
             <button class="submit-btn" onclick="handleRegister()">Register Account</button>
+        </div>
+
+        <!-- Forgot Password Form -->
+        <div id="forgotForm" style="display: none;">
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="forgotPhone" class="form-input" placeholder="Enter registered mobile">
+            </div>
+            <div class="form-group">
+                <label class="form-label">6-Digit OTP</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="forgotOtp" class="form-input" placeholder="Enter 6-digit OTP" maxlength="6">
+                    <button onclick="sendOtp()" style="background:#7c3aed; border:none; color:#fff; padding:0 12px; border-radius:10px; font-weight:bold; cursor:pointer; font-size:12px;">Get OTP</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">New Password (Min 6 chars, Letters + Numbers)</label>
+                <input type="password" id="forgotNewPassword" class="form-input" placeholder="New password">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirm New Password</label>
+                <input type="password" id="forgotConfirmPassword" class="form-input" placeholder="Confirm new password">
+            </div>
+            <button class="submit-btn" onclick="handleResetPassword()">Reset Password</button>
+            <div class="forgot-link" style="text-align:center; margin-top:12px;" onclick="switchMode('login')">Back to Login</div>
         </div>
     </div>
 
     <script>
         function switchMode(mode) {
+            document.getElementById('loginForm').style.display = mode === 'login' ? 'block' : 'none';
+            document.getElementById('registerForm').style.display = mode === 'register' ? 'block' : 'none';
+            document.getElementById('forgotForm').style.display = mode === 'forgot' ? 'block' : 'none';
+            document.getElementById('authTabsContainer').style.display = mode === 'forgot' ? 'none' : 'flex';
+
             if (mode === 'login') {
                 document.getElementById('tabLoginBtn').classList.add('active');
                 document.getElementById('tabRegisterBtn').classList.remove('active');
-                document.getElementById('loginForm').style.display = 'block';
-                document.getElementById('registerForm').style.display = 'none';
-            } else {
+            } else if (mode === 'register') {
                 document.getElementById('tabRegisterBtn').classList.add('active');
                 document.getElementById('tabLoginBtn').classList.remove('active');
-                document.getElementById('registerForm').style.display = 'block';
-                document.getElementById('loginForm').style.display = 'none';
             }
+        }
+
+        function validatePassword(pwd) {
+            if (pwd.length < 6) return "Password must be at least 6 characters long!";
+            let hasLetter = /[a-zA-Z]/.test(pwd);
+            let hasNumber = /[0-9]/.test(pwd);
+            if (!hasLetter || !hasNumber) return "Password must contain a mix of letters and numbers!";
+            return null;
         }
 
         async function handleLogin() {
@@ -207,9 +250,10 @@
                 if (data.success) {
                     localStorage.setItem('rewards_userId', data.userId);
                     localStorage.setItem('rewards_loggedMobile', phone);
+                    localStorage.setItem('lastActiveTime', Date.now());
                     showToast('Login successful!');
                     setTimeout(() => {
-                        window.location.href = 'win-go.html';
+                        window.location.href = 'index.html';
                     }, 1000);
                 } else {
                     showToast(data.message || 'Login failed');
@@ -222,10 +266,22 @@
         async function handleRegister() {
             let phone = document.getElementById('regPhone').value.trim();
             let password = document.getElementById('regPassword').value.trim();
+            let confirmPassword = document.getElementById('regConfirmPassword').value.trim();
             let refUid = document.getElementById('regRef').value.trim();
 
-            if (!phone || !password) {
-                showToast('Please fill required fields!');
+            if (!phone || !password || !confirmPassword) {
+                showToast('Please fill all required fields!');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match!');
+                return;
+            }
+
+            let pwdError = validatePassword(password);
+            if (pwdError) {
+                showToast(pwdError);
                 return;
             }
 
@@ -245,6 +301,60 @@
                 }
             } catch(e) {
                 showToast('Server connection error');
+            }
+        }
+
+        function sendOtp() {
+            let phone = document.getElementById('forgotPhone').value.trim();
+            if (!phone) {
+                showToast('Please enter your phone number first!');
+                return;
+            }
+            showToast('OTP sent successfully: 123456 (Demo)');
+        }
+
+        async function handleResetPassword() {
+            let phone = document.getElementById('forgotPhone').value.trim();
+            let otp = document.getElementById('forgotOtp').value.trim();
+            let newPassword = document.getElementById('forgotNewPassword').value.trim();
+            let confirmNewPassword = document.getElementById('forgotConfirmPassword').value.trim();
+
+            if (!phone || !otp || !newPassword || !confirmNewPassword) {
+                showToast('Please fill all fields!');
+                return;
+            }
+
+            if (otp !== '123456') {
+                showToast('Invalid OTP! Use 123456');
+                return;
+            }
+
+            if (newPassword !== confirmNewPassword) {
+                showToast('Passwords do not match!');
+                return;
+            }
+
+            let pwdError = validatePassword(newPassword);
+            if (pwdError) {
+                showToast(pwdError);
+                return;
+            }
+
+            try {
+                let res = await fetch('/api/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, newPassword })
+                });
+                let data = await res.json();
+                if (data.success) {
+                    showToast('Password reset successful! Please login.');
+                    switchMode('login');
+                } else {
+                    showToast(data.message || 'Reset failed');
+                }
+            } catch(e) {
+                showToast('Server error');
             }
         }
 
