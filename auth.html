@@ -253,8 +253,9 @@
                     localStorage.setItem('lastActiveTime', Date.now());
                     showToast('Login successful!');
                     setTimeout(() => {
+                        // User direct Home page (Popular Games) par jayega
                         window.location.href = 'index.html';
-                    }, 1000);
+                    }, 800);
                 } else {
                     showToast(data.message || 'Login failed');
                 }
