@@ -481,13 +481,13 @@ async function processBetsForPeriod(period, timerType, outcome) {
 
             if (bet.betType === 'size' && bet.betValue === outcome.size) {
                 isWin = true;
-                multiplier = 1.9;
+                multiplier = 1.96;
             } else if (bet.betType === 'color' && bet.betValue === outcome.color) {
                 isWin = true;
-                multiplier = (outcome.color === 'violet' ? 2 : 1.9);
+                multiplier = (outcome.color === 'violet' ? 3.98 : 1.43);
             } else if (bet.betType === 'number' && Number(bet.betValue) === outcome.number) {
                 isWin = true;
-                multiplier = 9;
+                multiplier = 8.96;
             }
 
             if (isWin) {
