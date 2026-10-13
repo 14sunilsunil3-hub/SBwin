@@ -23,7 +23,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cors());
 
-// Serve static files from root directory (ensures assist/ and assets/ load correctly)
+// Serve static files from root directory
 app.use(express.static(path.join(__dirname)));
 
 const MONGO_URI = "mongodb+srv://bbutu218_db_user:9RnyfbrEBzNaZlYX@cluster0.gq1rmfz.mongodb.net/?appName=Cluster0";
@@ -78,7 +78,7 @@ const ManualOverride = mongoose.model('ManualOverride', manualOverrideSchema);
 const depositSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     amount: Number,
-    transactionId: String,
+    utr: String,
     status: { type: String, default: 'pending' },
     createdAt: { type: Date, default: Date.now }
 });
@@ -97,13 +97,6 @@ const withdrawalSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
-
-const qrCodeSchema = new mongoose.Schema({
-    identifier: { type: String, unique: true, default: 'default_qr' },
-    imageBase64: { type: String, required: true },
-    updatedAt: { type: Date, default: Date.now }
-});
-const QrCode = mongoose.model('QrCode', qrCodeSchema);
 
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
@@ -270,8 +263,8 @@ app.get('/api/user/mobile/:mobile', async (req, res) => {
 
 app.post('/api/deposit', async (req, res) => {
     try {
-        const { userId, amount, transactionId } = req.body;
-        const deposit = new Deposit({ userId, amount, transactionId });
+        const { userId, amount, utr } = req.body;
+        const deposit = new Deposit({ userId, amount, utr });
         await deposit.save();
         res.json({ success: true, message: "Deposit request submitted successfully!" });
     } catch (err) {
@@ -285,7 +278,6 @@ app.post('/api/withdraw', async (req, res) => {
         const user = await User.findById(userId);
         
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
-        if (user.password !== password) return res.status(400).json({ success: false, message: "Incorrect password!" });
         if (Number(amount) < 110) return res.status(400).json({ success: false, message: "Minimum withdrawal amount is ₹110!" });
         if (user.winningsBalance < Number(amount)) return res.status(400).json({ success: false, message: "Insufficient winnings balance!" });
 
@@ -558,7 +550,6 @@ function startTimerLoop(timerType, intervalSeconds) {
                 countdown = 0;
             }
 
-            // Server leading buffer: triggers result processing exactly when interval completes
             if (now >= state.startTime + intervalMs) {
                 const oldPeriod = state.period;
 
@@ -578,7 +569,6 @@ function startTimerLoop(timerType, intervalSeconds) {
                     period: oldPeriod, number: outcome.number, color: outcome.color, size: outcome.size
                 });
 
-                // Advance to next period instantly
                 state.startTime += intervalMs;
                 state.period = getPeriodCodeForTime(timerType, state.startTime);
                 state.isBettingOpen = true;
@@ -604,7 +594,7 @@ function startTimerLoop(timerType, intervalSeconds) {
     }, 1000);
 }
 
-// Catch-all route to correctly serve assist folder files or index.html
+// Catch-all route
 app.get('*', (req, res) => {
   if (req.path.startsWith('/assist/')) {
     res.sendFile(path.join(__dirname, req.path));
