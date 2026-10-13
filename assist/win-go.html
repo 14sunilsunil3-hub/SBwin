@@ -186,7 +186,14 @@
             font-weight: bold;
             font-family: monospace;
             letter-spacing: 0.5px;
-            margin-top: 2px;
+            margin-top: 4px;
+        }
+        .mode-title-display {
+            font-size: 12px;
+            color: #34d399;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .recent-results-bar {
@@ -882,7 +889,7 @@
         <div class="timer-section">
             <div class="timer-left">
                 <button onclick="showToast('Opening Rules...')">📖 How to play</button>
-                <div class="period-id-left" id="periodId">---</div>
+                <div class="mode-title-display" id="modeTitleDisplay">WinGo 30Sec</div>
                 <div class="recent-results-bar" id="recentResultsBar"></div>
             </div>
             <div class="timer-right">
@@ -890,6 +897,7 @@
                 <div class="time-box" id="countdownBox">
                     <div>0</div><div>0</div><span>:</span><div>2</div><div>9</div>
                 </div>
+                <div class="period-id-left" id="periodId">---</div>
             </div>
         </div>
 
@@ -1009,6 +1017,13 @@
             currentPage = 1;
             document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
             document.getElementById(`mode-${type}`).classList.add('active');
+            
+            let modeTitleText = 'WinGo 30Sec';
+            if (type === '60s') modeTitleText = 'WinGo 1Min';
+            else if (type === '3m') modeTitleText = 'WinGo 3Min';
+            else if (type === '5m') modeTitleText = 'WinGo 5Min';
+            document.getElementById('modeTitleDisplay').innerText = modeTitleText;
+
             loadHistoryData();
         }
 
@@ -1032,7 +1047,7 @@
             }
         }
 
-        /* Pre-refresh Trigger at 01 sec so that by 00 it is completely updated */
+        /* Fixed Ultra-Smooth Local Countdown with Instant Zero Reset */
         function startClientCountdown() {
             if (clientTimerInterval) clearInterval(clientTimerInterval);
             clientTimerInterval = setInterval(() => {
@@ -1040,7 +1055,6 @@
                     timeLeft--;
                     updateDisplayTime(timeLeft);
                     
-                    // Trigger early background data load when timer hits 1 second remaining
                     if (timeLeft === 1) {
                         loadHistoryData();
                         fetchUserData();
@@ -1055,7 +1069,6 @@
                 if (currentTimerType === type) {
                     document.getElementById('periodId').innerText = data.period;
 
-                    // Pehli baar live socket connection se data milte hi loader hata do
                     if (!isFirstLoadSync) {
                         isFirstLoadSync = true;
                         const loader = document.getElementById('fullPageLoader');
@@ -1065,8 +1078,8 @@
                         }
                     }
 
-                    // Sirf tabhi timeLeft sync karein agar bada time gap ho, warna local smooth chalne dein
-                    if (Math.abs(timeLeft - data.countdown) > 2) {
+                    // Strict sync fix to completely eliminate zero-second lag/freezing
+                    if (data.countdown === 0 || Math.abs(timeLeft - data.countdown) >= 1) {
                         timeLeft = data.countdown;
                         updateDisplayTime(timeLeft);
                     }
