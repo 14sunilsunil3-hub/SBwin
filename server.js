@@ -32,7 +32,7 @@ function generateUID() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// Simplified User Schema
+// User Schema - Permanent Database Storage
 const userSchema = new mongoose.Schema({
     uid: { type: String, unique: true, default: generateUID },
     phone: { type: String, required: true, unique: true },
@@ -110,13 +110,13 @@ async function setupAdminAccount() {
             adminUser = new User({
                 phone: adminPhone,
                 password: adminPassword,
-                balance: 100, // Fixed admin balance to 100
+                balance: 100,
                 winningsBalance: 0
             });
             await adminUser.save();
         } else {
             adminUser.password = adminPassword;
-            adminUser.balance = 100; // Reset existing admin balance to 100
+            adminUser.balance = 100;
             adminUser.winningsBalance = 0;
             await adminUser.save();
         }
@@ -152,11 +152,11 @@ const gameStates = {
     '5m':  { countdown: 299, isBettingOpen: true, period: '', startTime: 0 }
 };
 
-// Root route redirects to auth.html first
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'auth.html'));
 });
 
+// Registration API - Permanent Save to MongoDB
 app.post('/api/register', async (req, res) => {
     try {
         const { phone, password, refUid } = req.body;
@@ -209,6 +209,7 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// Reset Password API - Only changes when requested via forgot password
 app.post('/api/reset-password', async (req, res) => {
     try {
         const { phone, newPassword } = req.body;
@@ -581,7 +582,6 @@ function startTimerLoop(timerType, intervalSeconds) {
     }, 1000);
 }
 
-// Fallback catch-all route for static assets and pages
 app.get('*', (req, res) => {
   if (req.path.startsWith('/assist/')) {
     res.sendFile(path.join(__dirname, req.path));
