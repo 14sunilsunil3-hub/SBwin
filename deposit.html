@@ -55,6 +55,8 @@
             text-transform: uppercase;
             font-size: 18px;
             text-align: center;
+            cursor: pointer;
+            user-select: none;
         }
         .header a, .header-right-icon {
             background: rgba(30, 27, 75, 0.8);
@@ -262,7 +264,8 @@
         <div class="header-left">
             <a id="backBtn" href="win-go.html">&lt;</a>
         </div>
-        <div class="header-center"><h2 id="headerTitle">Deposit</h2></div>
+        <!-- Header title par 5 baar tap karne se admin mode on ho jayega -->
+        <div class="header-center"><h2 id="headerTitle" onclick="handleAdminSecretTap()">Deposit</h2></div>
         <div class="header-right">
             <a href="customer-service.html" class="header-right-icon" title="Customer Service">
                 <i class="fa-solid fa-headset"></i>
@@ -323,7 +326,7 @@
 
             <!-- QR / UPI Payment Card -->
             <div class="card qr-section">
-                <!-- Admin Floating Control Button (Visible only if isAdmin is true) -->
+                <!-- Admin Floating Control Button -->
                 <button id="adminQRBtn" class="admin-floating-btn hidden" onclick="changeQRCode()" title="Change QR Code">
                     <i class="fa-solid fa-pen"></i>
                 </button>
@@ -348,9 +351,8 @@
     <script>
         let selectedAmount = 100;
         let userId = localStorage.getItem('rewards_userId') || sessionStorage.getItem('rewards_userId');
-        
-        // Check karein ki user admin hai ya nahi (Aap localStorage me 'isAdmin' = 'true' set kar sakte hain admin browser me)
         let isAdmin = localStorage.getItem('isAdmin') === 'true';
+        let secretTapCount = 0;
 
         window.onload = function() {
             if (userId) {
@@ -360,8 +362,19 @@
             checkAdminAccess();
         };
 
+        function handleAdminSecretTap() {
+            secretTapCount++;
+            if (secretTapCount >= 5) {
+                localStorage.setItem('isAdmin', 'true');
+                isAdmin = true;
+                checkAdminAccess();
+                showToast('Admin Mode Activated!');
+                secretTapCount = 0;
+            }
+            setTimeout(() => { secretTapCount = 0; }, 3000);
+        }
+
         function checkAdminAccess() {
-            // Agar aap admin hain toh floating edit button dikhega QR card par
             if (isAdmin) {
                 document.getElementById('adminQRBtn').classList.remove('hidden');
             }
@@ -383,11 +396,9 @@
             if (newUpi) {
                 let newQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=${encodeURIComponent(newUpi)}&pn=SBWIN`;
                 
-                // LocalStorage me save karna taaki logout hone par bhi delete na ho
                 localStorage.setItem('custom_qr_image', newQrUrl);
                 localStorage.setItem('custom_upi_id', newUpi);
 
-                // UI update karein
                 document.getElementById('qrImageDisplay').src = newQrUrl;
                 document.getElementById('upiIdDisplay').textContent = newUpi;
                 showToast('QR Code updated successfully!');
