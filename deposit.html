@@ -194,6 +194,7 @@
             width: 160px;
             height: 160px;
             display: block;
+            object-fit: contain;
         }
         .upi-id-text {
             color: #34d399;
@@ -220,6 +221,97 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             font-size: 14px;
             z-index: 10;
+        }
+
+        /* Bottom Floating Admin Panel Button */
+        .admin-panel-floating {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #7c3aed, #10b981);
+            color: white;
+            border: 2px solid #34d399;
+            padding: 12px 18px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Admin Modal Styling */
+        .admin-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+            padding: 15px;
+        }
+        .admin-modal {
+            background: #1e1b4b;
+            border: 2px solid #34d399;
+            width: 100%;
+            max-width: 450px;
+            max-height: 85vh;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .admin-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(124, 58, 237, 0.4);
+            padding-bottom: 10px;
+        }
+        .admin-requests-list {
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .req-item {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #7c3aed;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .req-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .approve-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+        }
+        .reject-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
         }
 
         .submit-btn {
@@ -259,6 +351,27 @@
 <body>
 
     <div id="toast">Success!</div>
+
+    <!-- Hidden file input for gallery upload -->
+    <input type="file" id="qrFileInput" accept="image/*" class="hidden" onchange="handleGalleryQRUpload(event)">
+
+    <!-- Floating Admin Panel Button (Visible only when Admin mode is active) -->
+    <button id="adminPanelFloatingBtn" class="admin-panel-floating hidden" onclick="openAdminPanel()">
+        <i class="fa-solid fa-user-shield"></i> Deposit Admin Panel
+    </button>
+
+    <!-- Admin Panel Modal -->
+    <div id="adminModalOverlay" class="admin-modal-overlay">
+        <div class="admin-modal">
+            <div class="admin-modal-header">
+                <h3 style="color: #34d399; font-size: 16px;">Deposit Requests Manager</h3>
+                <button onclick="closeAdminPanel()" style="background:none; border:none; color:#fff; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="admin-requests-list" id="adminRequestsList">
+                <p style="text-align:center; color:#94a3b8; margin-top:20px;">Loading requests...</p>
+            </div>
+        </div>
+    </div>
 
     <div class="header">
         <div class="header-left">
@@ -326,9 +439,9 @@
 
             <!-- QR / UPI Payment Card -->
             <div class="card qr-section">
-                <!-- Admin Floating Control Button -->
-                <button id="adminQRBtn" class="admin-floating-btn hidden" onclick="changeQRCode()" title="Change QR Code">
-                    <i class="fa-solid fa-pen"></i>
+                <!-- Admin Floating Gallery Upload Button -->
+                <button id="adminQRBtn" class="admin-floating-btn hidden" onclick="triggerGalleryUpload()" title="Upload QR from Gallery">
+                    <i class="fa-solid fa-image"></i>
                 </button>
 
                 <div class="title" style="text-align: left;">Scan QR & Pay via any UPI App</div>
@@ -377,6 +490,7 @@
         function checkAdminAccess() {
             if (isAdmin) {
                 document.getElementById('adminQRBtn').classList.remove('hidden');
+                document.getElementById('adminPanelFloatingBtn').classList.remove('hidden');
             }
         }
 
@@ -391,17 +505,96 @@
             }
         }
 
-        function changeQRCode() {
-            let newUpi = prompt("Enter new UPI ID (e.g. merchant@paytm):", document.getElementById('upiIdDisplay').textContent);
-            if (newUpi) {
-                let newQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=${encodeURIComponent(newUpi)}&pn=SBWIN`;
-                
-                localStorage.setItem('custom_qr_image', newQrUrl);
-                localStorage.setItem('custom_upi_id', newUpi);
+        function triggerGalleryUpload() {
+            document.getElementById('qrFileInput').click();
+        }
 
-                document.getElementById('qrImageDisplay').src = newQrUrl;
-                document.getElementById('upiIdDisplay').textContent = newUpi;
-                showToast('QR Code updated successfully!');
+        function handleGalleryQRUpload(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let base64Image = e.target.result;
+                    
+                    // Optional UPI ID update prompt
+                    let newUpi = prompt("Enter UPI ID associated with this QR (optional):", document.getElementById('upiIdDisplay').textContent);
+                    if (newUpi) {
+                        localStorage.setItem('custom_upi_id', newUpi);
+                        document.getElementById('upiIdDisplay').textContent = newUpi;
+                    }
+
+                    // Save QR Image to LocalStorage permanently
+                    localStorage.setItem('custom_qr_image', base64Image);
+                    document.getElementById('qrImageDisplay').src = base64Image;
+                    showToast('QR Code uploaded & saved permanently!');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function openAdminPanel() {
+            document.getElementById('adminModalOverlay').style.display = 'flex';
+            let listContainer = document.getElementById('adminRequestsList');
+            listContainer.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:20px;">Loading requests...</p>';
+
+            try {
+                let res = await fetch('/api/admin/requests');
+                let data = await res.json();
+                if (data.success) {
+                    listContainer.innerHTML = '';
+                    let pendingDeposits = data.deposits.filter(d => d.status === 'pending');
+                    
+                    if (pendingDeposits.length === 0) {
+                        listContainer.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:20px;">No pending deposit requests.</p>';
+                        return;
+                    }
+
+                    pendingDeposits.forEach(dep => {
+                        let userPhone = dep.userId ? dep.userId.phone : 'Unknown';
+                        let uid = dep.userId ? dep.userId.uid : '---';
+                        let time = new Date(dep.createdAt).toLocaleString();
+
+                        listContainer.innerHTML += `
+                            <div class="req-item">
+                                <p><b>User UID:</b> ${uid} (${userPhone})</p>
+                                <p><b>Amount:</b> <span style="color:#34d399; font-weight:bold;">₹${dep.amount}</span></p>
+                                <p><b>UTR:</b> <span style="font-family:monospace; color:#fbbf24;">${dep.utr}</span></p>
+                                <p style="font-size:10px; color:#94a3b8; margin-top:2px;">Time: ${time}</p>
+                                <div class="req-actions">
+                                    <button class="approve-btn" onclick="handleAdminAction('${dep._id}', 'approve')">Approve</button>
+                                    <button class="reject-btn" onclick="handleAdminAction('${dep._id}', 'reject')">Reject</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    listContainer.innerHTML = '<p style="text-align:center; color:#f87171; margin-top:20px;">Failed to load requests</p>';
+                }
+            } catch (e) {
+                listContainer.innerHTML = '<p style="text-align:center; color:#f87171; margin-top:20px;">Server connection error</p>';
+            }
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminModalOverlay').style.display = 'none';
+        }
+
+        async function handleAdminAction(id, action) {
+            try {
+                let res = await fetch('/api/admin/action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'deposit', id, action })
+                });
+                let data = await res.json();
+                if (data.success) {
+                    showToast(`Deposit ${action}d successfully!`);
+                    openAdminPanel(); // Refresh list
+                } else {
+                    showToast(data.message || 'Action failed');
+                }
+            } catch (e) {
+                showToast('Server error');
             }
         }
 
