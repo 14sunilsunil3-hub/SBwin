@@ -56,7 +56,7 @@
             font-size: 18px;
             text-align: center;
         }
-        .header a {
+        .header a, .header-right-icon {
             background: rgba(30, 27, 75, 0.8);
             border: 1px solid #7c3aed;
             color: #fff;
@@ -68,6 +68,11 @@
             border-radius: 10px;
             text-decoration: none;
             font-weight: bold;
+            cursor: pointer;
+        }
+        .header-right {
+            display: flex;
+            justify-content: flex-end;
         }
         .card {
             background: rgba(15, 23, 42, 0.7);
@@ -83,6 +88,62 @@
             margin-bottom: 8px;
             text-transform: uppercase;
         }
+        
+        /* Wallet Balance Card Styling */
+        .wallet-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(124, 58, 237, 0.2));
+            border: 1px solid #34d399;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .wallet-info .label {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .wallet-info .balance {
+            font-size: 20px;
+            font-weight: bold;
+            color: #34d399;
+        }
+        .refresh-btn {
+            background: rgba(30, 27, 75, 0.8);
+            border: 1px solid #34d399;
+            color: #34d399;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .refresh-btn:active {
+            transform: rotate(180deg);
+        }
+
+        /* Notice Box Styling */
+        .notice-box {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px dashed #f87171;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #fca5a5;
+        }
+        .notice-box i {
+            color: #f87171;
+            margin-right: 5px;
+        }
+
         .amount-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -93,10 +154,10 @@
             background: rgba(30, 27, 75, 0.6);
             border: 1px solid #7c3aed;
             color: #fff;
-            padding: 12px;
+            padding: 10px;
             border-radius: 10px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             text-align: center;
         }
@@ -118,6 +179,7 @@
         .qr-section {
             text-align: center;
             margin: 15px 0;
+            position: relative;
         }
         .qr-box {
             background: #fff;
@@ -137,6 +199,27 @@
             font-size: 14px;
             margin-bottom: 5px;
         }
+        
+        /* Admin Floating Button on QR Page */
+        .admin-floating-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 14px;
+            z-index: 10;
+        }
+
         .submit-btn {
             width: 100%;
             background: linear-gradient(135deg, #059669, #10b981);
@@ -148,6 +231,9 @@
             font-size: 16px;
             cursor: pointer;
             margin-top: 5px;
+        }
+        .hidden {
+            display: none !important;
         }
         #toast {
             position: fixed;
@@ -173,48 +259,154 @@
     <div id="toast">Success!</div>
 
     <div class="header">
-        <div class="header-left"><a href="win-go.html">&lt;</a></div>
-        <div class="header-center"><h2>Deposit</h2></div>
-        <div></div>
+        <div class="header-left">
+            <a id="backBtn" href="win-go.html">&lt;</a>
+        </div>
+        <div class="header-center"><h2 id="headerTitle">Deposit</h2></div>
+        <div class="header-right">
+            <a href="customer-service.html" class="header-right-icon" title="Customer Service">
+                <i class="fa-solid fa-headset"></i>
+            </a>
+        </div>
     </div>
 
     <div class="container">
-        <!-- Amount Selection Card -->
-        <div class="card">
-            <div class="title">Select Deposit Amount</div>
-            <div class="amount-grid">
-                <div class="amt-btn active" onclick="setAmount(100, this)">₹100</div>
-                <div class="amt-btn" onclick="setAmount(500, this)">₹500</div>
-                <div class="amt-btn" onclick="setAmount(1000, this)">₹1000</div>
-                <div class="amt-btn" onclick="setAmount(5000, this)">₹5000</div>
-                <div class="amt-btn" onclick="setAmount(10000, this)">₹10000</div>
-                <div class="amt-btn" onclick="setAmount(20000, this)">₹20000</div>
+        
+        <!-- STEP 1: Amount Selection View -->
+        <div id="step1View">
+            <div class="wallet-card">
+                <div class="wallet-info">
+                    <div class="label">Wallet Balance</div>
+                    <div class="balance">₹<span id="userWalletBalance">0.00</span></div>
+                </div>
+                <div class="refresh-btn" onclick="fetchWalletBalance()" title="Refresh Balance">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </div>
             </div>
-            <input type="number" id="depositAmount" class="input-box" value="100" placeholder="Enter custom amount">
+
+            <div class="notice-box">
+                <i class="fa-solid fa-triangle-exclamation"></i> 
+                <b>Notice:</b> Deposit system is operated manually, so don't panic, cooperate with us. Your money is 100% safe. Please pay your selected amount, otherwise your deposit will be rejected!
+            </div>
+
+            <div class="card">
+                <div class="title">Select Deposit Amount</div>
+                <div class="amount-grid">
+                    <div class="amt-btn active" onclick="setAmount(100, this)">₹100</div>
+                    <div class="amt-btn" onclick="setAmount(200, this)">₹200</div>
+                    <div class="amt-btn" onclick="setAmount(300, this)">₹300</div>
+                    <div class="amt-btn" onclick="setAmount(400, this)">₹400</div>
+                    <div class="amt-btn" onclick="setAmount(500, this)">₹500</div>
+                    <div class="amt-btn" onclick="setAmount(1000, this)">₹1000</div>
+                    <div class="amt-btn" onclick="setAmount(2000, this)">₹2000</div>
+                    <div class="amt-btn" onclick="setAmount(3000, this)">₹3000</div>
+                    <div class="amt-btn" onclick="setAmount(4000, this)">₹4000</div>
+                    <div class="amt-btn" onclick="setAmount(5000, this)">₹5000</div>
+                    <div class="amt-btn" onclick="setAmount(10000, this)">₹10000</div>
+                    <div class="amt-btn" onclick="setAmount(20000, this)">₹20000</div>
+                    <div class="amt-btn" onclick="setAmount(30000, this)">₹30000</div>
+                    <div class="amt-btn" onclick="setAmount(40000, this)">₹40000</div>
+                    <div class="amt-btn" onclick="setAmount(50000, this)">₹50000</div>
+                    <div class="amt-btn" onclick="setAmount(100000, this)">₹100000</div>
+                </div>
+                <input type="number" id="depositAmount" class="input-box" value="100" placeholder="Enter custom amount">
+                <button class="submit-btn" onclick="proceedToPay()">Pay Now</button>
+            </div>
         </div>
 
-        <!-- QR / UPI Payment Card -->
-        <div class="card qr-section">
-            <div class="title" style="text-align: left;">Scan QR & Pay via any UPI App</div>
-            <div class="qr-box">
-                <!-- Yahan apna QR code image link ya asset laga sakte ho -->
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=yourupi@oksbi&pn=SBWIN" alt="UPI QR Code">
+        <!-- STEP 2: QR & UTR View -->
+        <div id="step2View" class="hidden">
+            <div class="notice-box">
+                <i class="fa-solid fa-triangle-exclamation"></i> 
+                <b>Notice:</b> Please pay your selected amount (<span id="displaySelectedAmt" style="color: #fff; font-weight: bold;">₹100</span>) exactly, otherwise your deposit will be rejected!
             </div>
-            <div class="upi-id-text">UPI ID: <span id="upiIdDisplay">yourupi@oksbi</span></div>
-            <p style="font-size: 11px; color: #94a3b8;">Payment karne ke baad 12-digit UTR/Reference number niche enter karein.</p>
+
+            <!-- QR / UPI Payment Card -->
+            <div class="card qr-section">
+                <!-- Admin Floating Control Button (Visible only if isAdmin is true) -->
+                <button id="adminQRBtn" class="admin-floating-btn hidden" onclick="changeQRCode()" title="Change QR Code">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+
+                <div class="title" style="text-align: left;">Scan QR & Pay via any UPI App</div>
+                <div class="qr-box">
+                    <img id="qrImageDisplay" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=yourupi@oksbi&pn=SBWIN" alt="UPI QR Code">
+                </div>
+                <div class="upi-id-text">UPI ID: <span id="upiIdDisplay">yourupi@oksbi</span></div>
+                <p style="font-size: 11px; color: #94a3b8;">Payment karne ke baad 12-digit UTR/Reference number niche enter karein.</p>
+            </div>
+
+            <div class="card">
+                <div class="title">Enter UTR / Transaction ID</div>
+                <input type="text" id="utrNumber" class="input-box" placeholder="Enter 12-digit UTR number" maxlength="12">
+                <button class="submit-btn" onclick="submitDeposit()">Submit Deposit Request</button>
+            </div>
         </div>
 
-        <!-- UTR Submit Card -->
-        <div class="card">
-            <div class="title">Enter UTR / Transaction ID</div>
-            <input type="text" id="utrNumber" class="input-box" placeholder="Enter 12-digit UTR number" maxlength="12">
-            <button class="submit-btn" onclick="submitDeposit()">Submit Deposit Request</button>
-        </div>
     </div>
 
     <script>
         let selectedAmount = 100;
         let userId = localStorage.getItem('rewards_userId') || sessionStorage.getItem('rewards_userId');
+        
+        // Check karein ki user admin hai ya nahi (Aap localStorage me 'isAdmin' = 'true' set kar sakte hain admin browser me)
+        let isAdmin = localStorage.getItem('isAdmin') === 'true';
+
+        window.onload = function() {
+            if (userId) {
+                fetchWalletBalance();
+            }
+            loadSavedQR();
+            checkAdminAccess();
+        };
+
+        function checkAdminAccess() {
+            // Agar aap admin hain toh floating edit button dikhega QR card par
+            if (isAdmin) {
+                document.getElementById('adminQRBtn').classList.remove('hidden');
+            }
+        }
+
+        function loadSavedQR() {
+            let savedQR = localStorage.getItem('custom_qr_image');
+            let savedUPI = localStorage.getItem('custom_upi_id');
+            if (savedQR) {
+                document.getElementById('qrImageDisplay').src = savedQR;
+            }
+            if (savedUPI) {
+                document.getElementById('upiIdDisplay').textContent = savedUPI;
+            }
+        }
+
+        function changeQRCode() {
+            let newUpi = prompt("Enter new UPI ID (e.g. merchant@paytm):", document.getElementById('upiIdDisplay').textContent);
+            if (newUpi) {
+                let newQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=${encodeURIComponent(newUpi)}&pn=SBWIN`;
+                
+                // LocalStorage me save karna taaki logout hone par bhi delete na ho
+                localStorage.setItem('custom_qr_image', newQrUrl);
+                localStorage.setItem('custom_upi_id', newUpi);
+
+                // UI update karein
+                document.getElementById('qrImageDisplay').src = newQrUrl;
+                document.getElementById('upiIdDisplay').textContent = newUpi;
+                showToast('QR Code updated successfully!');
+            }
+        }
+
+        async function fetchWalletBalance() {
+            if (!userId) return;
+            try {
+                let res = await fetch(`/api/user/balance?userId=${userId}`);
+                let data = await res.json();
+                if (data.success) {
+                    document.getElementById('userWalletBalance').textContent = parseFloat(data.balance).toFixed(2);
+                }
+            } catch (e) {
+                let localBal = localStorage.getItem('rewards_balance') || '0.00';
+                document.getElementById('userWalletBalance').textContent = parseFloat(localBal).toFixed(2);
+            }
+        }
 
         function setAmount(amt, el) {
             selectedAmount = amt;
@@ -223,14 +415,42 @@
             el.classList.add('active');
         }
 
-        async function submitDeposit() {
+        function proceedToPay() {
             let amt = document.getElementById('depositAmount').value;
-            let utr = document.getElementById('utrNumber').value.trim();
-
             if (!amt || amt <= 0) {
                 showToast('Please enter valid amount!');
                 return;
             }
+            selectedAmount = parseFloat(amt);
+            document.getElementById('displaySelectedAmt').textContent = '₹' + selectedAmount;
+
+            document.getElementById('step1View').classList.add('hidden');
+            document.getElementById('step2View').classList.remove('hidden');
+            document.getElementById('headerTitle').textContent = 'Scan & Pay';
+
+            const backBtn = document.getElementById('backBtn');
+            backBtn.href = "#";
+            backBtn.onclick = function(e) {
+                e.preventDefault();
+                goBackToStep1();
+            };
+        }
+
+        function goBackToStep1() {
+            document.getElementById('step2View').classList.add('hidden');
+            document.getElementById('step1View').classList.remove('hidden');
+            document.getElementById('headerTitle').textContent = 'Deposit';
+            
+            const backBtn = document.getElementById('backBtn');
+            backBtn.onclick = null;
+            backBtn.href = 'win-go.html';
+            
+            fetchWalletBalance();
+        }
+
+        async function submitDeposit() {
+            let utr = document.getElementById('utrNumber').value.trim();
+
             if (!utr || utr.length < 6) {
                 showToast('Please enter valid 12-digit UTR number!');
                 return;
@@ -244,7 +464,7 @@
                 let res = await fetch('/api/deposit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, amount: parseFloat(amt), utr })
+                    body: JSON.stringify({ userId, amount: selectedAmount, utr })
                 });
                 let data = await res.json();
                 if (data.success) {
