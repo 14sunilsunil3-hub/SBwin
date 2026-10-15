@@ -28,7 +28,6 @@ app.use(express.static(path.join(__dirname)));
 
 const MONGO_URI = "mongodb+srv://14sunilsunil3_db_user:W1LlrneQfi7toLpn@cluster1.pr9b0cx.mongodb.net/sbwin_db?retryWrites=true&w=majority";
 
-
 function generateUID() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
@@ -299,7 +298,12 @@ app.post('/api/admin/action', async (req, res) => {
             if (action === 'approve' && dep.status === 'pending') {
                 dep.status = 'approved';
                 await dep.save();
-                await User.findByIdAndUpdate(dep.userId, { $inc: { balance: dep.amount } });
+                
+                const user = await User.findById(dep.userId);
+                if (user) {
+                    user.balance = (user.balance || 0) + Number(dep.amount);
+                    await user.save();
+                }
                 io.emit('refreshBalance');
             } else {
                 dep.status = action;
@@ -311,7 +315,12 @@ app.post('/api/admin/action', async (req, res) => {
             if (action === 'reject' && wit.status === 'pending') {
                 wit.status = 'rejected';
                 await wit.save();
-                await User.findByIdAndUpdate(wit.userId, { $inc: { winningsBalance: wit.amount } });
+                
+                const user = await User.findById(wit.userId);
+                if (user) {
+                    user.winningsBalance = (user.winningsBalance || 0) + Number(wit.amount);
+                    await user.save();
+                }
                 io.emit('refreshBalance');
             } else {
                 wit.status = action;
