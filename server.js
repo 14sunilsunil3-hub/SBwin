@@ -23,7 +23,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cors());
 
-// Serve static files from root directory
+// Serve static files from root directory[span_2](start_span)[span_2](end_span)
 app.use(express.static(path.join(__dirname)));
 
 // Explicit routes to prevent 404 Not Found errors on Render
@@ -126,12 +126,8 @@ async function setupAdminAccount() {
                 winningsBalance: 0
             });
             await adminUser.save();
-        } else {
-            adminUser.password = adminPassword;
-            adminUser.balance = 100;
-            adminUser.winningsBalance = 0;
-            await adminUser.save();
         }
+        // Else block hata diya gaya hai taaki balance reset na ho!
     } catch (err) {
         console.error("Admin setup error:", err.message);
     }
