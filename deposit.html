@@ -237,7 +237,6 @@
             cursor: pointer;
             text-align: center;
         }
-        /* Draggable Floating Admin Icon Button */
         .admin-panel-floating {
             position: fixed;
             bottom: 30px;
@@ -313,7 +312,6 @@
 
     <div id="toast">Success!</div>
 
-    <!-- Draggable Floating Admin Icon Button -->
     <button id="adminPanelFloatingBtn" class="admin-panel-floating hidden" onclick="goToAdminPage()">
         <i class="fa-solid fa-user-shield"></i>
     </button>
@@ -323,7 +321,6 @@
         <div class="custom-modal">
             <div style="font-size: 18px; font-weight: bold; color: #34d399; text-align: center; margin-bottom: 15px; text-transform: uppercase;">Order Details</div>
             <div id="orderDetailsContent" style="display: flex; flex-direction: column; gap: 10px; font-size: 13px; color: #cbd5e1; margin-bottom: 20px;">
-                <!-- Filled dynamically -->
             </div>
             <button class="submit-btn" onclick="closeOrderDetailsModal()">Close</button>
         </div>
@@ -366,7 +363,6 @@
     </div>
 
     <div class="container">
-        <!-- STEP 1 View -->
         <div id="step1View">
             <div class="wallet-card">
                 <div class="wallet-info">
@@ -412,7 +408,6 @@
             </div>
         </div>
 
-        <!-- STEP 2 View -->
         <div id="step2View" class="hidden">
             <div class="step2-top-bar">
                 <div class="step2-amount">₹<span id="displaySelectedAmt">100.00</span></div>
@@ -571,13 +566,13 @@
                     cachedDeposits = data.deposits;
                     container.innerHTML = '';
                     data.deposits.forEach((dep, index) => {
-                        let statusColor = dep.status === 'approved' ? '#34d399' : (dep.status === 'rejected' ? '#f87171' : '#fbbf24');
+                        let statusColor = dep.status === 'approved' ? '#34d399' : '#f87171';
                         let time = new Date(dep.createdAt).toLocaleString();
                         let orderNo = dep.orderNo || ('SBW' + (100000 + index));
-                        let reasonHTML = dep.status === 'rejected' && dep.rejectReason ? `<div style="color:#f87171; font-size:11px; margin-top:4px;">Reason: ${dep.rejectReason}</div>` : '';
+                        let reasonHTML = dep.rejectReason ? `<div style="color:#f87171; font-size:11px; margin-top:4px;">Reason: ${dep.rejectReason}</div>` : '';
                         
                         container.innerHTML += `
-                            <div onclick="openOrderDetails('${dep._id}')" style="background: rgba(15, 23, 42, 0.9); border: 1px solid #7c3aed; padding: 12px; border-radius: 12px; font-size: 13px; cursor: pointer; transition: border-color 0.2s;">
+                            <div onclick="openOrderDetails('${dep._id}')" style="background: rgba(15, 23, 42, 0.9); border: 1px solid #7c3aed; padding: 12px; border-radius: 12px; font-size: 13px; cursor: pointer;">
                                 <div style="display: flex; justify-content: space-between;">
                                     <span style="color: #fbbf24; font-weight: bold;">Order: ${orderNo}</span>
                                     <span style="color: ${statusColor}; text-transform: uppercase; font-weight: bold;">${dep.status}</span>
@@ -601,10 +596,10 @@
             let dep = cachedDeposits.find(d => d._id === depositId);
             if (!dep) return;
 
-            let statusColor = dep.status === 'approved' ? '#34d399' : (dep.status === 'rejected' ? '#f87171' : '#fbbf24');
+            let statusColor = dep.status === 'approved' ? '#34d399' : '#f87171';
             let time = new Date(dep.createdAt).toLocaleString();
             let orderNo = dep.orderNo || 'SBW---';
-            let reasonRow = dep.status === 'rejected' && dep.rejectReason ? `<p><b>Rejection Reason:</b> <span style="color:#f87171;">${dep.rejectReason}</span></p>` : '';
+            let reasonRow = dep.rejectReason ? `<p><b>Rejection Reason:</b> <span style="color:#f87171;">${dep.rejectReason}</span></p>` : '';
 
             let contentHTML = `
                 <p><b>Order No:</b> <span style="color:#fbbf24;">${orderNo}</span></p>
