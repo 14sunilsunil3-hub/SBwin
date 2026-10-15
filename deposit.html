@@ -566,7 +566,9 @@
                     cachedDeposits = data.deposits;
                     container.innerHTML = '';
                     data.deposits.forEach((dep, index) => {
-                        let statusColor = dep.status === 'approved' ? '#34d399' : '#f87171';
+                        let isApproved = dep.status === 'approved';
+                        let displayStatus = isApproved ? 'complete' : dep.status;
+                        let statusColor = isApproved ? '#34d399' : '#f87171';
                         let time = new Date(dep.createdAt).toLocaleString();
                         let orderNo = dep.orderNo || ('SBW' + (100000 + index));
                         let reasonHTML = dep.rejectReason ? `<div style="color:#f87171; font-size:11px; margin-top:4px;">Reason: ${dep.rejectReason}</div>` : '';
@@ -575,7 +577,7 @@
                             <div onclick="openOrderDetails('${dep._id}')" style="background: rgba(15, 23, 42, 0.9); border: 1px solid #7c3aed; padding: 12px; border-radius: 12px; font-size: 13px; cursor: pointer;">
                                 <div style="display: flex; justify-content: space-between;">
                                     <span style="color: #fbbf24; font-weight: bold;">Order: ${orderNo}</span>
-                                    <span style="color: ${statusColor}; text-transform: uppercase; font-weight: bold;">${dep.status}</span>
+                                    <span style="color: ${statusColor}; text-transform: uppercase; font-weight: bold;">${displayStatus}</span>
                                 </div>
                                 <div style="display: flex; justify-content: space-between; margin-top: 4px;">
                                     <span><b>Amount:</b> ₹${dep.amount}</span>
@@ -596,14 +598,16 @@
             let dep = cachedDeposits.find(d => d._id === depositId);
             if (!dep) return;
 
-            let statusColor = dep.status === 'approved' ? '#34d399' : '#f87171';
+            let isApproved = dep.status === 'approved';
+            let displayStatus = isApproved ? 'complete' : dep.status;
+            let statusColor = isApproved ? '#34d399' : '#f87171';
             let time = new Date(dep.createdAt).toLocaleString();
             let orderNo = dep.orderNo || 'SBW---';
             let reasonRow = dep.rejectReason ? `<p><b>Rejection Reason:</b> <span style="color:#f87171;">${dep.rejectReason}</span></p>` : '';
 
             let contentHTML = `
                 <p><b>Order No:</b> <span style="color:#fbbf24;">${orderNo}</span></p>
-                <p><b>Status:</b> <span style="color:${statusColor}; text-transform:uppercase; font-weight:bold;">${dep.status}</span></p>
+                <p><b>Status:</b> <span style="color:${statusColor}; text-transform:uppercase; font-weight:bold;">${displayStatus}</span></p>
                 <p><b>Amount:</b> <span style="color:#34d399; font-weight:bold;">₹${dep.amount}</span></p>
                 <p><b>UTR Number:</b> <span style="font-family:monospace; color:#fbbf24;">${dep.utr}</span></p>
                 ${reasonRow}
