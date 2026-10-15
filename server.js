@@ -26,7 +26,8 @@ app.use(cors());
 // Serve static files from root directory
 app.use(express.static(path.join(__dirname)));
 
-const MONGO_URI = "mongodb+srv://bbutu218_db_user:9RnyfbrEBzNaZlYX@cluster0.gq1rmfz.mongodb.net/?appName=Cluster0";
+const MONGO_URI = "mongodb+srv://14sunilsunil3_db_user:W1LlrneQfi7toLpn@cluster1.pr9b0cx.mongodb.net/sbwin_db?retryWrites=true&w=majority";
+
 
 function generateUID() {
     return Math.floor(100000 + Math.random() * 900000).toString();
