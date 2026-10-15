@@ -247,6 +247,16 @@ app.get('/api/user/mobile/:mobile', async (req, res) => {
     }
 });
 
+// Get user deposits history route
+app.get('/api/user-deposits/:userId', async (req, res) => {
+    try {
+        const deposits = await Deposit.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+        res.json({ success: true, deposits });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 app.post('/api/deposit', async (req, res) => {
     try {
         const { userId, amount, utr } = req.body;
