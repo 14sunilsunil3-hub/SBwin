@@ -394,7 +394,7 @@
                     <div class="label">Wallet Balance</div>
                     <div class="balance">₹<span id="userWalletBalance">0.00</span></div>
                 </div>
-                <div class="refresh-btn" onclick="fetchWalletBalance()" title="Refresh Balance">
+                <div class="refresh-btn" onclick="refreshData()" title="Refresh Data">
                     <i class="fa-solid fa-rotate-right"></i>
                 </div>
             </div>
@@ -426,6 +426,14 @@
                 </div>
                 <input type="number" id="depositAmount" class="input-box" value="100" placeholder="Enter custom amount">
                 <button class="submit-btn" onclick="proceedToPay()">Pay Now</button>
+            </div>
+
+            <!-- Deposit History Section -->
+            <div class="card">
+                <div class="title">Deposit History</div>
+                <div id="userDepositHistory" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <p style="font-size: 12px; color: #94a3b8; text-align: center;">Loading history...</p>
+                </div>
             </div>
         </div>
 
@@ -467,11 +475,16 @@
 
         window.onload = function() {
             if (userId) {
-                fetchWalletBalance();
+                refreshData();
             }
             loadSavedQR();
             checkAdminAccess();
         };
+
+        function refreshData() {
+            fetchWalletBalance();
+            fetchUserDeposits();
+        }
 
         function handleAdminSecretTap() {
             secretTapCount++;
@@ -608,6 +621,38 @@
             }
         }
 
+        async function fetchUserDeposits() {
+            if (!userId) return;
+            try {
+                let res = await fetch(`/api/user-deposits/${userId}`);
+                let data = await res.json();
+                let historyContainer = document.getElementById('userDepositHistory');
+                if (data.success && data.deposits.length > 0) {
+                    historyContainer.innerHTML = '';
+                    data.deposits.forEach(dep => {
+                        let statusColor = dep.status === 'approved' ? '#34d399' : (dep.status === 'rejected' ? '#f87171' : '#fbbf24');
+                        let time = new Date(dep.createdAt).toLocaleString();
+                        historyContainer.innerHTML += `
+                            <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid #7c3aed; padding: 10px; border-radius: 10px; font-size: 12px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span><b>Amount:</b> ₹${dep.amount}</span>
+                                    <span style="color: ${statusColor}; text-transform: uppercase; font-weight: bold;">${dep.status}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; color: #94a3b8; font-size: 11px;">
+                                    <span>UTR: ${dep.utr}</span>
+                                    <span>${time}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    historyContainer.innerHTML = '<p style="font-size: 12px; color: #94a3b8; text-align: center;">No deposit history found.</p>';
+                }
+            } catch (e) {
+                document.getElementById('userDepositHistory').innerHTML = '<p style="font-size: 12px; color: #f87171; text-align: center;">Failed to load history</p>';
+            }
+        }
+
         function setAmount(amt, el) {
             selectedAmount = amt;
             document.getElementById('depositAmount').value = amt;
@@ -645,7 +690,7 @@
             backBtn.onclick = null;
             backBtn.href = 'win-go.html';
             
-            fetchWalletBalance();
+            refreshData();
         }
 
         async function submitDeposit() {
@@ -669,9 +714,8 @@
                 let data = await res.json();
                 if (data.success) {
                     showToast('Deposit request submitted successfully!');
-                    setTimeout(() => {
-                        window.location.href = 'win-go.html';
-                    }, 1500);
+                    document.getElementById('utrNumber').value = '';
+                    goBackToStep1(); // Wapas amount selection page par le aayega aur history update kar dega
                 } else {
                     showToast(data.message || 'Error submitting request');
                 }
