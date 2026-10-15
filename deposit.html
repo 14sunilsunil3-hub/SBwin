@@ -213,26 +213,6 @@
             font-size: 16px;
             margin-bottom: 8px;
         }
-        
-        /* Admin Floating Button on QR Page */
-        .admin-floating-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            font-size: 15px;
-            z-index: 10;
-        }
 
         /* Bottom Floating Admin Panel Button */
         .admin-panel-floating {
@@ -365,9 +345,6 @@
 
     <div id="toast">Success!</div>
 
-    <!-- Hidden file input for gallery upload -->
-    <input type="file" id="qrFileInput" accept="image/*" class="hidden" onchange="handleGalleryQRUpload(event)">
-
     <!-- Floating Admin Panel Button -->
     <button id="adminPanelFloatingBtn" class="admin-panel-floating hidden" onclick="openAdminPanel()">
         <i class="fa-solid fa-user-shield"></i> Deposit Admin Panel
@@ -459,13 +436,9 @@
 
             <!-- QR / UPI Payment Card -->
             <div class="card qr-section">
-                <button id="adminQRBtn" class="admin-floating-btn hidden" onclick="triggerGalleryUpload()" title="Upload QR from Gallery">
-                    <i class="fa-solid fa-image"></i>
-                </button>
-
                 <div class="title" style="text-align: left;">Scan QR & Pay via any UPI App</div>
                 <div class="qr-box">
-                    <img id="qrImageDisplay" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=yourupi@oksbi&pn=SBWIN" alt="UPI QR Code">
+                    <img id="qrImageDisplay" src="assets/qr-code.png" alt="UPI QR Code">
                 </div>
                 <div class="upi-id-text">UPI ID: <span id="upiIdDisplay">yourupi@oksbi</span></div>
                 <p style="font-size: 12px; color: #94a3b8;">Payment karne ke baad 12-digit UTR/Reference number niche enter karein.</p>
@@ -490,7 +463,6 @@
             if (userId) {
                 refreshData();
             }
-            loadSavedQR();
             checkAdminAccess();
             setupDynamicBackButton();
         };
@@ -520,61 +492,7 @@
 
         function checkAdminAccess() {
             if (isAdmin) {
-                document.getElementById('adminQRBtn').classList.remove('hidden');
                 document.getElementById('adminPanelFloatingBtn').classList.remove('hidden');
-            }
-        }
-
-        async function loadSavedQR() {
-            try {
-                let res = await fetch('/api/admin/qr-settings');
-                let data = await res.json();
-                if (data.success) {
-                    if (data.qrImage) {
-                        document.getElementById('qrImageDisplay').src = data.qrImage;
-                    }
-                    if (data.upiId) {
-                        document.getElementById('upiIdDisplay').textContent = data.upiId;
-                    }
-                }
-            } catch (e) {
-                console.log("Error loading QR from server");
-            }
-        }
-
-        function triggerGalleryUpload() {
-            document.getElementById('qrFileInput').click();
-        }
-
-        function handleGalleryQRUpload(event) {
-            let file = event.target.files[0];
-            if (file) {
-                let reader = new FileReader();
-                reader.onload = async function(e) {
-                    let base64Image = e.target.result;
-                    let currentUpi = document.getElementById('upiIdDisplay').textContent;
-                    let newUpi = prompt("Enter UPI ID associated with this QR:", currentUpi);
-                    let finalUpi = newUpi ? newUpi : currentUpi;
-
-                    try {
-                        let res = await fetch('/api/admin/update-qr', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ upiId: finalUpi, qrImage: base64Image })
-                        });
-                        let data = await res.json();
-                        if (data.success) {
-                            document.getElementById('qrImageDisplay').src = base64Image;
-                            document.getElementById('upiIdDisplay').textContent = finalUpi;
-                            showToast('QR Code uploaded & saved globally!');
-                        } else {
-                            showToast(data.message || 'Failed to save QR on server');
-                        }
-                    } catch (err) {
-                        showToast('Server connection error');
-                    }
-                };
-                reader.readAsDataURL(file);
             }
         }
 
