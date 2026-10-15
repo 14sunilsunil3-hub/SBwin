@@ -70,7 +70,6 @@
             font-size: 18px;
             font-weight: bold;
         }
-        /* Tab Navigation Bar */
         .tab-bar {
             position: fixed;
             top: 68px;
@@ -222,11 +221,10 @@
 
     <div id="toast">Success!</div>
 
-    <!-- Rejection Reason Modal -->
     <div id="rejectModal" class="modal-overlay">
         <div class="modal-box">
-            <div style="font-size: 16px; font-weight: bold; color: #f87171; margin-bottom: 12px;" id="modalTitleText">Enter Rejection Reason</div>
-            <textarea id="rejectReasonInput" placeholder="e.g. Incorrect UTR or Details mismatch"></textarea>
+            <div style="font-size: 16px; font-weight: bold; color: #f87171; margin-bottom: 12px;">Enter Rejection Reason</div>
+            <textarea id="rejectReasonInput" placeholder="e.g. Incorrect details"></textarea>
             <div style="display: flex; gap: 10px;">
                 <button class="reject-btn" onclick="closeRejectModal()">Cancel</button>
                 <button class="approve-btn" onclick="confirmReject()">Submit Reject</button>
@@ -242,25 +240,21 @@
         <div class="header-right"></div>
     </div>
 
-    <!-- Tab Buttons -->
     <div class="tab-bar">
         <button class="tab-btn active" id="depositTabBtn" onclick="switchTab('deposit')">Deposit Control</button>
         <button class="tab-btn" id="withdrawalTabBtn" onclick="switchTab('withdrawal')">Withdrawal Control</button>
     </div>
 
     <div class="container">
-        <!-- Search Box -->
         <div class="search-box-wrap">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" placeholder="Search by Order No, UTR or Phone..." oninput="filterCurrentList()">
+            <input type="text" id="searchInput" placeholder="Search by Order No..." oninput="filterCurrentList()">
         </div>
 
-        <!-- Deposit Section -->
         <div id="depositSection" class="requests-list">
             <p style="text-align:center; color:#94a3b8; margin-top:20px;">Loading deposit requests...</p>
         </div>
 
-        <!-- Withdrawal Section -->
         <div id="withdrawalSection" class="requests-list hidden">
             <p style="text-align:center; color:#94a3b8; margin-top:20px;">Loading withdrawal requests...</p>
         </div>
@@ -354,9 +348,11 @@
                 let userPhone = wit.userId ? wit.userId.phone : (wit.mobile || 'Unknown');
                 let uid = wit.userId ? wit.userId.uid : '---';
                 let time = new Date(wit.createdAt).toLocaleString();
+                let orderNo = wit.orderNo || ('SBW_W' + (100000 + index));
 
                 container.innerHTML += `
-                    <div class="req-item">
+                    <div class="req-item" data-orderno="${orderNo}">
+                        <p><b>Order No:</b> <span style="color:#fbbf24; font-weight:bold;">${orderNo}</span></p>
                         <p><b>User UID:</b> ${uid} (${userPhone})</p>
                         <p><b>Amount:</b> <span style="color:#34d399; font-weight:bold; font-size:15px;">₹${wit.amount}</span></p>
                         <p><b>Name:</b> ${wit.accountHolderName || 'N/A'}</p>
@@ -378,17 +374,13 @@
             if (currentTab === 'deposit') {
                 let filtered = allDeposits.filter(dep => {
                     let orderNo = (dep.orderNo || '').toLowerCase();
-                    let utr = (dep.utr || '').toLowerCase();
-                    let phone = (dep.userId && dep.userId.phone) ? dep.userId.phone.toLowerCase() : '';
-                    return orderNo.includes(query) || utr.includes(query) || phone.includes(query);
+                    return orderNo.includes(query);
                 });
                 renderDeposits(filtered);
             } else {
-                let filtered = allWithdrawals.filter(wit => {
-                    let upi = (wit.upiId || '').toLowerCase();
-                    let name = (wit.accountHolderName || '').toLowerCase();
-                    let phone = (wit.userId && wit.userId.phone) ? wit.userId.phone.toLowerCase() : (wit.mobile || '').toLowerCase();
-                    return upi.includes(query) || name.includes(query) || phone.includes(query);
+                let filtered = allWithdrawals.filter((wit, index) => {
+                    let orderNo = (wit.orderNo || ('SBW_W' + (100000 + index))).toLowerCase();
+                    return orderNo.includes(query);
                 });
                 renderWithdrawals(filtered);
             }
