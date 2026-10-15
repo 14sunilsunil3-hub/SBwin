@@ -167,20 +167,33 @@
             gap: 10px;
         }
         .instructions-box li i { color: #34d399; margin-top: 3px; }
+        
+        /* Scrollable Amount Grid */
         .amount-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 4px;
         }
+        .amount-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .amount-grid::-webkit-scrollbar-thumb {
+            background: #7c3aed;
+            border-radius: 4px;
+        }
+
         .amt-btn {
             background: rgba(30, 27, 75, 0.6);
             border: 1.5px solid #7c3aed;
             color: #fff;
-            padding: 14px 10px;
+            padding: 12px 8px;
             border-radius: 12px;
             font-weight: bold;
-            font-size: 15px;
+            font-size: 14px;
             cursor: pointer;
             text-align: center;
         }
@@ -383,9 +396,19 @@
                     <div class="amt-btn active" onclick="setAmount(100, this)">₹100</div>
                     <div class="amt-btn" onclick="setAmount(200, this)">₹200</div>
                     <div class="amt-btn" onclick="setAmount(300, this)">₹300</div>
+                    <div class="amt-btn" onclick="setAmount(400, this)">₹400</div>
                     <div class="amt-btn" onclick="setAmount(500, this)">₹500</div>
                     <div class="amt-btn" onclick="setAmount(1000, this)">₹1000</div>
                     <div class="amt-btn" onclick="setAmount(2000, this)">₹2000</div>
+                    <div class="amt-btn" onclick="setAmount(3000, this)">₹3000</div>
+                    <div class="amt-btn" onclick="setAmount(4000, this)">₹4000</div>
+                    <div class="amt-btn" onclick="setAmount(5000, this)">₹5000</div>
+                    <div class="amt-btn" onclick="setAmount(10000, this)">₹10000</div>
+                    <div class="amt-btn" onclick="setAmount(20000, this)">₹20000</div>
+                    <div class="amt-btn" onclick="setAmount(30000, this)">₹30000</div>
+                    <div class="amt-btn" onclick="setAmount(40000, this)">₹40000</div>
+                    <div class="amt-btn" onclick="setAmount(50000, this)">₹50000</div>
+                    <div class="amt-btn" onclick="setAmount(100000, this)">₹100000</div>
                 </div>
                 <input type="number" id="depositAmount" class="input-box" value="100" placeholder="Enter custom amount">
                 <button class="submit-btn" onclick="proceedToPay()">Pay Now</button>
