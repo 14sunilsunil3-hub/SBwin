@@ -567,7 +567,7 @@
                     container.innerHTML = '';
                     data.deposits.forEach((dep, index) => {
                         let isApproved = dep.status === 'approved';
-                        let displayStatus = isApproved ? 'complete' : dep.status;
+                        let displayStatus = isApproved ? 'complete' : (dep.status === 'rejected' || dep.status === 'reject' ? 'failed' : dep.status);
                         let statusColor = isApproved ? '#34d399' : '#f87171';
                         let time = new Date(dep.createdAt).toLocaleString();
                         let orderNo = dep.orderNo || ('SBW' + (100000 + index));
@@ -599,7 +599,7 @@
             if (!dep) return;
 
             let isApproved = dep.status === 'approved';
-            let displayStatus = isApproved ? 'complete' : dep.status;
+            let displayStatus = isApproved ? 'complete' : (dep.status === 'rejected' || dep.status === 'reject' ? 'failed' : dep.status);
             let statusColor = isApproved ? '#34d399' : '#f87171';
             let time = new Date(dep.createdAt).toLocaleString();
             let orderNo = dep.orderNo || 'SBW---';
