@@ -94,7 +94,6 @@
             letter-spacing: 0.5px;
         }
         
-        /* Wallet Balance Card Styling */
         .wallet-card {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(124, 58, 237, 0.2));
             border: 1.5px solid #34d399;
@@ -135,7 +134,6 @@
             transform: rotate(180deg);
         }
 
-        /* Notice Box Styling */
         .notice-box {
             background: rgba(239, 68, 68, 0.15);
             border: 1px dashed #f87171;
@@ -151,7 +149,6 @@
             margin-right: 6px;
         }
 
-        /* Top Bar in Step 2 */
         .step2-top-bar {
             display: flex;
             justify-content: space-between;
@@ -173,7 +170,6 @@
             color: #fbbf24;
         }
 
-        /* Recharge Instructions Styling */
         .instructions-box {
             background: rgba(15, 23, 42, 0.75);
             border: 1px solid #7c3aed;
@@ -257,7 +253,6 @@
             object-fit: contain;
         }
 
-        /* Action Buttons Row at the bottom of Step 2 */
         .step2-actions {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -288,7 +283,27 @@
             box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
         }
 
-        /* Custom Popup Modals */
+        /* Draggable Floating Admin Icon Button */
+        .admin-panel-floating {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #7c3aed, #10b981);
+            color: white;
+            border: 2px solid #34d399;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: none;
+        }
+
         .custom-modal-overlay {
             position: fixed;
             inset: 0;
@@ -366,97 +381,6 @@
             height: 16px;
         }
 
-        /* Bottom Floating Admin Panel Button */
-        .admin-panel-floating {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background: linear-gradient(135deg, #7c3aed, #10b981);
-            color: white;
-            border: 2px solid #34d399;
-            padding: 14px 22px;
-            border-radius: 35px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Admin Modal Styling */
-        .admin-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100000;
-            padding: 20px;
-        }
-        .admin-modal {
-            background: #1e1b4b;
-            border: 2px solid #34d399;
-            width: 100%;
-            max-width: 480px;
-            max-height: 85vh;
-            border-radius: 22px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.9);
-        }
-        .admin-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-            border-bottom: 1px solid rgba(124, 58, 237, 0.4);
-            padding-bottom: 12px;
-        }
-        .admin-requests-list {
-            overflow-y: auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .req-item {
-            background: rgba(15, 23, 42, 0.9);
-            border: 1px solid #7c3aed;
-            padding: 16px;
-            border-radius: 14px;
-            font-size: 13px;
-        }
-        .req-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
-        }
-        .approve-btn {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            flex: 1;
-        }
-        .reject-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            flex: 1;
-        }
-
         .submit-btn {
             width: 100%;
             background: linear-gradient(135deg, #059669, #10b981);
@@ -497,23 +421,10 @@
 
     <div id="toast">Success!</div>
 
-    <!-- Floating Admin Panel Button -->
-    <button id="adminPanelFloatingBtn" class="admin-panel-floating hidden" onclick="openAdminPanel()">
-        <i class="fa-solid fa-user-shield"></i> Deposit Admin Panel
+    <!-- Draggable Floating Admin Icon Button -->
+    <button id="adminPanelFloatingBtn" class="admin-panel-floating hidden" onclick="goToAdminPage()">
+        <i class="fa-solid fa-user-shield"></i>
     </button>
-
-    <!-- Admin Panel Modal -->
-    <div id="adminModalOverlay" class="admin-modal-overlay">
-        <div class="admin-modal">
-            <div class="admin-modal-header">
-                <h3 style="color: #34d399; font-size: 18px;">Deposit Requests Manager</h3>
-                <button onclick="closeAdminPanel()" style="background:none; border:none; color:#fff; font-size:22px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="admin-requests-list" id="adminRequestsList">
-                <p style="text-align:center; color:#94a3b8; margin-top:20px;">Loading requests...</p>
-            </div>
-        </div>
-    </div>
 
     <!-- POPUP 1: Cancel Transaction Warning Modal -->
     <div id="cancelWarningModal" class="custom-modal-overlay">
@@ -620,13 +531,11 @@
 
         <!-- STEP 2: QR & UTR View -->
         <div id="step2View" class="hidden">
-            <!-- Amount and Timer Top Bar -->
             <div class="step2-top-bar">
                 <div class="step2-amount">₹<span id="displaySelectedAmt">100.00</span></div>
                 <div class="step2-timer" id="countdownTimer">10:00</div>
             </div>
 
-            <!-- QR / UPI Payment Card -->
             <div class="card qr-section">
                 <div class="title" style="text-align: left;">Scan QR & Pay via any UPI App</div>
                 <div class="qr-box">
@@ -642,7 +551,6 @@
                 <input type="text" id="utrNumber" class="input-box" placeholder="Enter 12-digit UTR number" maxlength="12" oninput="updateSubmitButtonState()">
             </div>
 
-            <!-- Bottom Cancel & Submit Action Buttons -->
             <div class="step2-actions">
                 <button class="cancel-btn-bottom" onclick="handleCancelClick()">Cancel</button>
                 <button id="bottomSubmitBtn" class="submit-btn-bottom" onclick="submitDeposit()" style="opacity: 0.6; pointer-events: none;">Submit (UTR not entered)</button>
@@ -665,7 +573,40 @@
                 refreshData();
             }
             checkAdminAccess();
+            initDraggableButton();
         };
+
+        // Draggable floating button logic
+        function initDraggableButton() {
+            const btn = document.getElementById('adminPanelFloatingBtn');
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+
+            btn.addEventListener('pointerdown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                initialX = btn.offsetLeft;
+                initialY = btn.offsetTop;
+                btn.setPointerCapture(e.pointerId);
+            });
+
+            btn.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                let dx = e.clientX - startX;
+                let dy = e.clientY - startY;
+                btn.style.right = 'auto';
+                btn.style.bottom = 'auto';
+                btn.style.left = (initialX + dx) + 'px';
+                btn.style.top = (initialY + dy) + 'px';
+            });
+
+            btn.addEventListener('pointerup', () => { isDragging = false; });
+        }
+
+        function goToAdminPage() {
+            window.location.href = 'admin.html';
+        }
 
         function startCountdown() {
             clearInterval(timerInterval);
@@ -765,74 +706,6 @@
             }
         }
 
-        async function openAdminPanel() {
-            document.getElementById('adminModalOverlay').style.display = 'flex';
-            let listContainer = document.getElementById('adminRequestsList');
-            listContainer.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:20px;">Loading requests...</p>';
-
-            try {
-                let res = await fetch('/api/admin/requests');
-                let data = await res.json();
-                if (data.success) {
-                    listContainer.innerHTML = '';
-                    let pendingDeposits = data.deposits.filter(d => d.status === 'pending');
-                    
-                    if (pendingDeposits.length === 0) {
-                        listContainer.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:20px;">No pending deposit requests.</p>';
-                        return;
-                    }
-
-                    pendingDeposits.forEach(dep => {
-                        let userPhone = dep.userId ? dep.userId.phone : 'Unknown';
-                        let uid = dep.userId ? dep.userId.uid : '---';
-                        let time = new Date(dep.createdAt).toLocaleString();
-                        let orderNo = dep.orderNo || 'SBW' + Math.floor(100000 + Math.random() * 900000);
-
-                        listContainer.innerHTML += `
-                            <div class="req-item">
-                                <p><b>Order No:</b> <span style="color:#fbbf24; font-weight:bold;">${orderNo}</span></p>
-                                <p><b>User UID:</b> ${uid} (${userPhone})</p>
-                                <p><b>Amount:</b> <span style="color:#34d399; font-weight:bold; font-size:15px;">₹${dep.amount}</span></p>
-                                <p><b>UTR:</b> <span style="font-family:monospace; color:#fbbf24; font-size:14px;">${dep.utr}</span></p>
-                                <p style="font-size:11px; color:#94a3b8; margin-top:4px;">Time: ${time}</p>
-                                <div class="req-actions">
-                                    <button class="approve-btn" onclick="handleAdminAction('${dep._id}', 'approve')">Approve</button>
-                                    <button class="reject-btn" onclick="handleAdminAction('${dep._id}', 'reject')">Reject</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    listContainer.innerHTML = '<p style="text-align:center; color:#f87171; margin-top:20px;">Failed to load requests</p>';
-                }
-            } catch (e) {
-                listContainer.innerHTML = '<p style="text-align:center; color:#f87171; margin-top:20px;">Server connection error</p>';
-            }
-        }
-
-        function closeAdminPanel() {
-            document.getElementById('adminModalOverlay').style.display = 'none';
-        }
-
-        async function handleAdminAction(id, action) {
-            try {
-                let res = await fetch('/api/admin/action', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'deposit', id, action })
-                });
-                let data = await res.json();
-                if (data.success) {
-                    showToast(`Deposit ${action}d successfully!`);
-                    openAdminPanel();
-                } else {
-                    showToast(data.message || 'Action failed');
-                }
-            } catch (e) {
-                showToast('Server error');
-            }
-        }
-
         async function fetchWalletBalance() {
             if (!userId) return;
             try {
@@ -859,6 +732,8 @@
                         let statusColor = dep.status === 'approved' ? '#34d399' : (dep.status === 'rejected' ? '#f87171' : '#fbbf24');
                         let time = new Date(dep.createdAt).toLocaleString();
                         let orderNo = dep.orderNo || ('SBW' + (100000 + index));
+                        let rejectReasonHTML = dep.status === 'rejected' && dep.rejectReason ? `<div style="color: #f87171; font-size: 11px; margin-top: 4px;">Reason: ${dep.rejectReason}</div>` : '';
+                        
                         historyContainer.innerHTML += `
                             <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid #7c3aed; padding: 12px; border-radius: 12px; font-size: 13px;">
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
@@ -869,7 +744,8 @@
                                     <span><b>Amount:</b> ₹${dep.amount}</span>
                                     <span>UTR: ${dep.utr}</span>
                                 </div>
-                                <div style="color: #94a3b8; font-size: 11px; text-align: right;">${time}</div>
+                                ${rejectReasonHTML}
+                                <div style="color: #94a3b8; font-size: 11px; text-align: right; margin-top: 4px;">${time}</div>
                             </div>
                         `;
                     });
