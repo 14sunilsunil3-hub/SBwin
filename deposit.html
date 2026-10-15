@@ -151,6 +151,33 @@
             margin-right: 6px;
         }
 
+        /* Recharge Instructions Styling */
+        .instructions-box {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid #7c3aed;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .instructions-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .instructions-box li {
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .instructions-box li i {
+            color: #34d399;
+            margin-top: 3px;
+        }
+
         .amount-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -206,6 +233,84 @@
             height: 180px;
             display: block;
             object-fit: contain;
+        }
+
+        /* Custom Popup Modals */
+        .custom-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+            padding: 20px;
+        }
+        .custom-modal {
+            background: #1e1b4b;
+            border: 2px solid #34d399;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 22px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #34d399;
+            text-align: center;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .modal-desc {
+            font-size: 13px;
+            color: #cbd5e1;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .modal-btn-row {
+            display: flex;
+            gap: 12px;
+        }
+        .modal-cancel-btn {
+            background: rgba(30, 27, 75, 0.8);
+            border: 1.5px solid #ef4444;
+            color: #f87171;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+        .modal-confirm-btn {
+            background: linear-gradient(135deg, #059669, #10b981);
+            border: 1.5px solid #34d399;
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+        .reason-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .reason-label input[type="radio"] {
+            accent-color: #10b981;
+            width: 16px;
+            height: 16px;
         }
 
         /* Bottom Floating Admin Panel Button */
@@ -357,9 +462,37 @@
         </div>
     </div>
 
+    <!-- POPUP 1: Cancel Transaction Warning Modal -->
+    <div id="cancelWarningModal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-title">Cancel Transaction</div>
+            <div class="modal-desc">If you have successfully transferred funds, please do not cancel the transaction!</div>
+            <div class="modal-btn-row">
+                <button class="modal-cancel-btn" onclick="openReasonModal()">Confirm Cancellation</button>
+                <button class="modal-confirm-btn" onclick="closeCancelWarningModal()">I have paid</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- POPUP 2: Cancellation Reasons Modal -->
+    <div id="reasonModal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-title">Cancel</div>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <label class="reason-label"><input type="radio" name="cancelReason" value="I don't want to continue payment"> I don't want to continue payment</label>
+                <label class="reason-label"><input type="radio" name="cancelReason" value="Want to use another payment method"> Want to use another payment method</label>
+                <label class="reason-label"><input type="radio" name="cancelReason" value="Bank system is under maintenance"> Bank system is under maintenance</label>
+                <label class="reason-label"><input type="radio" name="cancelReason" value="UPI payment error"> UPI payment error</label>
+                <label class="reason-label"><input type="radio" name="cancelReason" value="Other reasons"> Other reasons</label>
+            </div>
+            <textarea id="otherReasonText" class="input-box" placeholder="Please fill in other reasons" style="height: 80px; resize: none; font-size: 13px;"></textarea>
+            <button class="submit-btn" onclick="submitCancellation()">Confirm Cancellation</button>
+        </div>
+    </div>
+
     <div class="header">
         <div class="header-left">
-            <a id="backBtn" href="assist/win-go.html">&lt;</a>
+            <a id="backBtn" href="#" onclick="handleBackClick(event)">&lt;</a>
         </div>
         <div class="header-center"><h2 id="headerTitle" onclick="handleAdminSecretTap()">Deposit</h2></div>
         <div class="header-right">
@@ -412,6 +545,17 @@
                 <button class="submit-btn" onclick="proceedToPay()">Pay Now</button>
             </div>
 
+            <!-- Recharge Instructions Section (Theme Styled) -->
+            <div class="instructions-box">
+                <div class="title"><i class="fa-solid fa-book" style="margin-right: 6px;"></i> Recharge Instructions</div>
+                <ul>
+                    <li><i class="fa-solid fa-diamond"></i> If the transfer time is up, please fill out the deposit form again.</li>
+                    <li><i class="fa-solid fa-diamond"></i> The transfer amount must match the order you created, otherwise the money cannot be credited successfully.</li>
+                    <li><i class="fa-solid fa-diamond"></i> If you transfer the wrong amount, our company will not be responsible for the lost amount!</li>
+                    <li><i class="fa-solid fa-diamond"></i> Note: do not cancel the deposit order after the money has been transferred.</li>
+                </ul>
+            </div>
+
             <!-- Deposit History Section -->
             <div class="card">
                 <div class="title">Deposit History</div>
@@ -451,19 +595,45 @@
         let userId = localStorage.getItem('userId') || localStorage.getItem('rewards_userId') || sessionStorage.getItem('userId') || sessionStorage.getItem('rewards_userId');
         let isAdmin = localStorage.getItem('isAdmin') === 'true';
         let secretTapCount = 0;
+        let currentView = 'step1';
 
         window.onload = function() {
             if (userId) {
                 refreshData();
             }
             checkAdminAccess();
-            setupDynamicBackButton();
         };
 
-        function setupDynamicBackButton() {
-            const backBtn = document.getElementById('backBtn');
-            let returnPage = localStorage.getItem('deposit_return_page') || 'assist/win-go.html';
-            backBtn.href = returnPage;
+        function handleBackClick(e) {
+            e.preventDefault();
+            if (currentView === 'step2') {
+                // Show cancel warning modal instead of going back directly
+                document.getElementById('cancelWarningModal').style.display = 'flex';
+            } else {
+                let returnPage = localStorage.getItem('deposit_return_page') || 'assist/win-go.html';
+                window.location.href = returnPage;
+            }
+        }
+
+        function closeCancelWarningModal() {
+            document.getElementById('cancelWarningModal').style.display = 'none';
+        }
+
+        function openReasonModal() {
+            document.getElementById('cancelWarningModal').style.display = 'none';
+            document.getElementById('reasonModal').style.display = 'flex';
+        }
+
+        function submitCancellation() {
+            let selectedReason = document.querySelector('input[name="cancelReason"]:checked');
+            let otherText = document.getElementById('otherReasonText').value.trim();
+            if (!selectedReason && !otherText) {
+                showToast('Please select or enter a cancellation reason!');
+                return;
+            }
+            document.getElementById('reasonModal').style.display = 'none';
+            goBackToStep1();
+            showToast('Deposit order cancelled.');
         }
 
         function refreshData() {
@@ -510,9 +680,11 @@
                         let userPhone = dep.userId ? dep.userId.phone : 'Unknown';
                         let uid = dep.userId ? dep.userId.uid : '---';
                         let time = new Date(dep.createdAt).toLocaleString();
+                        let orderNo = dep.orderNo || 'SBW' + Math.floor(100000 + Math.random() * 900000);
 
                         listContainer.innerHTML += `
                             <div class="req-item">
+                                <p><b>Order No:</b> <span style="color:#fbbf24; font-weight:bold;">${orderNo}</span></p>
                                 <p><b>User UID:</b> ${uid} (${userPhone})</p>
                                 <p><b>Amount:</b> <span style="color:#34d399; font-weight:bold; font-size:15px;">₹${dep.amount}</span></p>
                                 <p><b>UTR:</b> <span style="font-family:monospace; color:#fbbf24; font-size:14px;">${dep.utr}</span></p>
@@ -577,19 +749,21 @@
                 let historyContainer = document.getElementById('userDepositHistory');
                 if (data.success && data.deposits.length > 0) {
                     historyContainer.innerHTML = '';
-                    data.deposits.forEach(dep => {
+                    data.deposits.forEach((dep, index) => {
                         let statusColor = dep.status === 'approved' ? '#34d399' : (dep.status === 'rejected' ? '#f87171' : '#fbbf24');
                         let time = new Date(dep.createdAt).toLocaleString();
+                        let orderNo = dep.orderNo || ('SBW' + (100000 + index));
                         historyContainer.innerHTML += `
                             <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid #7c3aed; padding: 12px; border-radius: 12px; font-size: 13px;">
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                                    <span><b>Amount:</b> ₹${dep.amount}</span>
+                                    <span style="color: #fbbf24; font-weight: bold;">Order: ${orderNo}</span>
                                     <span style="color: ${statusColor}; text-transform: uppercase; font-weight: bold;">${dep.status}</span>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; color: #94a3b8; font-size: 12px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                    <span><b>Amount:</b> ₹${dep.amount}</span>
                                     <span>UTR: ${dep.utr}</span>
-                                    <span>${time}</span>
                                 </div>
+                                <div style="color: #94a3b8; font-size: 11px; text-align: right;">${time}</div>
                             </div>
                         `;
                     });
@@ -620,24 +794,14 @@
             document.getElementById('step1View').classList.add('hidden');
             document.getElementById('step2View').classList.remove('hidden');
             document.getElementById('headerTitle').textContent = 'Scan & Pay';
-
-            const backBtn = document.getElementById('backBtn');
-            backBtn.href = "#";
-            backBtn.onclick = function(e) {
-                e.preventDefault();
-                goBackToStep1();
-            };
+            currentView = 'step2';
         }
 
         function goBackToStep1() {
             document.getElementById('step2View').classList.add('hidden');
             document.getElementById('step1View').classList.remove('hidden');
             document.getElementById('headerTitle').textContent = 'Deposit';
-            
-            const backBtn = document.getElementById('backBtn');
-            backBtn.onclick = null;
-            setupDynamicBackButton();
-            
+            currentView = 'step1';
             refreshData();
         }
 
@@ -653,15 +817,17 @@
                 return;
             }
 
+            let orderNo = 'SBW' + Math.floor(100000 + Math.random() * 900000);
+
             try {
                 let res = await fetch('/api/deposit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, amount: selectedAmount, utr })
+                    body: JSON.stringify({ userId, amount: selectedAmount, utr, orderNo })
                 });
                 let data = await res.json();
                 if (data.success) {
-                    showToast('Deposit request submitted successfully!');
+                    showToast('Deposit request submitted successfully! Order: ' + orderNo);
                     document.getElementById('utrNumber').value = '';
                     goBackToStep1();
                 } else {
