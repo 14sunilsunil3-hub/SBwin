@@ -23,7 +23,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cors());
 
-// Serve static files from root directory[span_2](start_span)[span_2](end_span)
+// Serve static files from root directory
 app.use(express.static(path.join(__dirname)));
 
 // Explicit routes to prevent 404 Not Found errors on Render
@@ -87,7 +87,7 @@ const depositSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     amount: Number,
     utr: String,
-    orderNo: String,
+    orderNo: { type: String },
     rejectReason: String,
     status: { type: String, default: 'pending' },
     createdAt: { type: Date, default: Date.now }
@@ -103,6 +103,7 @@ const withdrawalSchema = new mongoose.Schema({
     accountNumber: String,
     ifsc: String,
     mobile: String,
+    orderNo: { type: String },
     status: { type: String, default: 'pending' },
     createdAt: { type: Date, default: Date.now }
 });
@@ -167,7 +168,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'auth.html'));
 });
 
-// Registration API - Permanent Save to MongoDB
+// Registration API
 app.post('/api/register', async (req, res) => {
     try {
         const { phone, password, refUid } = req.body;
@@ -220,7 +221,6 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Reset Password API
 app.post('/api/reset-password', async (req, res) => {
     try {
         const { phone, newPassword } = req.body;
@@ -258,7 +258,6 @@ app.get('/api/user/mobile/:mobile', async (req, res) => {
     }
 });
 
-// Get user deposits history route
 app.get('/api/user-deposits/:userId', async (req, res) => {
     try {
         const deposits = await Deposit.find({ userId: req.params.userId }).sort({ createdAt: -1 });
@@ -268,10 +267,13 @@ app.get('/api/user-deposits/:userId', async (req, res) => {
     }
 });
 
+// Deposit API with Server-side Order No Generation
 app.post('/api/deposit', async (req, res) => {
     try {
         const { userId, amount, utr, orderNo } = req.body;
-        const deposit = new Deposit({ userId, amount, utr, orderNo });
+        const finalOrderNo = orderNo || ('SBW' + Math.floor(100000 + Math.random() * 900000));
+        
+        const deposit = new Deposit({ userId, amount, utr, orderNo: finalOrderNo });
         await deposit.save();
         res.json({ success: true, message: "Deposit request submitted successfully!" });
     } catch (err) {
@@ -279,6 +281,7 @@ app.post('/api/deposit', async (req, res) => {
     }
 });
 
+// Withdrawal API with Server-side Order No Generation
 app.post('/api/withdraw', async (req, res) => {
     try {
         const { userId, amount, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile } = req.body;
@@ -291,7 +294,8 @@ app.post('/api/withdraw', async (req, res) => {
         user.winningsBalance -= Number(amount);
         await user.save();
 
-        const withdrawal = new Withdrawal({ userId, amount, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile });
+        const finalOrderNo = 'SBW_W' + Math.floor(100000 + Math.random() * 900000);
+        const withdrawal = new Withdrawal({ userId, amount, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile, orderNo: finalOrderNo });
         await withdrawal.save();
 
         res.json({ success: true, message: "Withdrawal request submitted successfully!" });
