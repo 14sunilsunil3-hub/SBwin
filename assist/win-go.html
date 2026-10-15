@@ -111,6 +111,10 @@
             font-size: 15px;
             cursor: pointer;
             color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .btn-withdraw { background: linear-gradient(135deg, #dc2626, #ef4444); border: 1px solid #f87171; }
         .btn-deposit { background: linear-gradient(135deg, #059669, #10b981); border: 1px solid #34d399; }
@@ -486,7 +490,6 @@
             border: 1px solid #7c3aed;
         }
 
-        /* YaarWin Style Trend Chart View */
         .stat-card {
             background: rgba(30, 27, 75, 0.6);
             border: 1px solid #7c3aed;
@@ -850,7 +853,6 @@
         }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* Full Screen Theme Loading Overlay */
         #fullPageLoader {
             position: fixed;
             inset: 0;
@@ -890,7 +892,6 @@
 </head>
 <body>
 
-    <!-- Theme Loading Overlay -->
     <div id="fullPageLoader">
         <div class="spinner-theme"></div>
         <div style="margin-top: 18px; font-weight: 800; font-size: 16px; color: #34d399; letter-spacing: 1px;">
@@ -913,7 +914,6 @@
         </div>
     </div>
 
-    <!-- Bet Sheet Modal & Click-Outside Overlay -->
     <div id="betModalOverlay" class="bet-modal-overlay" onclick="closeBetModal()"></div>
     <div id="betModal" class="bet-modal">
         <div id="modalTitle" style="font-size: 18px; font-weight: 900; text-align: center; margin-bottom: 15px;">Select Bet</div>
@@ -953,7 +953,6 @@
         </div>
     </div>
 
-    <!-- Fixed Header Screen Navigation Bar -->
     <div class="header">
         <div class="header-left"><a href="../index.html">&lt;</a></div>
         <div class="header-center"><h2>SBWIN</h2></div>
@@ -966,7 +965,7 @@
             <div class="balance" id="userWallet">₹0.00</div>
             <div class="wallet-btns" style="margin-top: 12px;">
                 <button class="btn btn-withdraw" onclick="showToast('Opening Withdraw...')">Withdraw</button>
-                <button class="btn btn-deposit" onclick="showToast('Opening Deposit...')">Deposit</button>
+                <a href="../deposit.html" class="btn btn-deposit" onclick="localStorage.setItem('deposit_return_page', 'assist/win-go.html')">Deposit</a>
             </div>
         </div>
 
@@ -1055,7 +1054,6 @@
         </div>
 
         <div class="history-card" id="historyCardContainer">
-            <!-- Game History View -->
             <div id="gameHistoryView">
                 <table class="history-table" style="width:100%; border-collapse:collapse; font-size:13px; text-align:center;">
                     <thead>
@@ -1070,7 +1068,6 @@
                 </table>
             </div>
 
-            <!-- Chart / Trend View (YaarWin Style) -->
             <div id="chartView" style="display: none;">
                 <div class="stat-card">
                     <div class="stat-row">
@@ -1092,7 +1089,6 @@
                 </div>
             </div>
 
-            <!-- My History View -->
             <div id="myHistoryView" style="display: none;">
                 <div class="my-history-list" id="myHistoryList"></div>
             </div>
@@ -1221,10 +1217,6 @@
                     checkUserRoundResult(resultData.period);
                 }
             });
-        });
-
-        window.addEventListener('popstate', function () {
-            window.location.href = '../index.html';
         });
 
         function openBetModal(type, val) {
