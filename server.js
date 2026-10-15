@@ -44,6 +44,14 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
+// Settings Schema for Global QR & UPI Storage
+const settingsSchema = new mongoose.Schema({
+    key: { type: String, unique: true, default: 'payment_config' },
+    upiId: { type: String, default: 'yourupi@oksbi' },
+    qrImage: { type: String, default: '' }
+});
+const Settings = mongoose.model('Settings', settingsSchema);
+
 const gameResultSchema = new mongoose.Schema({
     timerType: { type: String, default: '30s' }, 
     period: { type: String, required: true, unique: true },
@@ -120,6 +128,13 @@ async function setupAdminAccount() {
             adminUser.winningsBalance = 0;
             await adminUser.save();
         }
+
+        // Initialize default settings if not exists
+        let settings = await Settings.findOne({ key: 'payment_config' });
+        if (!settings) {
+            settings = new Settings();
+            await settings.save();
+        }
     } catch (err) {
         console.error("Admin setup error:", err.message);
     }
@@ -154,6 +169,35 @@ const gameStates = {
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'auth.html'));
+});
+
+// Get Global QR and UPI Settings API
+app.get('/api/admin/qr-settings', async (req, res) => {
+    try {
+        let settings = await Settings.findOne({ key: 'payment_config' });
+        if (!settings) {
+            settings = new Settings();
+            await settings.save();
+        }
+        res.json({ success: true, upiId: settings.upiId, qrImage: settings.qrImage });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// Update Global QR and UPI Settings API (Admin)
+app.post('/api/admin/update-qr', async (req, res) => {
+    try {
+        const { upiId, qrImage } = req.body;
+        let settings = await Settings.findOneAndUpdate(
+            { key: 'payment_config' },
+            { upiId, qrImage },
+            { upsert: true, new: true }
+        );
+        res.json({ success: true, message: "QR & UPI updated successfully!" });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
 });
 
 // Registration API - Permanent Save to MongoDB
