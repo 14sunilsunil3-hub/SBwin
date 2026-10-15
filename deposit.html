@@ -151,15 +151,24 @@
             margin-right: 6px;
         }
 
-        /* Timer Display Styling */
-        .timer-box {
-            background: rgba(124, 58, 237, 0.2);
-            border: 1px solid #7c3aed;
-            padding: 12px;
-            border-radius: 14px;
-            text-align: center;
-            margin-bottom: 16px;
-            font-size: 15px;
+        /* Top Bar in Step 2 matching the screenshot style */
+        .step2-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1.5px solid #7c3aed;
+            padding: 16px 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        .step2-amount {
+            font-size: 22px;
+            font-weight: 900;
+            color: #34d399;
+        }
+        .step2-timer {
+            font-size: 18px;
             font-weight: bold;
             color: #fbbf24;
         }
@@ -246,6 +255,37 @@
             height: 180px;
             display: block;
             object-fit: contain;
+        }
+
+        /* Action Buttons Row at the bottom of Step 2 */
+        .step2-actions {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .cancel-btn-bottom {
+            background: rgba(30, 27, 75, 0.8);
+            border: 1.5px solid #ef4444;
+            color: #f87171;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .submit-btn-bottom {
+            background: linear-gradient(135deg, #059669, #10b981);
+            border: 1.5px solid #34d399;
+            color: white;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
         }
 
         /* Custom Popup Modals */
@@ -558,7 +598,7 @@
                 <button class="submit-btn" onclick="proceedToPay()">Pay Now</button>
             </div>
 
-            <!-- Recharge Instructions Section (Theme Styled) -->
+            <!-- Recharge Instructions Section -->
             <div class="instructions-box">
                 <div class="title"><i class="fa-solid fa-book" style="margin-right: 6px;"></i> Recharge Instructions</div>
                 <ul>
@@ -578,16 +618,12 @@
             </div>
         </div>
 
-        <!-- STEP 2: QR & UTR View -->
+        <!-- STEP 2: QR & UTR View (Styled like ArUpiPay reference) -->
         <div id="step2View" class="hidden">
-            <div class="notice-box">
-                <i class="fa-solid fa-triangle-exclamation"></i> 
-                <b>Notice:</b> Please pay your selected amount (<span id="displaySelectedAmt" style="color: #fff; font-weight: bold;">₹100</span>) exactly, otherwise your deposit will be rejected!
-            </div>
-
-            <!-- 10 Min Countdown Timer Box -->
-            <div class="timer-box">
-                <i class="fa-solid fa-clock"></i> Time Remaining: <span id="countdownTimer">10:00</span>
+            <!-- Amount and Timer Top Bar -->
+            <div class="step2-top-bar">
+                <div class="step2-amount">₹<span id="displaySelectedAmt">100.00</span></div>
+                <div class="step2-timer" id="countdownTimer">10:00</div>
             </div>
 
             <!-- QR / UPI Payment Card -->
@@ -596,13 +632,20 @@
                 <div class="qr-box">
                     <img id="qrImageDisplay" src="assets/qr-code.png" alt="UPI QR Code">
                 </div>
-                <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Payment karne ke baad 12-digit UTR/Reference number niche enter karein.</p>
+                <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">1. Please use another device to scan the QR code with your payment app.</p>
+                <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">2. If you scan the QR code from this device's gallery, the payment amount may be limited (≤2000).</p>
             </div>
 
             <div class="card">
-                <div class="title">Enter UTR / Transaction ID</div>
-                <input type="text" id="utrNumber" class="input-box" placeholder="Enter 12-digit UTR number" maxlength="12">
-                <button class="submit-btn" onclick="submitDeposit()">Submit Deposit Request</button>
+                <div class="title" style="color: #f87171;">Input UTR / Paste UTR</div>
+                <p style="font-size: 12px; color: #f87171; margin-bottom: 8px;">If you do not back fill UTR / paste UTR, 100% will fail.</p>
+                <input type="text" id="utrNumber" class="input-box" placeholder="Enter 12-digit UTR number" maxlength="12" oninput="updateSubmitButtonState()">
+            </div>
+
+            <!-- Bottom Cancel & Submit Action Buttons -->
+            <div class="step2-actions">
+                <button class="cancel-btn-bottom" onclick="handleCancelClick()">Cancel</button>
+                <button id="bottomSubmitBtn" class="submit-btn-bottom" onclick="submitDeposit()" style="opacity: 0.6; pointer-events: none;">Submit (UTR not entered)</button>
             </div>
         </div>
 
@@ -615,7 +658,7 @@
         let secretTapCount = 0;
         let currentView = 'step1';
         let timerInterval = null;
-        let timeLeft = 600; // 10 minutes in seconds
+        let timeLeft = 600;
 
         window.onload = function() {
             if (userId) {
@@ -652,6 +695,10 @@
 
         function handleBackClick(e) {
             e.preventDefault();
+            handleCancelClick();
+        }
+
+        function handleCancelClick() {
             if (currentView === 'step2') {
                 document.getElementById('cancelWarningModal').style.display = 'flex';
             } else {
@@ -679,6 +726,20 @@
             document.getElementById('reasonModal').style.display = 'none';
             goBackToStep1();
             showToast('Deposit order cancelled.');
+        }
+
+        function updateSubmitButtonState() {
+            let utr = document.getElementById('utrNumber').value.trim();
+            let submitBtn = document.getElementById('bottomSubmitBtn');
+            if (utr.length >= 6) {
+                submitBtn.style.opacity = '1';
+                submitBtn.style.pointerEvents = 'auto';
+                submitBtn.textContent = 'Submit';
+            } else {
+                submitBtn.style.opacity = '0.6';
+                submitBtn.style.pointerEvents = 'none';
+                submitBtn.textContent = 'Submit (UTR not entered)';
+            }
         }
 
         function refreshData() {
@@ -834,11 +895,11 @@
                 return;
             }
             selectedAmount = parseFloat(amt);
-            document.getElementById('displaySelectedAmt').textContent = '₹' + selectedAmount;
+            document.getElementById('displaySelectedAmt').textContent = selectedAmount.toFixed(2);
 
             document.getElementById('step1View').classList.add('hidden');
             document.getElementById('step2View').classList.remove('hidden');
-            document.getElementById('headerTitle').textContent = 'Scan & Pay';
+            document.getElementById('headerTitle').textContent = 'ArUpiPay';
             currentView = 'step2';
             startCountdown();
         }
@@ -849,6 +910,8 @@
             document.getElementById('step1View').classList.remove('hidden');
             document.getElementById('headerTitle').textContent = 'Deposit';
             currentView = 'step1';
+            document.getElementById('utrNumber').value = '';
+            updateSubmitButtonState();
             refreshData();
         }
 
@@ -875,7 +938,6 @@
                 let data = await res.json();
                 if (data.success) {
                     showToast('Deposit request submitted successfully! Order: ' + orderNo);
-                    document.getElementById('utrNumber').value = '';
                     goBackToStep1();
                 } else {
                     showToast(data.message || 'Error submitting request');
