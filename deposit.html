@@ -355,7 +355,7 @@
     <!-- Hidden file input for gallery upload -->
     <input type="file" id="qrFileInput" accept="image/*" class="hidden" onchange="handleGalleryQRUpload(event)">
 
-    <!-- Floating Admin Panel Button (Visible only when Admin mode is active) -->
+    <!-- Floating Admin Panel Button -->
     <button id="adminPanelFloatingBtn" class="admin-panel-floating hidden" onclick="openAdminPanel()">
         <i class="fa-solid fa-user-shield"></i> Deposit Admin Panel
     </button>
@@ -377,7 +377,6 @@
         <div class="header-left">
             <a id="backBtn" href="win-go.html">&lt;</a>
         </div>
-        <!-- Header title par 5 baar tap karne se admin mode on ho jayega -->
         <div class="header-center"><h2 id="headerTitle" onclick="handleAdminSecretTap()">Deposit</h2></div>
         <div class="header-right">
             <a href="customer-service.html" class="header-right-icon" title="Customer Service">
@@ -439,7 +438,6 @@
 
             <!-- QR / UPI Payment Card -->
             <div class="card qr-section">
-                <!-- Admin Floating Gallery Upload Button -->
                 <button id="adminQRBtn" class="admin-floating-btn hidden" onclick="triggerGalleryUpload()" title="Upload QR from Gallery">
                     <i class="fa-solid fa-image"></i>
                 </button>
@@ -463,7 +461,7 @@
 
     <script>
         let selectedAmount = 100;
-        let userId = localStorage.getItem('rewards_userId') || sessionStorage.getItem('rewards_userId');
+        let userId = localStorage.getItem('userId') || localStorage.getItem('rewards_userId') || sessionStorage.getItem('userId') || sessionStorage.getItem('rewards_userId');
         let isAdmin = localStorage.getItem('isAdmin') === 'true';
         let secretTapCount = 0;
 
@@ -516,14 +514,12 @@
                 reader.onload = function(e) {
                     let base64Image = e.target.result;
                     
-                    // Optional UPI ID update prompt
                     let newUpi = prompt("Enter UPI ID associated with this QR (optional):", document.getElementById('upiIdDisplay').textContent);
                     if (newUpi) {
                         localStorage.setItem('custom_upi_id', newUpi);
                         document.getElementById('upiIdDisplay').textContent = newUpi;
                     }
 
-                    // Save QR Image to LocalStorage permanently
                     localStorage.setItem('custom_qr_image', base64Image);
                     document.getElementById('qrImageDisplay').src = base64Image;
                     showToast('QR Code uploaded & saved permanently!');
@@ -589,7 +585,7 @@
                 let data = await res.json();
                 if (data.success) {
                     showToast(`Deposit ${action}d successfully!`);
-                    openAdminPanel(); // Refresh list
+                    openAdminPanel();
                 } else {
                     showToast(data.message || 'Action failed');
                 }
@@ -601,7 +597,7 @@
         async function fetchWalletBalance() {
             if (!userId) return;
             try {
-                let res = await fetch(`/api/user/balance?userId=${userId}`);
+                let res = await fetch(`/api/user/${userId}`);
                 let data = await res.json();
                 if (data.success) {
                     document.getElementById('userWalletBalance').textContent = parseFloat(data.balance).toFixed(2);
