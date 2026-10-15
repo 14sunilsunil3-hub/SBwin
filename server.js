@@ -23,8 +23,17 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cors());
 
-// Serve static files from root directory
+// Serve static files from root directory[span_2](start_span)[span_2](end_span)
 app.use(express.static(path.join(__dirname)));
+
+// Explicit routes to prevent 404 Not Found errors on Render
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/deposit-admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'deposit-admin.html'));
+});
 
 const MONGO_URI = "mongodb+srv://14sunilsunil3_db_user:W1LlrneQfi7toLpn@cluster1.pr9b0cx.mongodb.net/sbwin_db?retryWrites=true&w=majority";
 
@@ -78,6 +87,8 @@ const depositSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     amount: Number,
     utr: String,
+    orderNo: String,
+    rejectReason: String,
     status: { type: String, default: 'pending' },
     createdAt: { type: Date, default: Date.now }
 });
@@ -209,7 +220,7 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Reset Password API - Only changes when requested via forgot password
+// Reset Password API
 app.post('/api/reset-password', async (req, res) => {
     try {
         const { phone, newPassword } = req.body;
@@ -259,8 +270,8 @@ app.get('/api/user-deposits/:userId', async (req, res) => {
 
 app.post('/api/deposit', async (req, res) => {
     try {
-        const { userId, amount, utr } = req.body;
-        const deposit = new Deposit({ userId, amount, utr });
+        const { userId, amount, utr, orderNo } = req.body;
+        const deposit = new Deposit({ userId, amount, utr, orderNo });
         await deposit.save();
         res.json({ success: true, message: "Deposit request submitted successfully!" });
     } catch (err) {
@@ -301,7 +312,7 @@ app.get('/api/admin/requests', async (req, res) => {
 
 app.post('/api/admin/action', async (req, res) => {
     try {
-        const { type, id, action } = req.body;
+        const { type, id, action, reason } = req.body;
         if (type === 'deposit') {
             const dep = await Deposit.findById(id);
             if (!dep) return res.status(404).json({ success: false, message: "Deposit not found" });
@@ -317,6 +328,9 @@ app.post('/api/admin/action', async (req, res) => {
                 io.emit('refreshBalance');
             } else {
                 dep.status = action;
+                if (action === 'reject' && reason) {
+                    dep.rejectReason = reason;
+                }
                 await dep.save();
             }
         } else if (type === 'withdrawal') {
