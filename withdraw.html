@@ -26,7 +26,7 @@
             max-width: 500px;
             background: linear-gradient(135deg, #1e1b4b, #064e3b);
             min-height: 100vh;
-            padding: 80px 20px 40px 20px;
+            padding: 75px 18px 40px 18px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             position: relative;
         }
@@ -37,8 +37,8 @@
             transform: translateX(-50%);
             width: 100%;
             max-width: 500px;
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
             padding: 14px 16px;
             z-index: 1000;
@@ -53,15 +53,14 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
-            font-size: 20px;
-            text-align: center;
+            font-size: 19px;
         }
-        .header a, .header-right-icon {
+        .header-back-btn {
             background: rgba(30, 27, 75, 0.8);
             border: 1px solid #7c3aed;
             color: #fff;
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -72,19 +71,24 @@
             cursor: pointer;
         }
         .header-right {
-            display: flex;
-            justify-content: flex-end;
+            font-size: 12px;
+            color: #a7f3d0;
+            cursor: pointer;
         }
+
+        .view-page { display: block; }
+        .hidden { display: none !important; }
+
         .card {
             background: rgba(15, 23, 42, 0.75);
             border: 1px solid #7c3aed;
             border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 18px;
+            margin-bottom: 18px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
         .title {
-            font-size: 14px;
+            font-size: 13px;
             color: #a7f3d0;
             font-weight: bold;
             margin-bottom: 12px;
@@ -92,110 +96,213 @@
             letter-spacing: 0.5px;
         }
         .wallet-card {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(124, 58, 237, 0.2));
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(124, 58, 237, 0.25));
             border: 1.5px solid #34d399;
             border-radius: 18px;
-            padding: 18px 20px;
-            margin-bottom: 20px;
+            padding: 18px;
+            margin-bottom: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .wallet-info .label {
-            font-size: 13px;
-            color: #94a3b8;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            font-weight: 600;
-        }
-        .wallet-info .balance {
-            font-size: 24px;
-            font-weight: 900;
-            color: #34d399;
-        }
+        .wallet-info .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+        .wallet-info .balance { font-size: 24px; font-weight: 900; color: #34d399; }
         .refresh-btn {
             background: rgba(30, 27, 75, 0.8);
             border: 1.5px solid #34d399;
             color: #34d399;
-            width: 42px;
-            height: 42px;
+            width: 40px; height: 40px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             cursor: pointer;
         }
-        .notice-box {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px dashed #f87171;
-            padding: 16px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #fca5a5;
+
+        .method-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+        .method-btn {
+            background: rgba(30, 27, 75, 0.6);
+            border: 1.5px solid #7c3aed;
+            color: #94a3b8;
+            padding: 12px 8px;
+            border-radius: 14px;
+            font-weight: bold; font-size: 12px;
+            cursor: pointer; text-align: center;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
         }
-        .input-box {
+        .method-btn.active {
+            background: #10b981; border-color: #34d399; color: #fff;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Mini Bar Structure */
+        .mini-bank-bar {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1.5px solid #7c3aed;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .mini-bank-bar:hover { border-color: #34d399; }
+        .mini-bank-left { display: flex; align-items: center; gap: 12px; }
+        .mini-bank-icon {
+            width: 36px; height: 36px; background: rgba(52, 211, 153, 0.15);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            color: #34d399; font-size: 18px;
+        }
+        .mini-bank-info { display: flex; flex-direction: column; gap: 2px; }
+        .mini-bank-name { font-size: 13px; font-weight: bold; color: #fff; }
+        .mini-bank-acc { font-size: 13px; font-family: monospace; color: #cbd5e1; }
+        .mini-bank-arrow { color: #94a3b8; font-size: 16px; }
+
+        /* Full Card Item */
+        .account-display-card {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1.5px solid #7c3aed;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        .account-display-card.selected { border-color: #34d399; box-shadow: 0 4px 15px rgba(52, 211, 153, 0.2); }
+        .account-card-header { background: #10b981; height: 10px; width: 100%; }
+        .account-card-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .acc-row {
+            display: flex; justify-content: space-between; font-size: 13px;
+            background: rgba(30, 27, 75, 0.5); padding: 10px 14px; border-radius: 10px;
+        }
+        .acc-row span:first-child { color: #94a3b8; }
+        .acc-row span:last-child { color: #fff; font-weight: 600; font-family: monospace; }
+        .card-select-footer {
+            padding: 10px 16px; border-top: 1px solid rgba(124, 58, 237, 0.3);
+            display: flex; align-items: center; gap: 8px; font-size: 13px; color: #34d399; font-weight: bold;
+        }
+
+        /* Add Account Button Box */
+        .add-account-box {
+            background: rgba(15, 23, 42, 0.7);
+            border: 2px dashed #7c3aed;
+            border-radius: 16px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 18px;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            transition: all 0.3s;
+        }
+        .add-account-box:hover { border-color: #34d399; background: rgba(16, 185, 129, 0.1); }
+        .add-account-box i { font-size: 28px; color: #34d399; }
+        .add-account-box span { color: #cbd5e1; font-size: 14px; font-weight: 600; }
+
+        /* Form Inputs */
+        .field-group { margin-bottom: 16px; }
+        .field-label { font-size: 13px; color: #a7f3d0; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .field-label i { color: #34d399; }
+        .form-input {
             width: 100%;
             background: rgba(15, 23, 42, 0.9);
             border: 1.5px solid #7c3aed;
-            color: #fff;
-            padding: 14px 16px;
-            border-radius: 12px;
-            font-size: 15px;
-            margin-bottom: 14px;
-            outline: none;
+            color: #fff; padding: 14px 16px; border-radius: 14px;
+            font-size: 14px; outline: none;
         }
-        .input-box:focus {
-            border-color: #34d399;
+        .form-input:focus { border-color: #34d399; }
+        .form-input:disabled { opacity: 0.75; cursor: not-allowed; background: rgba(30, 27, 75, 0.8); }
+        .select-bank-trigger {
+            background: #10b981; border: 1.5px solid #34d399; color: #fff;
+            padding: 14px 16px; border-radius: 14px; font-weight: bold; font-size: 14px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer;
         }
+
+        .notice-banner {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px dashed #f87171;
+            padding: 12px 16px; border-radius: 14px;
+            margin-bottom: 18px; font-size: 12px; color: #fca5a5; line-height: 1.5;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .instructions-box {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid #7c3aed;
+            border-radius: 18px;
+            padding: 16px 18px;
+            margin-bottom: 18px;
+        }
+        .instructions-box ul { list-style: none; padding-left: 0; }
+        .instructions-box li {
+            font-size: 12px;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+        }
+        .instructions-box li i { color: #34d399; margin-top: 3px; }
+
+        .amount-input-group {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1.5px solid #7c3aed; border-radius: 14px;
+            padding: 14px 16px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .amount-input-group span { font-size: 18px; color: #34d399; font-weight: bold; }
+        .amount-input-group input { width: 100%; background: transparent; border: none; color: #fff; font-size: 16px; outline: none; }
+        .balance-info-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+        .all-btn { background: rgba(30, 27, 75, 0.8); border: 1px solid #34d399; color: #34d399; padding: 4px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; }
+
         .submit-btn {
             width: 100%;
             background: linear-gradient(135deg, #059669, #10b981);
-            border: 1.5px solid #34d399;
-            color: white;
-            padding: 16px;
-            border-radius: 14px;
-            font-weight: bold;
-            font-size: 17px;
-            cursor: pointer;
-            margin-top: 8px;
+            border: 1.5px solid #34d399; color: white;
+            padding: 16px; border-radius: 14px; font-weight: bold; font-size: 16px; cursor: pointer;
         }
-        .custom-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100000;
-            padding: 20px;
+
+        /* Password Modal Styling */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            z-index: 200000; display: none; justify-content: center; align-items: center; padding: 20px;
+            backdrop-filter: blur(5px);
         }
-        .custom-modal {
-            background: #1e1b4b;
-            border: 2px solid #34d399;
-            width: 100%;
-            max-width: 420px;
-            border-radius: 22px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
+        .pwd-modal-container {
+            width: 100%; max-width: 400px;
+            background: #1e1b4b; border: 1.5px solid #34d399;
+            border-radius: 20px; padding: 22px;
+            display: flex; flex-direction: column; gap: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
+
+        .bank-modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            z-index: 200000; display: none; justify-content: center; align-items: flex-end;
+        }
+        .bank-modal-container {
+            width: 100%; max-width: 500px; height: 85vh;
+            background: #1e1b4b; border-top: 2px solid #34d399;
+            border-radius: 24px 24px 0 0; padding: 20px;
+            display: flex; flex-direction: column; gap: 14px;
+        }
+        .bank-search-box {
+            background: rgba(15, 23, 42, 0.9); border: 1.5px solid #7c3aed;
+            border-radius: 12px; padding: 12px 16px; color: #fff; font-size: 14px; outline: none; width: 100%;
+        }
+        .bank-list-scroll { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .bank-item {
+            padding: 14px 16px; border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+            font-size: 14px; color: #cbd5e1; cursor: pointer; border-radius: 8px;
+        }
+        .bank-item:hover { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+
         #toast {
-            position: fixed;
-            top: 25px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            background: #10b981;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 35px;
-            font-size: 14px;
-            font-weight: bold;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            z-index: 300000;
+            position: fixed; top: 25px; left: 50%; transform: translateX(-50%) translateY(-20px);
+            background: #10b981; color: white; padding: 12px 24px; border-radius: 35px;
+            font-size: 14px; font-weight: bold; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 300000;
+            text-align: center;
         }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
@@ -204,67 +311,633 @@
 
     <div id="toast">Success!</div>
 
-    <!-- ORDER DETAILS POPUP MODAL -->
-    <div id="withdrawalDetailsModal" class="custom-modal-overlay">
-        <div class="custom-modal">
-            <div style="font-size: 18px; font-weight: bold; color: #34d399; text-align: center; margin-bottom: 15px; text-transform: uppercase;">Withdrawal Details</div>
-            <div id="withdrawalDetailsContent" style="display: flex; flex-direction: column; gap: 10px; font-size: 13px; color: #cbd5e1; margin-bottom: 20px;">
-            </div>
-            <button class="submit-btn" onclick="closeWithdrawalDetailsModal()">Close</button>
-        </div>
-    </div>
-
+    <!-- HEADER -->
     <div class="header">
-        <div class="header-left">
-            <a href="assist/win-go.html">&lt;</a>
-        </div>
-        <div class="header-center"><h2>Withdrawal</h2></div>
-        <div class="header-right">
-            <a href="customer-service.html" class="header-right-icon"><i class="fa-solid fa-headset"></i></a>
-        </div>
+        <div id="headerBackBtn" class="header-back-btn" onclick="handleHeaderBack()">&lt;</div>
+        <div class="header-center"><h2 id="headerTitleText">Withdraw</h2></div>
+        <div class="header-right"><span id="headerRightAction" onclick="scrollToHistory()">Withdrawal history</span></div>
     </div>
 
     <div class="container">
-        <div class="wallet-card">
-            <div class="wallet-info">
-                <div class="label">Winnings Balance</div>
-                <div class="balance">₹<span id="userWinningsBalance">0.00</span></div>
+
+        <!-- ================= PAGE 1: MAIN WITHDRAW VIEW ================= -->
+        <div id="viewWithdrawMain" class="view-page">
+            <div class="wallet-card">
+                <div class="wallet-info">
+                    <div class="label">Available balance</div>
+                    <div class="balance">₹<span id="userWinningsBalance">0.00</span></div>
+                </div>
+                <div class="refresh-btn" onclick="refreshData()"><i class="fa-solid fa-rotate-right"></i></div>
             </div>
-            <div class="refresh-btn" onclick="refreshData()"><i class="fa-solid fa-rotate-right"></i></div>
-        </div>
 
-        <div class="notice-box">
-            <i class="fa-solid fa-triangle-exclamation"></i> 
-            <b>Notice:</b> Minimum withdrawal is ₹110. Please ensure your bank details and UPI ID are correct to avoid failure.
-        </div>
-
-        <div class="card">
-            <div class="title">Withdrawal Form</div>
-            <input type="number" id="withdrawAmount" class="input-box" placeholder="Enter withdrawal amount (Min ₹110)">
-            <input type="text" id="accHolderName" class="input-box" placeholder="Account Holder Name">
-            <input type="text" id="upiId" class="input-box" placeholder="UPI ID (e.g. name@paytm)">
-            <input type="text" id="bankName" class="input-box" placeholder="Bank Name">
-            <input type="text" id="accNumber" class="input-box" placeholder="Bank Account Number">
-            <input type="text" id="ifscCode" class="input-box" placeholder="IFSC Code">
-            <input type="text" id="mobileNumber" class="input-box" placeholder="Mobile Number">
-            <button class="submit-btn" onclick="submitWithdrawal()">Withdraw Now</button>
-        </div>
-
-        <div class="card">
-            <div class="title">Withdrawal History (Click for details)</div>
-            <div id="userWithdrawalHistory" style="max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
-                <p style="font-size: 13px; color: #94a3b8; text-align: center; padding: 15px;">Loading history...</p>
+            <div class="method-tabs">
+                <div class="method-btn active" id="tabBank" onclick="switchMethod('bank')">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>BANK CARD</span>
+                </div>
+                <div class="method-btn" id="tabUpi" onclick="switchMethod('upi')">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>UPI</span>
+                </div>
+                <div class="method-btn" id="tabUsdt" onclick="switchMethod('usdt')">
+                    <i class="fa-solid fa-coins"></i>
+                    <span>USDT</span>
+                </div>
             </div>
+
+            <!-- BANK SECTION -->
+            <div id="bankSection">
+                <div id="selectedMiniBankBar" class="mini-bank-bar hidden" onclick="showBankCardSelectionView()">
+                    <div class="mini-bank-left">
+                        <div class="mini-bank-icon"><i class="fa-solid fa-building-columns"></i></div>
+                        <div class="mini-bank-info">
+                            <span class="mini-bank-name" id="miniBankName">State Bank of India</span>
+                            <span class="mini-bank-acc" id="miniBankAcc">592****792</span>
+                        </div>
+                    </div>
+                    <div class="mini-bank-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                </div>
+
+                <div id="addBankBtnBoxMain" class="add-account-box" onclick="showAddBankView()">
+                    <i class="fa-solid fa-plus-square"></i>
+                    <span>Add a bank account number</span>
+                </div>
+            </div>
+
+            <!-- UPI SECTION -->
+            <div id="upiSection" class="hidden">
+                <div id="selectedMiniUpiBar" class="mini-bank-bar hidden" onclick="showUpiSelectionView()">
+                    <div class="mini-bank-left">
+                        <div class="mini-bank-icon"><i class="fa-solid fa-qrcode"></i></div>
+                        <div class="mini-bank-info">
+                            <span class="mini-bank-name" id="miniUpiName">UPI ID</span>
+                            <span class="mini-bank-acc" id="miniUpiIdDisplay">sunil@paytm</span>
+                        </div>
+                    </div>
+                    <div class="mini-bank-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                </div>
+
+                <div id="addUpiBtnBoxMain" class="add-account-box" onclick="showAddUpiView()">
+                    <i class="fa-solid fa-plus-square"></i>
+                    <span>Add UPI payment method</span>
+                </div>
+            </div>
+
+            <!-- USDT SECTION -->
+            <div id="usdtSection" class="hidden">
+                <div class="add-account-box" onclick="showUsdtError()">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #f87171;"></i>
+                    <span>USDT Unavailable</span>
+                </div>
+            </div>
+
+            <!-- WITHDRAW AMOUNT CARD -->
+            <div class="card">
+                <div class="amount-input-group">
+                    <span>₹</span>
+                    <input type="number" id="withdrawAmount" placeholder="Please enter the amount">
+                </div>
+                <div class="balance-info-row">
+                    <span>Withdrawable balance ₹<span id="subWinningsBal">0.00</span></span>
+                    <button class="all-btn" onclick="setAllAmount()">All</button>
+                </div>
+                <button class="submit-btn" onclick="initiateWithdrawal()">Withdraw</button>
+            </div>
+
+            <!-- NOTICE BOARD -->
+            <div class="instructions-box">
+                <div class="title" style="margin-bottom: 10px;"><i class="fa-solid fa-bullhorn"></i> Important Instructions</div>
+                <ul>
+                    <li><i class="fa-solid fa-diamond"></i> Need to bet <span style="color: #34d399;">₹0.00</span> to be able to withdraw</li>
+                    <li><i class="fa-solid fa-diamond"></i> Withdraw time <span style="color: #fbbf24;">00:00-23:55</span></li>
+                    <li><i class="fa-solid fa-diamond"></i> Inday Remaining Withdrawal Times <span style="color: #f87171;">3</span></li>
+                    <li><i class="fa-solid fa-diamond"></i> Withdrawal amount range <span style="color: #fbbf24;">₹110.00-₹10,000,000.00</span></li>
+                    <li><i class="fa-solid fa-diamond"></i> Please check your registered bank information again before making a withdrawal. If your registered bank information is incorrect, our company will not be responsible for any losses you may incur.</li>
+                    <li><i class="fa-solid fa-diamond"></i> If your registered bank information is incorrect, please contact customer service.</li>
+                    <li><i class="fa-solid fa-triangle-exclamation" style="color: #fbbf24;"></i> <span style="color: #34d399; font-weight: bold;">Withdrawal payout system is operated manually, so don't panic. Your money is 100% safe, please cooperate with us. Your withdrawal is processed in 1-2 hours. Thank you, keep playing and withdraw carefully!</span></li>
+                </ul>
+            </div>
+
+            <div class="card" id="historySection">
+                <div class="title">Withdrawal History</div>
+                <div id="userWithdrawalHistory" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <p style="font-size: 13px; color: #94a3b8; text-align: center; padding: 15px;">Loading history...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 2: BANK CARD SELECTION VIEW ================= -->
+        <div id="viewBankCardList" class="view-page hidden">
+            <div id="fullBankCardsContainer"></div>
+            
+            <div class="add-account-box" onclick="showAddBankView()">
+                <i class="fa-solid fa-plus-square"></i>
+                <span>Add a bank account number</span>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 2B: UPI SELECTION VIEW ================= -->
+        <div id="viewUpiCardList" class="view-page hidden">
+            <div id="fullUpiCardsContainer"></div>
+            
+            <div class="add-account-box" onclick="showAddUpiView()">
+                <i class="fa-solid fa-plus-square"></i>
+                <span>Add UPI payment method</span>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 3: ADD BANK ACCOUNT FORM VIEW ================= -->
+        <div id="viewAddBank" class="view-page hidden">
+            <div class="notice-banner">
+                <i class="fa-solid fa-circle-exclamation" style="font-size: 18px; color: #f87171;"></i>
+                <span>To ensure the safety of your funds, please bind your bank account.</span>
+            </div>
+
+            <div class="field-group">
+                <div class="field-label"><i class="fa-solid fa-building-columns"></i> Choose a bank</div>
+                <div class="select-bank-trigger" onclick="openBankModal()">
+                    <span id="selectedBankText">Please select a bank</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-label"><i class="fa-solid fa-user"></i> Full recipient's name</div>
+                <input type="text" id="bankRecipientName" class="form-input" placeholder="Full recipient's name">
+            </div>
+
+            <div class="field-group">
+                <div class="field-label"><i class="fa-solid fa-credit-card"></i> Bank account number</div>
+                <input type="text" id="bankAccNoInput" class="form-input" placeholder="Please enter your bank account number">
+            </div>
+
+            <div class="field-group">
+                <div class="field-label"><i class="fa-solid fa-mobile-screen"></i> Phone number</div>
+                <input type="text" id="bankPhoneInput" class="form-input" placeholder="Please enter your phone number">
+            </div>
+
+            <div class="field-group">
+                <div class="field-label"><i class="fa-solid fa-key"></i> IFSC code</div>
+                <input type="text" id="bankIfscInput" class="form-input" placeholder="Please enter IFSC code">
+            </div>
+
+            <button class="submit-btn" style="margin-top: 20px;" onclick="saveBankCard()">Save</button>
+        </div>
+
+        <!-- ================= PAGE 4: ADD UPI VIEW ================= -->
+        <div id="viewAddUpi" class="view-page hidden">
+            <div class="notice-banner">
+                <i class="fa-solid fa-circle-exclamation" style="font-size: 18px; color: #f87171;"></i>
+                <span>To ensure the safety of your funds, please bind your UPI ID.</span>
+            </div>
+
+            <div class="field-group">
+                <div class="field-label"><i class="fa-solid fa-user"></i> UPI Name</div>
+                <input type="text" id="upiNameInput" class="form-input" placeholder="Full recipient's name">
+            </div>
+
+            <div class="field-group">
+                <div class="field-label"><i class="fa-solid fa-phone"></i> Phone Number</div>
+                <input type="text" id="upiPhoneInput" class="form-input" placeholder="Please enter the phone number">
+            </div>
+
+            <div class="field-group">
+                <div class="field-label"><i class="fa-solid fa-qrcode"></i> UPI ID</div>
+                <input type="text" id="upiIdInput" class="form-input" placeholder="Please enter your UPI ID">
+            </div>
+
+            <div class="field-group">
+                <div class="field-label"><i class="fa-solid fa-circle-check"></i> Confirm UPI ID</div>
+                <input type="text" id="upiIdConfirmInput" class="form-input" placeholder="Please enter your UPI ID">
+            </div>
+
+            <button class="submit-btn" style="margin-top: 20px;" onclick="saveUpiDetails()">Save</button>
+        </div>
+
+    </div>
+
+    <!-- SECURITY PASSWORD MODAL -->
+    <div id="passwordModalOverlay" class="modal-overlay">
+        <div class="pwd-modal-container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 16px; color: #a7f3d0;"><i class="fa-solid fa-lock"></i> Safety Verification</h3>
+                <i class="fa-solid fa-xmark" style="font-size: 20px; cursor: pointer; color: #f87171;" onclick="closePasswordModal()"></i>
+            </div>
+            <p style="font-size: 12px; color: #94a3b8; line-height: 1.4;">
+                Please enter your account login password to confirm withdrawal request.
+            </p>
+            <div class="field-group" style="margin-bottom: 0;">
+                <input type="password" id="confirmLoginPassword" class="form-input" placeholder="Enter login password">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button onclick="closePasswordModal()" style="flex: 1; background: rgba(239,68,68,0.2); border: 1px solid #f87171; color: #f87171; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">Cancel</button>
+                <button onclick="confirmAndSubmitWithdrawal()" style="flex: 1; background: #10b981; border: 1px solid #34d399; color: #fff; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHOOSE BANK MODAL -->
+    <div id="bankModalOverlay" class="bank-modal-overlay">
+        <div class="bank-modal-container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 16px; color: #a7f3d0;">Choose a bank</h3>
+                <i class="fa-solid fa-xmark" style="font-size: 20px; cursor: pointer; color: #f87171;" onclick="closeBankModal()"></i>
+            </div>
+            <input type="text" id="bankSearchBox" class="bank-search-box" placeholder="Search bank name..." oninput="filterBanks()">
+            <div id="bankListScroll" class="bank-list-scroll"></div>
         </div>
     </div>
 
     <script>
         let userId = localStorage.getItem('userId') || localStorage.getItem('rewards_userId');
-        let cachedWithdrawals = [];
+        let activeView = 'main';
+        let currentMethod = 'bank';
+        let currentWinnings = 0;
+        let selectedBankName = '';
+
+        let savedBankList = [];
+        let selectedBankIndex = 0;
+
+        let savedUpiList = [];
+        let selectedUpiIndex = 0;
+
+        // User kis page se yahan aaya tha use dynamic save karna
+        let previousReferrerPage = document.referrer;
+
+        const INDIAN_BANKS = [
+            "State Bank of India", "HDFC Bank", "ICICI Bank", "Punjab National Bank", "Bank of Baroda",
+            "Axis Bank", "Canara Bank", "Union Bank of India", "Kotak Mahindra Bank", "IndusInd Bank",
+            "Bank of India", "Central Bank of India", "Indian Bank", "IDBI Bank", "YES Bank",
+            "Federal Bank", "UCO Bank", "Indian Overseas Bank", "Punjab & Sind Bank", "Bank of Maharashtra",
+            "Bandhan Bank", "IDFC First Bank", "Jammu & Kashmir Bank", "Karnataka Bank", "South Indian Bank",
+            "Karur Vysya Bank", "City Union Bank", "Tamilnad Mercantile Bank", "RBL Bank", "DBS Bank India",
+            "Airtel Payments Bank", "Paytm Payments Bank", "India Post Payments Bank", "FINO Payments Bank", "Jio Payments Bank",
+            "NSDL Payments Bank", "AU Small Finance Bank", "Equitas Small Finance Bank", "Ujjivan Small Finance Bank", "Capital Small Finance Bank",
+            "ESAF Small Finance Bank", "Jana Small Finance Bank", "North East Small Finance Bank", "Suryoday Small Finance Bank", "Utkarsh Small Finance Bank"
+        ];
 
         window.onload = function() {
-            if (userId) refreshData();
+            renderBankList(INDIAN_BANKS);
+            if (userId) {
+                loadSavedDetails();
+                refreshData();
+            }
         };
+
+        function loadSavedDetails() {
+            let rawBanks = localStorage.getItem('user_banks_' + userId);
+            savedBankList = rawBanks ? JSON.parse(rawBanks) : [];
+            if (savedBankList.length === 0) {
+                let singleOldBank = localStorage.getItem('user_bank_' + userId);
+                if (singleOldBank) {
+                    savedBankList.push(JSON.parse(singleOldBank));
+                    localStorage.setItem('user_banks_' + userId, JSON.stringify(savedBankList));
+                }
+            }
+            renderMainBankSection();
+            renderFullBankCardList();
+
+            let rawUpis = localStorage.getItem('user_upis_' + userId);
+            savedUpiList = rawUpis ? JSON.parse(rawUpis) : [];
+            if (savedUpiList.length === 0) {
+                let singleOldUpi = localStorage.getItem('user_upi_' + userId);
+                if (singleOldUpi) {
+                    savedUpiList.push(JSON.parse(singleOldUpi));
+                    localStorage.setItem('user_upis_' + userId, JSON.stringify(savedUpiList));
+                }
+            }
+            renderMainUpiSection();
+            renderFullUpiCardList();
+        }
+
+        function renderMainBankSection() {
+            let miniBar = document.getElementById('selectedMiniBankBar');
+            let addBox = document.getElementById('addBankBtnBoxMain');
+
+            if (savedBankList.length > 0) {
+                let activeBank = savedBankList[selectedBankIndex] || savedBankList[0];
+                document.getElementById('miniBankName').textContent = activeBank.bankName;
+                document.getElementById('miniBankAcc').textContent = maskString(activeBank.accountNumber);
+
+                miniBar.classList.remove('hidden');
+                addBox.classList.add('hidden');
+            } else {
+                miniBar.classList.add('hidden');
+                addBox.classList.remove('hidden');
+            }
+        }
+
+        function renderFullBankCardList() {
+            let container = document.getElementById('fullBankCardsContainer');
+            container.innerHTML = '';
+
+            if (savedBankList.length > 0) {
+                savedBankList.forEach((bank, idx) => {
+                    let isSelected = (idx === selectedBankIndex);
+                    let checkIcon = isSelected 
+                        ? `<i class="fa-solid fa-circle-check" style="color:#34d399; font-size:18px;"></i> Select` 
+                        : `<i class="fa-regular fa-circle" style="color:#94a3b8; font-size:18px;"></i> Select`;
+
+                    container.innerHTML += `
+                        <div class="account-display-card ${isSelected ? 'selected' : ''}" onclick="selectBankCardIndex(${idx})">
+                            <div class="account-card-header"></div>
+                            <div class="account-card-body">
+                                <div class="acc-row"><span>Bank name</span><span>${bank.bankName}</span></div>
+                                <div class="acc-row"><span>Bank account number</span><span>${maskString(bank.accountNumber)}</span></div>
+                                <div class="acc-row"><span>Phone number</span><span>${maskString(bank.phone)}</span></div>
+                                <div class="acc-row"><span>IFSC Code</span><span>${bank.ifsc}</span></div>
+                            </div>
+                            <div class="card-select-footer">${checkIcon}</div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function renderMainUpiSection() {
+            let miniBar = document.getElementById('selectedMiniUpiBar');
+            let addBox = document.getElementById('addUpiBtnBoxMain');
+
+            if (savedUpiList.length > 0) {
+                let activeUpi = savedUpiList[selectedUpiIndex] || savedUpiList[0];
+                document.getElementById('miniUpiName').textContent = activeUpi.accountHolderName;
+                document.getElementById('miniUpiIdDisplay').textContent = activeUpi.upiId;
+
+                miniBar.classList.remove('hidden');
+                addBox.classList.add('hidden');
+            } else {
+                miniBar.classList.add('hidden');
+                addBox.classList.remove('hidden');
+            }
+        }
+
+        function renderFullUpiCardList() {
+            let container = document.getElementById('fullUpiCardsContainer');
+            container.innerHTML = '';
+
+            if (savedUpiList.length > 0) {
+                savedUpiList.forEach((upi, idx) => {
+                    let isSelected = (idx === selectedUpiIndex);
+                    let checkIcon = isSelected 
+                        ? `<i class="fa-solid fa-circle-check" style="color:#34d399; font-size:18px;"></i> Select` 
+                        : `<i class="fa-regular fa-circle" style="color:#94a3b8; font-size:18px;"></i> Select`;
+
+                    container.innerHTML += `
+                        <div class="account-display-card ${isSelected ? 'selected' : ''}" onclick="selectUpiCardIndex(${idx})">
+                            <div class="account-card-header"></div>
+                            <div class="account-card-body">
+                                <div class="acc-row"><span>UPI Name</span><span>${upi.accountHolderName}</span></div>
+                                <div class="acc-row"><span>Phone number</span><span>${maskString(upi.phone)}</span></div>
+                                <div class="acc-row"><span>UPI ID</span><span>${upi.upiId}</span></div>
+                            </div>
+                            <div class="card-select-footer">${checkIcon}</div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function showBankCardSelectionView() {
+            activeView = 'cardList';
+            document.getElementById('viewWithdrawMain').classList.add('hidden');
+            document.getElementById('viewAddBank').classList.add('hidden');
+            document.getElementById('viewBankCardList').classList.remove('hidden');
+            document.getElementById('headerTitleText').textContent = 'BANK ACCOUNT';
+            document.getElementById('headerRightAction').style.display = 'none';
+        }
+
+        function showUpiSelectionView() {
+            activeView = 'upiList';
+            document.getElementById('viewWithdrawMain').classList.add('hidden');
+            document.getElementById('viewAddUpi').classList.add('hidden');
+            document.getElementById('viewUpiCardList').classList.remove('hidden');
+            document.getElementById('headerTitleText').textContent = 'UPI ACCOUNT';
+            document.getElementById('headerRightAction').style.display = 'none';
+        }
+
+        function selectBankCardIndex(idx) {
+            selectedBankIndex = idx;
+            renderFullBankCardList();
+            renderMainBankSection();
+            handleHeaderBack();
+        }
+
+        function selectUpiCardIndex(idx) {
+            selectedUpiIndex = idx;
+            renderFullUpiCardList();
+            renderMainUpiSection();
+            handleHeaderBack();
+        }
+
+        function showUsdtError() {
+            showToast('Something went wrong, please try another way');
+        }
+
+        function maskString(str) {
+            if (!str || str.length < 6) return str;
+            return str.slice(0, 3) + '****' + str.slice(-3);
+        }
+
+        function switchMethod(method) {
+            currentMethod = method;
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('bankSection').classList.add('hidden');
+            document.getElementById('upiSection').classList.add('hidden');
+            document.getElementById('usdtSection').classList.add('hidden');
+
+            if (method === 'bank') {
+                document.getElementById('tabBank').classList.add('active');
+                document.getElementById('bankSection').classList.remove('hidden');
+            } else if (method === 'upi') {
+                document.getElementById('tabUpi').classList.add('active');
+                document.getElementById('upiSection').classList.remove('hidden');
+            } else if (method === 'usdt') {
+                document.getElementById('tabUsdt').classList.add('active');
+                document.getElementById('usdtSection').classList.remove('hidden');
+            }
+        }
+
+        function showAddBankView() {
+            activeView = 'addBank';
+            document.getElementById('viewWithdrawMain').classList.add('hidden');
+            document.getElementById('viewBankCardList').classList.add('hidden');
+            document.getElementById('viewAddBank').classList.remove('hidden');
+            document.getElementById('headerTitleText').textContent = 'ADD A BANK ACCOUNT NUMBER';
+            document.getElementById('headerRightAction').style.display = 'none';
+
+            let lockedName = localStorage.getItem('locked_holder_name_' + userId);
+            let input = document.getElementById('bankRecipientName');
+
+            if (lockedName) {
+                input.value = lockedName;
+                input.disabled = true;
+            } else if (savedBankList.length > 0) {
+                input.value = savedBankList[0].accountHolderName;
+                input.disabled = true;
+                localStorage.setItem('locked_holder_name_' + userId, savedBankList[0].accountHolderName);
+            } else if (savedUpiList.length > 0) {
+                input.value = savedUpiList[0].accountHolderName;
+                input.disabled = true;
+                localStorage.setItem('locked_holder_name_' + userId, savedUpiList[0].accountHolderName);
+            } else {
+                input.value = '';
+                input.disabled = false;
+            }
+        }
+
+        function showAddUpiView() {
+            activeView = 'addUpi';
+            document.getElementById('viewWithdrawMain').classList.add('hidden');
+            document.getElementById('viewUpiCardList').classList.add('hidden');
+            document.getElementById('viewAddUpi').classList.remove('hidden');
+            document.getElementById('headerTitleText').textContent = 'ADD UPI';
+            document.getElementById('headerRightAction').style.display = 'none';
+
+            let lockedName = localStorage.getItem('locked_holder_name_' + userId);
+            let input = document.getElementById('upiNameInput');
+
+            if (lockedName) {
+                input.value = lockedName;
+                input.disabled = true;
+            } else if (savedBankList.length > 0) {
+                input.value = savedBankList[0].accountHolderName;
+                input.disabled = true;
+                localStorage.setItem('locked_holder_name_' + userId, savedBankList[0].accountHolderName);
+            } else if (savedUpiList.length > 0) {
+                input.value = savedUpiList[0].accountHolderName;
+                input.disabled = true;
+                localStorage.setItem('locked_holder_name_' + userId, savedUpiList[0].accountHolderName);
+            } else {
+                input.value = '';
+                input.disabled = false;
+            }
+        }
+
+        /* Dynamic Back Button Functionality */
+        function handleHeaderBack() {
+            if (activeView === 'addBank' && savedBankList.length > 0) {
+                showBankCardSelectionView();
+            } else if (activeView === 'addUpi' && savedUpiList.length > 0) {
+                showUpiSelectionView();
+            } else if (activeView !== 'main') {
+                activeView = 'main';
+                document.getElementById('viewAddBank').classList.add('hidden');
+                document.getElementById('viewBankCardList').classList.add('hidden');
+                document.getElementById('viewUpiCardList').classList.add('hidden');
+                document.getElementById('viewAddUpi').classList.add('hidden');
+                document.getElementById('viewWithdrawMain').classList.remove('hidden');
+                document.getElementById('headerTitleText').textContent = 'Withdraw';
+                document.getElementById('headerRightAction').style.display = 'block';
+            } else {
+                // User jis page se aaya tha wahi wapas bhej do
+                if (previousReferrerPage && previousReferrerPage !== '' && !previousReferrerPage.includes('withdraw.html')) {
+                    window.location.href = previousReferrerPage;
+                } else if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    // Fallback URL agar Direct URL open kiya ho
+                    window.location.href = 'assist/win-go.html';
+                }
+            }
+        }
+
+        function openBankModal() { document.getElementById('bankModalOverlay').style.display = 'flex'; }
+        function closeBankModal() { document.getElementById('bankModalOverlay').style.display = 'none'; }
+
+        function openPasswordModal() {
+            document.getElementById('confirmLoginPassword').value = '';
+            document.getElementById('passwordModalOverlay').style.display = 'flex';
+        }
+        function closePasswordModal() {
+            document.getElementById('passwordModalOverlay').style.display = 'none';
+        }
+
+        function renderBankList(list) {
+            let container = document.getElementById('bankListScroll');
+            container.innerHTML = '';
+            list.forEach(b => {
+                container.innerHTML += `<div class="bank-item" onclick="selectBank('${b}')">${b}</div>`;
+            });
+        }
+
+        function filterBanks() {
+            let q = document.getElementById('bankSearchBox').value.toLowerCase();
+            let filtered = INDIAN_BANKS.filter(b => b.toLowerCase().includes(q));
+            renderBankList(filtered);
+        }
+
+        function selectBank(name) {
+            selectedBankName = name;
+            document.getElementById('selectedBankText').textContent = name;
+            closeBankModal();
+        }
+
+        function saveBankCard() {
+            let name = document.getElementById('bankRecipientName').value.trim();
+            let accNo = document.getElementById('bankAccNoInput').value.trim();
+            let phone = document.getElementById('bankPhoneInput').value.trim();
+            let ifsc = document.getElementById('bankIfscInput').value.trim();
+
+            if (!selectedBankName) { showToast('Please select a bank!'); return; }
+            if (!name || !accNo || !ifsc) { showToast('Please fill all required fields!'); return; }
+
+            let lockedName = localStorage.getItem('locked_holder_name_' + userId);
+            if (lockedName && lockedName.toLowerCase() !== name.toLowerCase()) {
+                showToast('Name must match locked name: ' + lockedName);
+                return;
+            }
+
+            if (!lockedName) localStorage.setItem('locked_holder_name_' + userId, name);
+
+            let newBank = { bankName: selectedBankName, accountHolderName: name, accountNumber: accNo, phone, ifsc };
+            savedBankList.push(newBank);
+            localStorage.setItem('user_banks_' + userId, JSON.stringify(savedBankList));
+
+            document.getElementById('bankAccNoInput').value = '';
+            document.getElementById('bankPhoneInput').value = '';
+            document.getElementById('bankIfscInput').value = '';
+            document.getElementById('selectedBankText').textContent = 'Please select a bank';
+            selectedBankName = '';
+
+            showToast('New bank card added successfully!');
+            loadSavedDetails();
+            showBankCardSelectionView();
+        }
+
+        function saveUpiDetails() {
+            let name = document.getElementById('upiNameInput').value.trim();
+            let phone = document.getElementById('upiPhoneInput').value.trim();
+            let upiId = document.getElementById('upiIdInput').value.trim();
+            let upiConfirm = document.getElementById('upiIdConfirmInput').value.trim();
+
+            if (!name || !upiId) { showToast('Please fill required fields!'); return; }
+            if (upiId !== upiConfirm) { showToast('UPI IDs do not match!'); return; }
+
+            let lockedName = localStorage.getItem('locked_holder_name_' + userId);
+            if (lockedName && lockedName.toLowerCase() !== name.toLowerCase()) {
+                showToast('Name must match locked name: ' + lockedName);
+                return;
+            }
+
+            if (!lockedName) localStorage.setItem('locked_holder_name_' + userId, name);
+
+            let newUpi = { accountHolderName: name, phone, upiId };
+            savedUpiList.push(newUpi);
+            localStorage.setItem('user_upis_' + userId, JSON.stringify(savedUpiList));
+
+            document.getElementById('upiNameInput').value = '';
+            document.getElementById('upiPhoneInput').value = '';
+            document.getElementById('upiIdInput').value = '';
+            document.getElementById('upiIdConfirmInput').value = '';
+
+            showToast('UPI saved successfully!');
+            loadSavedDetails();
+            showUpiSelectionView();
+        }
+
+        function setAllAmount() {
+            document.getElementById('withdrawAmount').value = currentWinnings;
+        }
 
         function refreshData() {
             fetchWinningsBalance();
@@ -272,47 +945,39 @@
         }
 
         async function fetchWinningsBalance() {
-            if (!userId) return;
             try {
                 let res = await fetch(`/api/user/${userId}`);
                 let data = await res.json();
                 if (data.success) {
-                    document.getElementById('userWinningsBalance').textContent = parseFloat(data.winningsBalance || 0).toFixed(2);
+                    currentWinnings = parseFloat(data.winningsBalance || 0);
+                    document.getElementById('userWinningsBalance').textContent = currentWinnings.toFixed(2);
+                    document.getElementById('subWinningsBal').textContent = currentWinnings.toFixed(2);
                 }
             } catch (e) {}
         }
 
         async function fetchUserWithdrawals() {
-            if (!userId) return;
             try {
                 let res = await fetch(`/api/admin/requests`);
                 let data = await res.json();
                 let container = document.getElementById('userWithdrawalHistory');
                 if (data.success && data.withdrawals) {
                     let myWithdrawals = data.withdrawals.filter(w => w.userId && (w.userId._id === userId || w.userId === userId));
-                    cachedWithdrawals = myWithdrawals;
-                    
                     if (myWithdrawals.length > 0) {
                         container.innerHTML = '';
-                        myWithdrawals.forEach((wit, index) => {
+                        myWithdrawals.forEach((wit) => {
                             let isApproved = wit.status === 'approved';
-                            let displayStatus = isApproved ? 'complete' : (wit.status === 'rejected' ? 'failed' : wit.status);
+                            let displayStatus = isApproved ? 'Completed' : (wit.status === 'rejected' ? 'Failed' : wit.status);
                             let statusColor = isApproved ? '#34d399' : (wit.status === 'rejected' ? '#f87171' : '#fbbf24');
                             let time = new Date(wit.createdAt).toLocaleString();
-                            let orderNo = wit.orderNo || ('SBW_W' + (100000 + index));
-                            let reasonHTML = wit.status === 'rejected' ? `<div style="color:#f87171; font-size:11px; margin-top:4px;">Status: Failed</div>` : '';
 
                             container.innerHTML += `
-                                <div onclick="openWithdrawalDetails('${wit._id}')" style="background: rgba(15, 23, 42, 0.9); border: 1px solid #7c3aed; padding: 12px; border-radius: 12px; font-size: 13px; cursor: pointer;">
+                                <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid #7c3aed; padding: 12px; border-radius: 12px; font-size: 13px;">
                                     <div style="display: flex; justify-content: space-between;">
-                                        <span style="color: #fbbf24; font-weight: bold;">Order: ${orderNo}</span>
+                                        <span style="color: #fbbf24; font-weight: bold;">₹${wit.amount}</span>
                                         <span style="color: ${statusColor}; text-transform: uppercase; font-weight: bold;">${displayStatus}</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; margin-top: 4px;">
-                                        <span><b>Amount:</b> ₹${wit.amount}</span>
-                                        <span>UPI: ${wit.upiId || 'N/A'}</span>
-                                    </div>
-                                    <div style="color: #94a3b8; font-size: 11px; text-align: right; margin-top: 4px;">${time}</div>
+                                    <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">${time}</div>
                                 </div>
                             `;
                         });
@@ -323,77 +988,83 @@
             } catch (e) {}
         }
 
-        async function submitWithdrawal() {
+        function initiateWithdrawal() {
             let amount = document.getElementById('withdrawAmount').value;
-            let accountHolderName = document.getElementById('accHolderName').value.trim();
-            let upiId = document.getElementById('upiId').value.trim();
-            let bankName = document.getElementById('bankName').value.trim();
-            let accountNumber = document.getElementById('accNumber').value.trim();
-            let ifsc = document.getElementById('ifscCode').value.trim();
-            let mobile = document.getElementById('mobileNumber').value.trim();
-
             if (!amount || Number(amount) < 110) {
                 showToast('Minimum withdrawal amount is ₹110!');
                 return;
             }
-            if (!accountHolderName || !upiId || !accountNumber || !ifsc) {
-                showToast('Please fill all required bank/UPI details!');
+
+            if (Number(amount) > currentWinnings) {
+                showToast('Insufficient winnings balance!');
                 return;
+            }
+
+            if (currentMethod === 'bank' && savedBankList.length === 0) {
+                showToast('Please bind a bank card first!');
+                return;
+            }
+
+            if (currentMethod === 'upi' && savedUpiList.length === 0) {
+                showToast('Please bind UPI details first!');
+                return;
+            }
+
+            if (currentMethod === 'usdt') {
+                showToast('Something went wrong, please try another way');
+                return;
+            }
+
+            openPasswordModal();
+        }
+
+        async function confirmAndSubmitWithdrawal() {
+            let enterPassword = document.getElementById('confirmLoginPassword').value.trim();
+            if (!enterPassword) {
+                showToast('Please enter your login password!');
+                return;
+            }
+
+            let amount = document.getElementById('withdrawAmount').value;
+            let payload = { userId, amount, password: enterPassword };
+
+            if (currentMethod === 'bank') {
+                let currentSelectedBank = savedBankList[selectedBankIndex] || savedBankList[0];
+                payload = { ...payload, ...currentSelectedBank };
+            } else if (currentMethod === 'upi') {
+                let currentSelectedUpi = savedUpiList[selectedUpiIndex] || savedUpiList[0];
+                payload = { ...payload, ...currentSelectedUpi };
             }
 
             try {
                 let res = await fetch('/api/withdraw', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, amount, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile })
+                    body: JSON.stringify(payload)
                 });
                 let data = await res.json();
                 if (data.success) {
-                    showToast('Withdrawal request submitted successfully!');
+                    closePasswordModal();
+                    showToast('Withdrawal request submitted!');
                     document.getElementById('withdrawAmount').value = '';
                     refreshData();
                 } else {
-                    showToast(data.message || 'Withdrawal failed');
+                    showToast(data.message || 'Incorrect password! Withdrawal cancelled.');
                 }
             } catch (e) {
-                showToast('Server connection error');
+                showToast('Server error! Please try again.');
             }
         }
 
-        function openWithdrawalDetails(id) {
-            let wit = cachedWithdrawals.find(w => w._id === id);
-            if (!wit) return;
-
-            let isApproved = wit.status === 'approved';
-            let displayStatus = isApproved ? 'complete' : (wit.status === 'rejected' ? 'failed' : wit.status);
-            let statusColor = isApproved ? '#34d399' : (wit.status === 'rejected' ? '#f87171' : '#fbbf24');
-            let time = new Date(wit.createdAt).toLocaleString();
-            let orderNo = wit.orderNo || 'SBW_W---';
-
-            let contentHTML = `
-                <p><b>Order No:</b> <span style="color:#fbbf24;">${orderNo}</span></p>
-                <p><b>Status:</b> <span style="color:${statusColor}; text-transform:uppercase; font-weight:bold;">${displayStatus}</span></p>
-                <p><b>Amount:</b> <span style="color:#34d399; font-weight:bold;">₹${wit.amount}</span></p>
-                <p><b>Name:</b> ${wit.accountHolderName || 'N/A'}</p>
-                <p><b>UPI ID:</b> <span style="color:#fbbf24;">${wit.upiId || 'N/A'}</span></p>
-                <p><b>Bank / Acc:</b> ${wit.bankName || 'N/A'} (${wit.accountNumber || 'N/A'})</p>
-                <p><b>IFSC:</b> ${wit.ifsc || 'N/A'}</p>
-                <p><b>Date & Time:</b> ${time}</p>
-            `;
-
-            document.getElementById('withdrawalDetailsContent').innerHTML = contentHTML;
-            document.getElementById('withdrawalDetailsModal').style.display = 'flex';
-        }
-
-        function closeWithdrawalDetailsModal() {
-            document.getElementById('withdrawalDetailsModal').style.display = 'none';
+        function scrollToHistory() {
+            document.getElementById('historySection').scrollIntoView({ behavior: 'smooth' });
         }
 
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 2000);
+            setTimeout(() => { toast.classList.remove('show'); }, 2200);
         }
     </script>
 </body>
