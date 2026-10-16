@@ -81,7 +81,7 @@
 
         .card {
             background: rgba(15, 23, 42, 0.75);
-            border: 1px solid #7c3aed;
+            border: 1.5px solid #7c3aed;
             border-radius: 20px;
             padding: 18px;
             margin-bottom: 18px;
@@ -224,7 +224,7 @@
 
         .instructions-box {
             background: rgba(15, 23, 42, 0.85);
-            border: 1px solid #7c3aed;
+            border: 1.5px solid #7c3aed;
             border-radius: 18px;
             padding: 16px 18px;
             margin-bottom: 18px;
@@ -436,10 +436,10 @@
             <div class="instructions-box">
                 <div class="title" style="margin-bottom: 10px;"><i class="fa-solid fa-bullhorn"></i> Important Instructions</div>
                 <ul>
-                    <li><i class="fa-solid fa-diamond"></i> Need to bet <span style="color: #34d399;">₹0.00</span> to be able to withdraw</li>
+                    <li><i class="fa-solid fa-diamond"></i> Need to bet <span id="neededBetDisplay" style="color: #34d399;">₹110.00</span> to be able to withdraw</li>
                     <li><i class="fa-solid fa-diamond"></i> Withdraw time <span style="color: #fbbf24;">00:00-23:55</span></li>
-                    <li><i class="fa-solid fa-diamond"></i> Inday Remaining Withdrawal Times <span style="color: #f87171;">3</span></li>
-                    <li><i class="fa-solid fa-diamond"></i> Withdrawal amount range <span style="color: #fbbf24;">₹110.00-₹10,000,000.00</span></li>
+                    <li><i class="fa-solid fa-diamond"></i> Inday Remaining Withdrawal Times <span style="color: #f87171;" id="remainingWithdrawCount">3</span></li>
+                    <li><i class="fa-solid fa-diamond"></i> Withdrawal amount range <span style="color: #fbbf24;">₹110.00-₹1,000,000.00</span></li>
                     <li><i class="fa-solid fa-diamond"></i> Please check your registered bank information again before making a withdrawal. If your registered bank information is incorrect, our company will not be responsible for any losses you may incur.</li>
                     <li><i class="fa-solid fa-diamond"></i> If your registered bank information is incorrect, please contact customer service.</li>
                     <li><i class="fa-solid fa-triangle-exclamation" style="color: #fbbf24;"></i> <span style="color: #34d399; font-weight: bold;">Withdrawal payout system is operated manually, so don't panic. Your money is 100% safe, please cooperate with us. Your withdrawal is processed in 1-2 hours. Thank you, keep playing and withdraw carefully!</span></li>
@@ -601,7 +601,6 @@
                 await refreshData();
             }
             
-            // Hide Loader Smoothly
             const loader = document.getElementById('fullPageLoader');
             if (loader) {
                 loader.style.opacity = '0';
@@ -971,6 +970,11 @@
                     currentWinnings = parseFloat(data.winningsBalance || 0);
                     document.getElementById('userWinningsBalance').textContent = currentWinnings.toFixed(2);
                     document.getElementById('subWinningsBal').textContent = currentWinnings.toFixed(2);
+                    
+                    // Dynamic calculation for needed bet turnover
+                    let totalBetDone = parseFloat(data.user?.totalBetDone || data.totalBetDone || 0);
+                    let remainingBet = Math.max(0, 110 - totalBetDone);
+                    document.getElementById('neededBetDisplay').textContent = `₹${remainingBet.toFixed(2)}`;
                 }
             } catch (e) {}
         }
@@ -982,6 +986,14 @@
                 let container = document.getElementById('userWithdrawalHistory');
                 if (data.success && data.withdrawals) {
                     let myWithdrawals = data.withdrawals.filter(w => w.userId && (w.userId._id === userId || w.userId === userId));
+                    
+                    // Count today's withdrawals to update remaining withdrawal times
+                    let startOfToday = new Date();
+                    startOfToday.setHours(0, 0, 0, 0);
+                    let todayCount = myWithdrawals.filter(w => new Date(w.createdAt) >= startOfToday && w.status !== 'rejected').length;
+                    let remainingTimes = Math.max(0, 3 - todayCount);
+                    document.getElementById('remainingWithdrawCount').textContent = remainingTimes;
+
                     if (myWithdrawals.length > 0) {
                         container.innerHTML = '';
                         myWithdrawals.forEach((wit) => {
@@ -1009,8 +1021,8 @@
 
         function initiateWithdrawal() {
             let amount = document.getElementById('withdrawAmount').value;
-            if (!amount || Number(amount) < 110) {
-                showToast('Minimum withdrawal amount is ₹110!');
+            if (!amount || Number(amount) < 110 || Number(amount) > 1000000) {
+                showToast('Withdrawal amount must be between ₹110 and ₹1,000,000!');
                 return;
             }
 
@@ -1068,7 +1080,7 @@
                     document.getElementById('withdrawAmount').value = '';
                     refreshData();
                 } else {
-                    showToast(data.message || 'Incorrect password! Withdrawal cancelled.');
+                    showToast(data.message || 'Withdrawal failed.');
                 }
             } catch (e) {
                 showToast('Server error! Please try again.');
