@@ -345,6 +345,27 @@
     </div>
 
     <script>
+        // Check if user already logged in after 12 AM midnight reset on auth page load
+        async function checkExistingAuthSession() {
+            let userId = localStorage.getItem('rewards_userId');
+            if (userId) {
+                try {
+                    let res = await fetch('/api/check-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId })
+                    });
+                    let data = await res.json();
+                    if (data.success && data.valid) {
+                        window.location.href = 'index.html';
+                    } else {
+                        localStorage.clear();
+                    }
+                } catch(e) {}
+            }
+        }
+        checkExistingAuthSession();
+
         // 3 Seconds Splash Screen Handler
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
@@ -426,7 +447,6 @@
                 if (data.success) {
                     localStorage.setItem('rewards_userId', data.userId);
                     localStorage.setItem('rewards_loggedMobile', phone);
-                    localStorage.setItem('lastActiveTime', Date.now());
                     showToast('Login successful!');
                     setTimeout(() => {
                         window.location.href = 'index.html';
@@ -473,7 +493,6 @@
                 });
                 let data = await res.json();
                 if (data.success) {
-                    // Automatically log in or fetch user session after registration
                     let loginRes = await fetch('/api/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -483,7 +502,6 @@
                     if (loginData.success) {
                         localStorage.setItem('rewards_userId', loginData.userId);
                         localStorage.setItem('rewards_loggedMobile', phone);
-                        localStorage.setItem('lastActiveTime', Date.now());
                     }
 
                     showToast('Registration successful!');
