@@ -35,6 +35,7 @@ app.get('/deposit-admin.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'deposit-admin.html'));
 });
 
+// Explicit route for withdraw.html file mapping[span_2](start_span)[span_2](end_span)
 app.get('/withdraw.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'withdraw.html'));
 });
@@ -45,15 +46,15 @@ function generateUID() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// User Schema with lastLoginDate for 12 AM reset logic
+// User Schema - Permanent Database Storage[span_3](start_span)[span_3](end_span)
 const userSchema = new mongoose.Schema({
     uid: { type: String, unique: true, default: generateUID },
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     balance: { type: Number, default: 0 }, 
     winningsBalance: { type: Number, default: 0 }, 
-    totalBetDone: { type: Number, default: 0 },
-    lastLoginTime: { type: Date, default: null }, // Track when user last logged in after 12 AM
+    totalBetDone: { type: Number, default: 0 }, 
+    lastLoginTime: { type: Date, default: null }, // Track login timestamp for 12 AM reset
     referredBy: { type: String, default: null },
     createdAt: { type: Date, default: Date.now }
 });
@@ -115,6 +116,7 @@ const withdrawalSchema = new mongoose.Schema({
 });
 const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
+// Admin Numbers Configuration[span_4](start_span)[span_4](end_span)
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
 async function setupAdminAccount() {
@@ -164,13 +166,41 @@ const gameStates = {
     '5m':  { countdown: 299, isBettingOpen: true, period: '', startTime: 0 }
 };
 
-// Track connected active sockets to prevent logging out online users at 12 AM
-const activeConnectedSockets = new Set();
+// Track active connected users via socket to protect online users at 12 AM from bad UX
+const activeOnlineSocketUsers = new Set();
+
+// 12:00 AM Reset Cron/Interval Checker
+function startMidnightResetChecker() {
+    setInterval(async () => {
+        const now = new Date();
+        // Check if current time is exactly 00:00 (12:00 AM) or within the first minute
+        if (now.getHours() === 0 && now.getMinutes() === 0) {
+            const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            try {
+                // Reset lastLoginTime for users who were NOT active online at 12 AM
+                // This forces offline users to login again after midnight, while sparing active online users
+                const allUsers = await User.find({});
+                for (const u of allUsers) {
+                    if (!activeOnlineSocketUsers.has(u._id.toString())) {
+                        u.lastLoginTime = null;
+                        await u.save();
+                    }
+                }
+                console.log("Midnight 12 AM reset executed successfully, offline user sessions cleared.");
+            } catch (err) {
+                console.error("Midnight reset error:", err.message);
+            }
+            // Wait 70 seconds to prevent multiple triggers within the same minute
+            await new Promise(resolve => setTimeout(resolve, 70000));
+        }
+    }, 10000);
+}
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'auth.html'));
 });
 
+// Registration API[span_5](start_span)[span_5](end_span)
 app.post('/api/register', async (req, res) => {
     try {
         const { phone, password, refUid } = req.body;
@@ -184,7 +214,7 @@ app.post('/api/register', async (req, res) => {
             password, 
             balance: 0, 
             winningsBalance: 0,
-            lastLoginTime: new Date(), // Set login time on register
+            lastLoginTime: new Date(), // Set login timestamp so they go straight to home page post-registration
             referredBy: refUid || null 
         });
 
@@ -201,7 +231,7 @@ app.post('/api/login', async (req, res) => {
         const user = await User.findOne({ phone, password });
         if (!user) return res.status(400).json({ success: false, message: "Invalid phone number or password!" });
 
-        // Update last login time on successful login
+        // Update last login time to current timestamp (marking login after midnight check)
         user.lastLoginTime = new Date();
         await user.save();
 
@@ -213,7 +243,6 @@ app.post('/api/login', async (req, res) => {
             userId: user._id, 
             balance: user.balance,
             winningsBalance: user.winningsBalance,
-            lastLoginTime: user.lastLoginTime,
             isAdmin: isAdmin,
             user: { 
                 _id: user._id, 
@@ -222,7 +251,6 @@ app.post('/api/login', async (req, res) => {
                 balance: user.balance, 
                 winningsBalance: user.winningsBalance,
                 totalBetDone: user.totalBetDone || 0,
-                lastLoginTime: user.lastLoginTime,
                 isAdmin: isAdmin
             } 
         });
@@ -231,25 +259,29 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Endpoint for client to check session validity based on 12 AM reset
-app.get('/api/check-session/:userId', async (req, res) => {
+// API to check user session validity based on 12 AM midnight reset rule
+app.post('/api/check-session', async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId);
+        const { userId } = req.body;
+        if (!userId) return res.json({ success: false, valid: false });
+
+        const user = await User.findById(userId);
         if (!user || !user.lastLoginTime) {
-            return res.json({ success: false, valid: false });
+            return res.json({ success: true, valid: false, message: "Session expired or logged out after midnight." });
         }
 
         const now = new Date();
-        const startOfTodayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+        const loginTimestamp = new Date(user.lastLoginTime).getTime();
 
-        // If user logged in AFTER today's 12 AM midnight, session is valid
-        if (new Date(user.lastLoginTime) >= startOfTodayMidnight) {
+        // Check if user logged in AFTER today's midnight (12:00 AM)
+        if (loginTimestamp >= startOfToday) {
             return res.json({ success: true, valid: true });
         } else {
-            return res.json({ success: true, valid: false });
+            return res.json({ success: true, valid: false, message: "Please log in again after midnight reset." });
         }
     } catch (err) {
-        res.status(500).json({ success: false, valid: false });
+        res.status(500).json({ success: false, valid: false, message: err.message });
     }
 });
 
@@ -260,6 +292,7 @@ app.post('/api/reset-password', async (req, res) => {
         if (!user) return res.status(404).json({ success: false, message: "Phone number not registered!" });
 
         user.password = newPassword;
+        user.lastLoginTime = null; // Invalidate session so they log in fresh
         await user.save();
 
         res.json({ success: true, message: "Password reset successful!" });
@@ -273,7 +306,7 @@ app.get('/api/user/:userId', async (req, res) => {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
         const isAdmin = ADMIN_NUMBERS.includes(user.phone);
-        res.json({ success: true, balance: user.balance, winningsBalance: user.winningsBalance, totalBetDone: user.totalBetDone || 0, lastLoginTime: user.lastLoginTime, isAdmin, user });
+        res.json({ success: true, balance: user.balance, winningsBalance: user.winningsBalance, totalBetDone: user.totalBetDone || 0, isAdmin, user });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -299,6 +332,7 @@ app.get('/api/user-deposits/:userId', async (req, res) => {
     }
 });
 
+// Deposit API with Server-side Order No Generation[span_6](start_span)[span_6](end_span)
 app.post('/api/deposit', async (req, res) => {
     try {
         const { userId, amount, utr, orderNo } = req.body;
@@ -312,6 +346,7 @@ app.post('/api/deposit', async (req, res) => {
     }
 });
 
+// Withdrawal API with Rules Validation (Min/Max range, turnover requirement, daily limit)[span_7](start_span)[span_7](end_span)
 app.post('/api/withdraw', async (req, res) => {
     try {
         const { userId, amount, password, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile } = req.body;
@@ -319,20 +354,24 @@ app.post('/api/withdraw', async (req, res) => {
         
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
         
+        // Verify login password for safety[span_8](start_span)[span_8](end_span)
         if (!password || user.password !== password) {
             return res.status(400).json({ success: false, message: "Incorrect password! Withdrawal cancelled." });
         }
 
         const numAmount = Number(amount);
 
+        // Rule 4: Withdrawal Amount Range Validation (₹110 - ₹1,000,000)
         if (numAmount < 110 || numAmount > 1000000) {
             return res.status(400).json({ success: false, message: "Withdrawal amount must be between ₹110 and ₹1,000,000!" });
         }
 
+        // Rule 1: Minimum betting turnover requirement (₹110)
         if ((user.totalBetDone || 0) < 110) {
             return res.status(400).json({ success: false, message: "You need to place bets totaling at least ₹110 before withdrawing!" });
         }
 
+        // Rule 2 & 3: Daily Withdrawal Count Limit (Max 3 times per day)
         const startOfToday = new Date();
         startOfToday.setHours(0, 0, 0, 0);
         const todayWithdrawalsCount = await Withdrawal.countDocuments({
@@ -511,6 +550,7 @@ app.get('/api/user-round-result', async (req, res) => {
     }
 });
 
+// Place Bet API with Turnover Tracking[span_9](start_span)[span_9](end_span)
 app.post('/api/bet', async (req, res) => {
     try {
         const { userId, timerType = '30s', period, betType, betValue, amount } = req.body;
@@ -534,6 +574,7 @@ app.post('/api/bet', async (req, res) => {
             user.winningsBalance -= remain;
         }
 
+        // Update total bet done for withdrawal requirement
         user.totalBetDone = (user.totalBetDone || 0) + deductAmt;
         await user.save();
 
@@ -678,33 +719,6 @@ function startTimerLoop(timerType, intervalSeconds) {
     }, 1000);
 }
 
-// 12 AM (00:00) Midnight Check Loop: Force logout offline users only
-setInterval(async () => {
-    const now = new Date();
-    // Check if it is exactly 00:00 (12:00 AM) within a 1-minute window
-    if (now.getHours() === 0 && now.getMinutes() === 0) {
-        try {
-            const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-            
-            // Find users whose last login was BEFORE today's midnight
-            const usersToLogout = await User.find({
-                $or: [
-                    { lastLoginTime: { $lt: startOfToday } },
-                    { lastLoginTime: { $exists: false } },
-                    { lastLoginTime: null }
-                ]
-            });
-
-            const logoutUserIds = usersToLogout.map(u => u._id.toString());
-
-            // Notify only those sockets/users who are offline or need logout
-            io.emit('forceLogoutCheck', { logoutUserIds });
-        } catch (err) {
-            console.error("Midnight logout check error:", err);
-        }
-    }
-}, 60000); // Check every 1 minute
-
 app.get('*', (req, res) => {
   if (req.path.startsWith('/assist/')) {
     res.sendFile(path.join(__dirname, req.path));
@@ -716,6 +730,7 @@ app.get('*', (req, res) => {
 mongoose.connect(MONGO_URI).then(async () => {
     console.log("Connected to MongoDB successfully!");
     await setupAdminAccount();
+    startMidnightResetChecker();
 
     ['30s', '60s', '3m', '5m'].forEach(type => {
         let interval = type === '30s' ? 30 : (type === '60s' ? 60 : (type === '3m' ? 180 : 300));
@@ -727,16 +742,29 @@ mongoose.connect(MONGO_URI).then(async () => {
 });
 
 io.on('connection', (socket) => {
-    activeConnectedSockets.add(socket.id);
+    let currentConnectedUserId = null;
+
+    socket.on('registerUserSession', (userId) => {
+        currentConnectedUserId = userId;
+        if (userId) {
+            activeOnlineSocketUsers.add(userId);
+        }
+    });
+
+    socket.on('disconnect', () => {
+        if (currentConnectedUserId) {
+            // Keep track of user disconnection timeout for 10 seconds rule on pages other than deposit/withdraw
+            setTimeout(() => {
+                // If socket hasn't reconnected within 10 seconds, remove from active online users
+                activeOnlineSocketUsers.delete(currentConnectedUserId);
+            }, 10000);
+        }
+    });
 
     ['30s', '60s', '3m', '5m'].forEach(type => {
         socket.emit(`timerTick_${type}`, { 
             countdown: gameStates[type].countdown, isBettingOpen: gameStates[type].isBettingOpen, period: gameStates[type].period 
         });
-    });
-
-    socket.on('disconnect', () => {
-        activeConnectedSockets.delete(socket.id);
     });
 });
 
