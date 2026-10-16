@@ -536,20 +536,61 @@
     </div>
   </nav>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script>
-    let lastActive = localStorage.getItem('lastActiveTime');
+    const socket = io();
     let userId = localStorage.getItem('rewards_userId');
 
-    if (!userId || (lastActive && (Date.now() - parseInt(lastActive) > 30 * 60 * 1000))) {
-        localStorage.clear();
-        window.location.href = '../auth.html';
-    } else {
-        localStorage.setItem('lastActiveTime', Date.now());
-        fetchUserData();
+    // Register active user session via socket to prevent offline reset if online at 12 AM
+    if (userId) {
+        socket.emit('registerUserSession', userId);
     }
 
-    window.addEventListener('click', () => localStorage.setItem('lastActiveTime', Date.now()));
-    window.addEventListener('keypress', () => localStorage.setItem('lastActiveTime', Date.now()));
+    // Session validation on page load (checks if user logged in after 12 AM midnight reset)
+    async function validateUserSession() {
+        if (!userId) {
+            window.location.href = 'auth.html';
+            return;
+        }
+        try {
+            let res = await fetch('/api/check-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId })
+            });
+            let data = await res.json();
+            if (data.success && !data.valid) {
+                localStorage.clear();
+                window.location.href = 'auth.html';
+            } else {
+                fetchUserData();
+            }
+        } catch(e) {
+            fetchUserData();
+        }
+    }
+
+    validateUserSession();
+
+    // 10-Second Background Inactivity Check (Excludes deposit.html & withdraw.html)
+    let backgroundTimer = null;
+    document.addEventListener('visibilitychange', () => {
+        let currentPath = window.location.pathname;
+        let isExemptPage = currentPath.includes('deposit.html') || currentPath.includes('withdraw.html');
+
+        if (document.hidden) {
+            if (!isExemptPage) {
+                backgroundTimer = setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 10000); // 10 seconds
+            }
+        } else {
+            if (backgroundTimer) {
+                clearTimeout(backgroundTimer);
+                backgroundTimer = null;
+            }
+        }
+    });
 
     async function fetchUserData() {
         try {
@@ -575,7 +616,7 @@
         localStorage.clear();
         showToast('Logged out successfully');
         setTimeout(() => {
-            window.location.href = '../auth.html';
+            window.location.href = 'auth.html';
         }, 800);
     }
 
