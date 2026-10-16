@@ -26,7 +26,7 @@ app.use(cors());
 // Serve static files from root directory[span_2](start_span)[span_2](end_span)
 app.use(express.static(path.join(__dirname)));
 
-// Explicit routes to prevent 404 Not Found errors on Render
+// Explicit routes to prevent 404 Not Found errors on Render[span_3](start_span)[span_3](end_span)
 app.get('/admin.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
@@ -35,7 +35,7 @@ app.get('/deposit-admin.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'deposit-admin.html'));
 });
 
-// Explicit route for withdraw.html file mapping
+// Explicit route for withdraw.html file mapping[span_4](start_span)[span_4](end_span)
 app.get('/withdraw.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'withdraw.html'));
 });
@@ -46,13 +46,14 @@ function generateUID() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// User Schema - Permanent Database Storage
+// User Schema - Permanent Database Storage[span_5](start_span)[span_5](end_span)
 const userSchema = new mongoose.Schema({
     uid: { type: String, unique: true, default: generateUID },
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     balance: { type: Number, default: 0 }, 
     winningsBalance: { type: Number, default: 0 }, 
+    totalBetDone: { type: Number, default: 0 }, // Turnover tracking for withdrawal rule
     referredBy: { type: String, default: null },
     createdAt: { type: Date, default: Date.now }
 });
@@ -114,7 +115,7 @@ const withdrawalSchema = new mongoose.Schema({
 });
 const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
-// Admin Numbers Configuration
+// Admin Numbers Configuration[span_6](start_span)[span_6](end_span)
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
 async function setupAdminAccount() {
@@ -168,7 +169,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'auth.html'));
 });
 
-// Registration API
+// Registration API[span_7](start_span)[span_7](end_span)
 app.post('/api/register', async (req, res) => {
     try {
         const { phone, password, refUid } = req.body;
@@ -213,6 +214,7 @@ app.post('/api/login', async (req, res) => {
                 phone: user.phone, 
                 balance: user.balance, 
                 winningsBalance: user.winningsBalance,
+                totalBetDone: user.totalBetDone || 0,
                 isAdmin: isAdmin
             } 
         });
@@ -241,7 +243,7 @@ app.get('/api/user/:userId', async (req, res) => {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
         const isAdmin = ADMIN_NUMBERS.includes(user.phone);
-        res.json({ success: true, balance: user.balance, winningsBalance: user.winningsBalance, isAdmin, user });
+        res.json({ success: true, balance: user.balance, winningsBalance: user.winningsBalance, totalBetDone: user.totalBetDone || 0, isAdmin, user });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -267,7 +269,7 @@ app.get('/api/user-deposits/:userId', async (req, res) => {
     }
 });
 
-// Deposit API with Server-side Order No Generation
+// Deposit API with Server-side Order No Generation[span_8](start_span)[span_8](end_span)
 app.post('/api/deposit', async (req, res) => {
     try {
         const { userId, amount, utr, orderNo } = req.body;
@@ -281,7 +283,7 @@ app.post('/api/deposit', async (req, res) => {
     }
 });
 
-// Withdrawal API with Password Verification & Order No Generation
+// Withdrawal API with Rules Validation (Min/Max range, turnover requirement, daily limit)[span_9](start_span)[span_9](end_span)
 app.post('/api/withdraw', async (req, res) => {
     try {
         const { userId, amount, password, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile } = req.body;
@@ -289,19 +291,43 @@ app.post('/api/withdraw', async (req, res) => {
         
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
         
-        // Verify login password for safety
+        // Verify login password for safety[span_10](start_span)[span_10](end_span)
         if (!password || user.password !== password) {
             return res.status(400).json({ success: false, message: "Incorrect password! Withdrawal cancelled." });
         }
 
-        if (Number(amount) < 110) return res.status(400).json({ success: false, message: "Minimum withdrawal amount is ₹110!" });
-        if (user.winningsBalance < Number(amount)) return res.status(400).json({ success: false, message: "Insufficient winnings balance!" });
+        const numAmount = Number(amount);
 
-        user.winningsBalance -= Number(amount);
+        // Rule 4: Withdrawal Amount Range Validation (₹110 - ₹1,000,000)
+        if (numAmount < 110 || numAmount > 1000000) {
+            return res.status(400).json({ success: false, message: "Withdrawal amount must be between ₹110 and ₹1,000,000!" });
+        }
+
+        // Rule 1: Minimum betting turnover requirement (₹110)
+        if ((user.totalBetDone || 0) < 110) {
+            return res.status(400).json({ success: false, message: "You need to place bets totaling at least ₹110 before withdrawing!" });
+        }
+
+        // Rule 2 & 3: Daily Withdrawal Count Limit (Max 3 times per day)
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        const todayWithdrawalsCount = await Withdrawal.countDocuments({
+            userId: userId,
+            createdAt: { $gte: startOfToday },
+            status: { $ne: 'rejected' }
+        });
+
+        if (todayWithdrawalsCount >= 3) {
+            return res.status(400).json({ success: false, message: "Daily withdrawal limit of 3 times reached!" });
+        }
+
+        if (user.winningsBalance < numAmount) return res.status(400).json({ success: false, message: "Insufficient winnings balance!" });
+
+        user.winningsBalance -= numAmount;
         await user.save();
 
         const finalOrderNo = 'SBW_W' + Math.floor(100000 + Math.random() * 900000);
-        const withdrawal = new Withdrawal({ userId, amount, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile, orderNo: finalOrderNo });
+        const withdrawal = new Withdrawal({ userId, amount: numAmount, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile, orderNo: finalOrderNo });
         await withdrawal.save();
 
         res.json({ success: true, message: "Withdrawal request submitted successfully!" });
@@ -461,6 +487,7 @@ app.get('/api/user-round-result', async (req, res) => {
     }
 });
 
+// Place Bet API with Turnover Tracking[span_11](start_span)[span_11](end_span)
 app.post('/api/bet', async (req, res) => {
     try {
         const { userId, timerType = '30s', period, betType, betValue, amount } = req.body;
@@ -483,9 +510,12 @@ app.post('/api/bet', async (req, res) => {
             user.balance = 0;
             user.winningsBalance -= remain;
         }
+
+        // Update total bet done for withdrawal requirement
+        user.totalBetDone = (user.totalBetDone || 0) + deductAmt;
         await user.save();
 
-        const newBet = new Bet({ userId, timerType, period, betType, betValue, amount });
+        const newBet = new Bet({ userId, timerType, period, betType, betValue, amount: deductAmt });
         await newBet.save();
 
         res.json({ success: true, message: "Bet successfully added!", newBalance: user.balance, newWinnings: user.winningsBalance });
