@@ -856,7 +856,7 @@
         #fullPageLoader {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.9);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             display: flex;
@@ -885,9 +885,7 @@
             50% { opacity: 1; }
             100% { opacity: 0.2; }
         }
-        .dot-anim {
-            animation: dotBlink 1.4s infinite;
-        }
+        .dot-anim { animation: dotBlink 1.4s infinite; }
     </style>
 </head>
 <body>
@@ -964,7 +962,7 @@
             <div class="wallet-title">Wallet balance</div>
             <div class="balance" id="userWallet">₹0.00</div>
             <div class="wallet-btns" style="margin-top: 12px;">
-                <button class="btn btn-withdraw" onclick="showToast('Opening Withdraw...')">Withdraw</button>
+                <button class="btn btn-withdraw" onclick="window.location.href='withdraw.html'">Withdraw</button>
                 <a href="../deposit.html" class="btn btn-deposit" onclick="localStorage.setItem('deposit_return_page', 'assist/win-go.html')">Deposit</a>
             </div>
         </div>
@@ -989,7 +987,6 @@
             </div>
         </div>
 
-        <!-- Timer Box -->
         <div class="timer-section">
             <div class="timer-left">
                 <button onclick="showToast('Opening Rules...')">📖 How to play</button>
@@ -1005,7 +1002,6 @@
             </div>
         </div>
 
-        <!-- Betting Area Wrapper -->
         <div class="betting-wrapper">
             <div class="lock-overlay" id="lockOverlay">
                 <div class="lock-box" id="lockBoxTens">0</div>
