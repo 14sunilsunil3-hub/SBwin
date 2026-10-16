@@ -35,6 +35,11 @@ app.get('/deposit-admin.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'deposit-admin.html'));
 });
 
+// Explicit route for withdraw.html file mapping
+app.get('/withdraw.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'withdraw.html'));
+});
+
 const MONGO_URI = "mongodb+srv://14sunilsunil3_db_user:W1LlrneQfi7toLpn@cluster1.pr9b0cx.mongodb.net/sbwin_db?retryWrites=true&w=majority";
 
 function generateUID() {
@@ -127,7 +132,6 @@ async function setupAdminAccount() {
             });
             await adminUser.save();
         }
-        // Else block hata diya gaya hai taaki balance reset na ho!
     } catch (err) {
         console.error("Admin setup error:", err.message);
     }
@@ -277,13 +281,19 @@ app.post('/api/deposit', async (req, res) => {
     }
 });
 
-// Withdrawal API with Server-side Order No Generation
+// Withdrawal API with Password Verification & Order No Generation
 app.post('/api/withdraw', async (req, res) => {
     try {
-        const { userId, amount, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile } = req.body;
+        const { userId, amount, password, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile } = req.body;
         const user = await User.findById(userId);
         
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
+        
+        // Verify login password for safety
+        if (!password || user.password !== password) {
+            return res.status(400).json({ success: false, message: "Incorrect password! Withdrawal cancelled." });
+        }
+
         if (Number(amount) < 110) return res.status(400).json({ success: false, message: "Minimum withdrawal amount is ₹110!" });
         if (user.winningsBalance < Number(amount)) return res.status(400).json({ success: false, message: "Insufficient winnings balance!" });
 
