@@ -23,10 +23,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cors());
 
-// Serve static files from root directory
+// Serve static files from root directory[span_1](start_span)[span_1](end_span)
 app.use(express.static(path.join(__dirname)));
 
-// Explicit routes to prevent 404 Not Found errors on Render[span_1](start_span)[span_1](end_span)
+// Explicit routes to prevent 404 Not Found errors on Render[span_2](start_span)[span_2](end_span)
 app.get('/admin.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
@@ -35,7 +35,6 @@ app.get('/deposit-admin.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'deposit-admin.html'));
 });
 
-// Explicit route for withdraw.html file mapping[span_2](start_span)[span_2](end_span)
 app.get('/withdraw.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'withdraw.html'));
 });
@@ -54,7 +53,7 @@ const userSchema = new mongoose.Schema({
     balance: { type: Number, default: 0 }, 
     winningsBalance: { type: Number, default: 0 }, 
     totalBetDone: { type: Number, default: 0 }, 
-    lastLoginTime: { type: Date, default: null }, // Track login timestamp for 12 AM reset
+    lastLoginTime: { type: Date, default: null }, 
     referredBy: { type: String, default: null },
     createdAt: { type: Date, default: Date.now }
 });
@@ -94,7 +93,7 @@ const depositSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     amount: Number,
     utr: String,
-    orderNo: { type: String },
+    orderNo: { type: String, unique: true },
     rejectReason: String,
     status: { type: String, default: 'pending' },
     createdAt: { type: Date, default: Date.now }
@@ -110,7 +109,8 @@ const withdrawalSchema = new mongoose.Schema({
     accountNumber: String,
     ifsc: String,
     mobile: String,
-    orderNo: { type: String },
+    orderNo: { type: String, unique: true },
+    type: { type: String, default: 'BANK CARD' },
     status: { type: String, default: 'pending' },
     createdAt: { type: Date, default: Date.now }
 });
@@ -172,7 +172,6 @@ function startMidnightResetChecker() {
     setInterval(async () => {
         const now = new Date();
         if (now.getHours() === 0 && now.getMinutes() === 0) {
-            const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
             try {
                 const allUsers = await User.find({});
                 for (const u of allUsers) {
@@ -181,7 +180,7 @@ function startMidnightResetChecker() {
                         await u.save();
                     }
                 }
-                console.log("Midnight 12 AM reset executed successfully, offline user sessions cleared.");
+                console.log("Midnight 12 AM reset executed successfully.");
             } catch (err) {
                 console.error("Midnight reset error:", err.message);
             }
@@ -345,7 +344,6 @@ app.post('/api/withdraw', async (req, res) => {
         
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
         
-        // Verify login password[span_8](start_span)[span_8](end_span)
         if (!password || user.password !== password) {
             return res.status(400).json({ success: false, message: "Incorrect password! Withdrawal cancelled." });
         }
@@ -408,13 +406,18 @@ app.get('/api/admin/requests', async (req, res) => {
     }
 });
 
+// ORDER NUMBER BASED ADMIN ACTION HANDLER (Deposit & Withdrawal)
 app.post('/api/admin/action', async (req, res) => {
     try {
-        const { type, id, action, reason } = req.body;
+        const { type, id, orderNo, action, reason } = req.body;
+        const act = String(action).toLowerCase().trim();
+
         if (type === 'deposit') {
-            const dep = await Deposit.findById(id);
+            let query = orderNo ? { orderNo } : { _id: id };
+            const dep = await Deposit.findOne(query);
             if (!dep) return res.status(404).json({ success: false, message: "Deposit not found" });
-            if (action === 'approve' && dep.status === 'pending') {
+
+            if ((act === 'approve' || act === 'approved' || act === 'complete' || act === 'completed' || act === 'success') && dep.status === 'pending') {
                 dep.status = 'approved';
                 await dep.save();
                 
@@ -424,33 +427,38 @@ app.post('/api/admin/action', async (req, res) => {
                     await user.save();
                 }
                 io.emit('refreshBalance');
+            } else if (act === 'reject' || act === 'rejected' || act === 'fail' || act === 'failed') {
+                if (dep.status !== 'rejected') {
+                    dep.status = 'rejected';
+                    if (reason) dep.rejectReason = reason;
+                    await dep.save();
+                    io.emit('refreshBalance');
+                }
             } else {
                 dep.status = action;
-                if (action === 'reject' && reason) {
-                    dep.rejectReason = reason;
-                }
                 await dep.save();
             }
         } else if (type === 'withdrawal') {
-            const wit = await Withdrawal.findById(id);
-            if (!wit) return res.status(404).json({ success: false, message: "Withdrawal not found" });
+            let query = orderNo ? { orderNo } : { _id: id };
+            const wit = await Withdrawal.findOne(query);
+            if (!wit) return res.status(404).json({ success: false, message: "Withdrawal order not found" });
             
-            // Handle approval/rejection properly
-            if (action === 'approve' && wit.status === 'pending') {
+            if (act === 'approve' || act === 'approved' || act === 'complete' || act === 'completed' || act === 'success') {
                 wit.status = 'approved';
                 await wit.save();
                 io.emit('refreshBalance');
-            } else if (action === 'reject' && wit.status === 'pending') {
-                wit.status = 'rejected';
-                await wit.save();
-                
-                // Refund amount to user winnings if rejected
-                const user = await User.findById(wit.userId);
-                if (user) {
-                    user.winningsBalance = (user.winningsBalance || 0) + Number(wit.amount);
-                    await user.save();
+            } else if (act === 'reject' || act === 'rejected' || act === 'fail' || act === 'failed') {
+                if (wit.status !== 'rejected') {
+                    wit.status = 'rejected';
+                    await wit.save();
+                    
+                    const user = await User.findById(wit.userId);
+                    if (user) {
+                        user.winningsBalance = (user.winningsBalance || 0) + Number(wit.amount);
+                        await user.save();
+                    }
+                    io.emit('refreshBalance');
                 }
-                io.emit('refreshBalance');
             } else {
                 wit.status = action;
                 await wit.save();
@@ -556,7 +564,7 @@ app.get('/api/user-round-result', async (req, res) => {
     }
 });
 
-// Place Bet API
+// Place Bet API[span_8](start_span)[span_8](end_span)
 app.post('/api/bet', async (req, res) => {
     try {
         const { userId, timerType = '30s', period, betType, betValue, amount } = req.body;
