@@ -37,14 +37,20 @@
             transform: translateX(-50%);
             width: 100%;
             max-width: 500px;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 40px 1fr 40px;
             align-items: center;
             padding: 14px 16px;
             z-index: 1000;
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(124, 58, 237, 0.4);
+        }
+        .header-center {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .header h2 {
             font-style: italic;
@@ -54,6 +60,7 @@
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
             font-size: 19px;
+            margin: 0;
         }
         .header-back-btn {
             background: rgba(30, 27, 75, 0.8);
@@ -71,9 +78,23 @@
             cursor: pointer;
         }
         .header-right {
-            font-size: 12px;
-            color: #a7f3d0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .support-icon-btn {
+            background: rgba(30, 27, 75, 0.8);
+            border: 1px solid #7c3aed;
+            color: #34d399;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
             cursor: pointer;
+            font-size: 18px;
+            text-decoration: none;
         }
 
         .view-page { display: block; }
@@ -259,6 +280,90 @@
             padding: 16px; border-radius: 14px; font-weight: bold; font-size: 16px; cursor: pointer;
         }
 
+        /* Deposit Style History Card Item */
+        .history-card-item {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1.5px solid #7c3aed;
+            border-radius: 16px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .history-card-item:hover {
+            border-color: #34d399;
+        }
+        .history-card-top, .history-card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .order-no-txt {
+            color: #f59e0b;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .status-txt {
+            font-weight: 800;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        .amount-txt {
+            font-size: 13px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .type-time-right {
+            text-align: right;
+            font-size: 11px;
+            color: #94a3b8;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+        .type-badge {
+            background: rgba(124, 58, 237, 0.25);
+            border: 1px solid #7c3aed;
+            color: #a7f3d0;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        /* Detail Modal Popup */
+        .detail-modal-card {
+            width: 100%;
+            max-width: 420px;
+            background: #131738;
+            border: 2px solid #34d399;
+            border-radius: 20px;
+            padding: 24px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .detail-modal-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: #34d399;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .detail-label { color: #cbd5e1; font-weight: 600; }
+        .detail-val { color: #ffffff; font-weight: 700; font-family: monospace; }
+
         .modal-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.85);
             z-index: 200000; display: none; justify-content: center; align-items: center; padding: 20px;
@@ -349,8 +454,12 @@
 
     <div class="header">
         <div id="headerBackBtn" class="header-back-btn" onclick="handleHeaderBack()">&lt;</div>
-        <div class="header-center"><h2 id="headerTitleText">Withdraw</h2></div>
-        <div class="header-right"><span id="headerRightAction" onclick="scrollToHistory()">Withdrawal history</span></div>
+        <div class="header-center"><h2 id="headerTitleText">WITHDRAW</h2></div>
+        <div class="header-right">
+            <a href="https://telegram.org" target="_blank" class="support-icon-btn" id="supportIconBtn">
+                <i class="fa-solid fa-headset"></i>
+            </a>
+        </div>
     </div>
 
     <div class="container">
@@ -447,8 +556,8 @@
             </div>
 
             <div class="card" id="historySection">
-                <div class="title">Withdrawal History</div>
-                <div id="userWithdrawalHistory" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                <div class="title">WITHDRAWAL HISTORY (CLICK ITEM FOR DETAILS)</div>
+                <div id="userWithdrawalHistory" style="max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
                     <p style="font-size: 13px; color: #94a3b8; text-align: center; padding: 15px;">Loading history...</p>
                 </div>
             </div>
@@ -537,6 +646,34 @@
         </div>
     </div>
 
+    <!-- Details Modal (Deposit Style) -->
+    <div id="orderDetailModalOverlay" class="modal-overlay">
+        <div class="detail-modal-card">
+            <div class="detail-modal-title">ORDER DETAILS</div>
+            <div class="detail-row">
+                <span class="detail-label">Order No:</span>
+                <span class="detail-val" id="modalOrderNo" style="color: #f59e0b;">SBW120433</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Status:</span>
+                <span class="detail-val" id="modalStatus" style="color: #34d399;">COMPLETE</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Amount:</span>
+                <span class="detail-val" id="modalAmount" style="color: #34d399;">₹100</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Withdrawal Type:</span>
+                <span class="detail-val" id="modalType" style="color: #a7f3d0;">BANK CARD</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date & Time:</span>
+                <span class="detail-val" id="modalTime" style="color: #cbd5e1; font-size: 12px;">21/10/2026, 22:55:15</span>
+            </div>
+            <button onclick="closeDetailModal()" class="submit-btn" style="margin-top: 10px; padding: 12px;">Close</button>
+        </div>
+    </div>
+
     <div id="passwordModalOverlay" class="modal-overlay">
         <div class="pwd-modal-container">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -579,6 +716,8 @@
 
         let savedUpiList = [];
         let selectedUpiIndex = 0;
+
+        let rawWithdrawalData = [];
 
         let previousReferrerPage = document.referrer;
 
@@ -727,7 +866,7 @@
             document.getElementById('viewAddBank').classList.add('hidden');
             document.getElementById('viewBankCardList').classList.remove('hidden');
             document.getElementById('headerTitleText').textContent = 'BANK ACCOUNT';
-            document.getElementById('headerRightAction').style.display = 'none';
+            document.getElementById('supportIconBtn').style.display = 'none';
         }
 
         function showUpiSelectionView() {
@@ -736,7 +875,7 @@
             document.getElementById('viewAddUpi').classList.add('hidden');
             document.getElementById('viewUpiCardList').classList.remove('hidden');
             document.getElementById('headerTitleText').textContent = 'UPI ACCOUNT';
-            document.getElementById('headerRightAction').style.display = 'none';
+            document.getElementById('supportIconBtn').style.display = 'none';
         }
 
         function selectBankCardIndex(idx) {
@@ -787,7 +926,7 @@
             document.getElementById('viewBankCardList').classList.add('hidden');
             document.getElementById('viewAddBank').classList.remove('hidden');
             document.getElementById('headerTitleText').textContent = 'ADD A BANK ACCOUNT NUMBER';
-            document.getElementById('headerRightAction').style.display = 'none';
+            document.getElementById('supportIconBtn').style.display = 'none';
 
             let lockedName = localStorage.getItem('locked_holder_name_' + userId);
             let input = document.getElementById('bankRecipientName');
@@ -815,7 +954,7 @@
             document.getElementById('viewUpiCardList').classList.add('hidden');
             document.getElementById('viewAddUpi').classList.remove('hidden');
             document.getElementById('headerTitleText').textContent = 'ADD UPI';
-            document.getElementById('headerRightAction').style.display = 'none';
+            document.getElementById('supportIconBtn').style.display = 'none';
 
             let lockedName = localStorage.getItem('locked_holder_name_' + userId);
             let input = document.getElementById('upiNameInput');
@@ -849,8 +988,8 @@
                 document.getElementById('viewUpiCardList').classList.add('hidden');
                 document.getElementById('viewAddUpi').classList.add('hidden');
                 document.getElementById('viewWithdrawMain').classList.remove('hidden');
-                document.getElementById('headerTitleText').textContent = 'Withdraw';
-                document.getElementById('headerRightAction').style.display = 'block';
+                document.getElementById('headerTitleText').textContent = 'WITHDRAW';
+                document.getElementById('supportIconBtn').style.display = 'flex';
             } else {
                 if (previousReferrerPage && previousReferrerPage !== '' && !previousReferrerPage.includes('withdraw.html')) {
                     window.location.href = previousReferrerPage;
@@ -971,7 +1110,6 @@
                     document.getElementById('userWinningsBalance').textContent = currentWinnings.toFixed(2);
                     document.getElementById('subWinningsBal').textContent = currentWinnings.toFixed(2);
                     
-                    // Dynamic calculation for needed bet turnover
                     let totalBetDone = parseFloat(data.user?.totalBetDone || data.totalBetDone || 0);
                     let remainingBet = Math.max(0, 110 - totalBetDone);
                     document.getElementById('neededBetDisplay').textContent = `₹${remainingBet.toFixed(2)}`;
@@ -986,8 +1124,8 @@
                 let container = document.getElementById('userWithdrawalHistory');
                 if (data.success && data.withdrawals) {
                     let myWithdrawals = data.withdrawals.filter(w => w.userId && (w.userId._id === userId || w.userId === userId));
+                    rawWithdrawalData = myWithdrawals;
                     
-                    // Count today's withdrawals to update remaining withdrawal times
                     let startOfToday = new Date();
                     startOfToday.setHours(0, 0, 0, 0);
                     let todayCount = myWithdrawals.filter(w => new Date(w.createdAt) >= startOfToday && w.status !== 'rejected').length;
@@ -996,19 +1134,30 @@
 
                     if (myWithdrawals.length > 0) {
                         container.innerHTML = '';
-                        myWithdrawals.forEach((wit) => {
-                            let isApproved = wit.status === 'approved';
-                            let displayStatus = isApproved ? 'Completed' : (wit.status === 'rejected' ? 'Failed' : wit.status);
-                            let statusColor = isApproved ? '#34d399' : (wit.status === 'rejected' ? '#f87171' : '#fbbf24');
-                            let time = new Date(wit.createdAt).toLocaleString();
+                        myWithdrawals.forEach((wit, index) => {
+                            let isApproved = wit.status === 'approved' || wit.status === 'completed' || wit.status === 'COMPLETE';
+                            let isRejected = wit.status === 'rejected' || wit.status === 'FAILED';
+                            
+                            let displayStatus = isApproved ? 'COMPLETE' : (isRejected ? 'FAILED' : 'PENDING');
+                            let statusColor = isApproved ? '#34d399' : (isRejected ? '#f87171' : '#fbbf24');
+                            
+                            let orderNo = wit.orderNo || wit._id ? ('SBW' + (wit._id ? wit._id.slice(-6).toUpperCase() : Math.floor(100000 + Math.random() * 900000))) : 'SBW120433';
+                            let wType = wit.type || (wit.upiId ? 'UPI' : 'BANK CARD');
+                            let time = new Date(wit.createdAt || Date.now()).toLocaleString('en-GB');
 
                             container.innerHTML += `
-                                <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid #7c3aed; padding: 12px; border-radius: 12px; font-size: 13px;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="color: #fbbf24; font-weight: bold;">₹${wit.amount}</span>
-                                        <span style="color: ${statusColor}; text-transform: uppercase; font-weight: bold;">${displayStatus}</span>
+                                <div class="history-card-item" onclick="openDetailModal(${index})">
+                                    <div class="history-card-top">
+                                        <span class="order-no-txt">Order: ${orderNo}</span>
+                                        <span class="status-txt" style="color: ${statusColor};">${displayStatus}</span>
                                     </div>
-                                    <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">${time}</div>
+                                    <div class="history-card-bottom">
+                                        <span class="amount-txt">Amount: ₹${wit.amount}</span>
+                                        <div class="type-time-right">
+                                            <span class="type-badge">${wType}</span>
+                                            <span>${time}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             `;
                         });
@@ -1017,6 +1166,33 @@
                     }
                 }
             } catch (e) {}
+        }
+
+        function openDetailModal(index) {
+            let wit = rawWithdrawalData[index];
+            if (!wit) return;
+
+            let isApproved = wit.status === 'approved' || wit.status === 'completed' || wit.status === 'COMPLETE';
+            let isRejected = wit.status === 'rejected' || wit.status === 'FAILED';
+            
+            let displayStatus = isApproved ? 'COMPLETE' : (isRejected ? 'FAILED' : 'PENDING');
+            let statusColor = isApproved ? '#34d399' : (isRejected ? '#f87171' : '#fbbf24');
+            let orderNo = wit.orderNo || wit._id ? ('SBW' + (wit._id ? wit._id.slice(-6).toUpperCase() : Math.floor(100000 + Math.random() * 900000))) : 'SBW120433';
+            let wType = wit.type || (wit.upiId ? 'UPI' : 'BANK CARD');
+            let time = new Date(wit.createdAt || Date.now()).toLocaleString('en-GB');
+
+            document.getElementById('modalOrderNo').textContent = orderNo;
+            document.getElementById('modalStatus').textContent = displayStatus;
+            document.getElementById('modalStatus').style.color = statusColor;
+            document.getElementById('modalAmount').textContent = '₹' + wit.amount;
+            document.getElementById('modalType').textContent = wType;
+            document.getElementById('modalTime').textContent = time;
+
+            document.getElementById('orderDetailModalOverlay').style.display = 'flex';
+        }
+
+        function closeDetailModal() {
+            document.getElementById('orderDetailModalOverlay').style.display = 'none';
         }
 
         function initiateWithdrawal() {
@@ -1061,10 +1237,10 @@
 
             if (currentMethod === 'bank') {
                 let currentSelectedBank = savedBankList[selectedBankIndex] || savedBankList[0];
-                payload = { ...payload, ...currentSelectedBank };
+                payload = { ...payload, ...currentSelectedBank, type: 'BANK CARD' };
             } else if (currentMethod === 'upi') {
                 let currentSelectedUpi = savedUpiList[selectedUpiIndex] || savedUpiList[0];
-                payload = { ...payload, ...currentSelectedUpi };
+                payload = { ...payload, ...currentSelectedUpi, type: 'UPI' };
             }
 
             try {
@@ -1085,10 +1261,6 @@
             } catch (e) {
                 showToast('Server error! Please try again.');
             }
-        }
-
-        function scrollToHistory() {
-            document.getElementById('historySection').scrollIntoView({ behavior: 'smooth' });
         }
 
         function showToast(message) {
