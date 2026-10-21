@@ -1194,6 +1194,19 @@
             } catch (e) {}
         }
 
+        // Helper function for checking approved/completed status flexible way
+        function parseWithdrawalStatus(rawStatus) {
+            if (!rawStatus) return { text: 'PENDING', color: '#fbbf24' };
+            let s = String(rawStatus).toLowerCase().trim();
+            if (s === 'approved' || s === 'approved' || s === 'complete' || s === 'completed' || s === 'success' || s === 'successful') {
+                return { text: 'COMPLETE', color: '#34d399' };
+            }
+            if (s === 'rejected' || s === 'reject' || s === 'failed' || s === 'fail') {
+                return { text: 'FAILED', color: '#f87171' };
+            }
+            return { text: 'PENDING', color: '#fbbf24' };
+        }
+
         async function fetchUserWithdrawals() {
             try {
                 let res = await fetch(`/api/admin/requests`);
@@ -1205,20 +1218,16 @@
                     
                     let startOfToday = new Date();
                     startOfToday.setHours(0, 0, 0, 0);
-                    let todayCount = myWithdrawals.filter(w => new Date(w.createdAt) >= startOfToday && w.status !== 'rejected').length;
+                    let todayCount = myWithdrawals.filter(w => new Date(w.createdAt) >= startOfToday && String(w.status).toLowerCase() !== 'rejected').length;
                     let remainingTimes = Math.max(0, 3 - todayCount);
                     document.getElementById('remainingWithdrawCount').textContent = remainingTimes;
 
                     if (myWithdrawals.length > 0) {
                         container.innerHTML = '';
                         myWithdrawals.forEach((wit, index) => {
-                            let isApproved = wit.status === 'approved' || wit.status === 'completed' || wit.status === 'COMPLETE';
-                            let isRejected = wit.status === 'rejected' || wit.status === 'FAILED';
+                            let statusObj = parseWithdrawalStatus(wit.status);
                             
-                            let displayStatus = isApproved ? 'COMPLETE' : (isRejected ? 'FAILED' : 'PENDING');
-                            let statusColor = isApproved ? '#34d399' : (isRejected ? '#f87171' : '#fbbf24');
-                            
-                            let orderNo = wit.orderNo || wit._id ? ('SBW' + (wit._id ? wit._id.slice(-6).toUpperCase() : Math.floor(100000 + Math.random() * 900000))) : 'SBW120433';
+                            let orderNo = wit.orderNo || (wit._id ? ('SBW' + wit._id.slice(-6).toUpperCase()) : 'SBW120433');
                             let wType = wit.type || (wit.upiId ? 'UPI' : 'BANK CARD');
                             let time = new Date(wit.createdAt || Date.now()).toLocaleString('en-GB');
 
@@ -1226,7 +1235,7 @@
                                 <div class="history-card-item" onclick="openDetailModal(${index})">
                                     <div class="history-card-top">
                                         <span class="order-no-txt">Order: ${orderNo}</span>
-                                        <span class="status-txt" style="color: ${statusColor};">${displayStatus}</span>
+                                        <span class="status-txt" style="color: ${statusObj.color};">${statusObj.text}</span>
                                     </div>
                                     <div class="history-card-bottom">
                                         <span class="amount-txt">Amount: ₹${wit.amount}</span>
@@ -1249,18 +1258,14 @@
             let wit = rawWithdrawalData[index];
             if (!wit) return;
 
-            let isApproved = wit.status === 'approved' || wit.status === 'completed' || wit.status === 'COMPLETE';
-            let isRejected = wit.status === 'rejected' || wit.status === 'FAILED';
-            
-            let displayStatus = isApproved ? 'COMPLETE' : (isRejected ? 'FAILED' : 'PENDING');
-            let statusColor = isApproved ? '#34d399' : (isRejected ? '#f87171' : '#fbbf24');
-            let orderNo = wit.orderNo || wit._id ? ('SBW' + (wit._id ? wit._id.slice(-6).toUpperCase() : Math.floor(100000 + Math.random() * 900000))) : 'SBW120433';
+            let statusObj = parseWithdrawalStatus(wit.status);
+            let orderNo = wit.orderNo || (wit._id ? ('SBW' + wit._id.slice(-6).toUpperCase()) : 'SBW120433');
             let wType = wit.type || (wit.upiId ? 'UPI' : 'BANK CARD');
             let time = new Date(wit.createdAt || Date.now()).toLocaleString('en-GB');
 
             document.getElementById('modalOrderNo').textContent = orderNo;
-            document.getElementById('modalStatus').textContent = displayStatus;
-            document.getElementById('modalStatus').style.color = statusColor;
+            document.getElementById('modalStatus').textContent = statusObj.text;
+            document.getElementById('modalStatus').style.color = statusObj.color;
             document.getElementById('modalAmount').textContent = '₹' + wit.amount;
             document.getElementById('modalType').textContent = wType;
             document.getElementById('modalTime').textContent = time;
