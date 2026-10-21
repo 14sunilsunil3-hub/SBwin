@@ -61,6 +61,8 @@
             text-transform: uppercase;
             font-size: 19px;
             margin: 0;
+            cursor: pointer;
+            user-select: none;
         }
         .header-back-btn {
             background: rgba(30, 27, 75, 0.8);
@@ -280,6 +282,27 @@
             padding: 16px; border-radius: 14px; font-weight: bold; font-size: 16px; cursor: pointer;
         }
 
+        /* Floating Admin Button Style */
+        .admin-panel-floating {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #7c3aed, #10b981);
+            color: white;
+            border: 2px solid #34d399;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: none;
+        }
+
         /* Deposit Style History Card Item */
         .history-card-item {
             background: rgba(15, 23, 42, 0.9);
@@ -452,9 +475,14 @@
 
     <div id="toast">Success!</div>
 
+    <!-- Floating Admin Panel Button -->
+    <button id="adminPanelFloatingBtn" class="admin-panel-floating hidden" onclick="goToAdminPage()">
+        <i class="fa-solid fa-user-shield"></i>
+    </button>
+
     <div class="header">
         <div id="headerBackBtn" class="header-back-btn" onclick="handleHeaderBack()">&lt;</div>
-        <div class="header-center"><h2 id="headerTitleText">WITHDRAW</h2></div>
+        <div class="header-center"><h2 id="headerTitleText" onclick="handleAdminSecretTap()">WITHDRAW</h2></div>
         <div class="header-right">
             <a href="https://telegram.org" target="_blank" class="support-icon-btn" id="supportIconBtn">
                 <i class="fa-solid fa-headset"></i>
@@ -706,6 +734,8 @@
 
     <script>
         let userId = localStorage.getItem('userId') || localStorage.getItem('rewards_userId');
+        let isAdmin = localStorage.getItem('isAdmin') === 'true';
+        let secretTapCount = 0;
         let activeView = 'main';
         let currentMethod = 'bank';
         let currentWinnings = 0;
@@ -735,6 +765,9 @@
 
         window.onload = async function() {
             renderBankList(INDIAN_BANKS);
+            checkAdminAccess();
+            initDraggableButton();
+
             if (userId) {
                 loadSavedDetails();
                 await refreshData();
@@ -746,6 +779,50 @@
                 setTimeout(() => { loader.style.display = 'none'; }, 300);
             }
         };
+
+        function initDraggableButton() {
+            const btn = document.getElementById('adminPanelFloatingBtn');
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+
+            btn.addEventListener('pointerdown', (e) => {
+                isDragging = true;
+                startX = e.clientX; startY = e.clientY;
+                initialX = btn.offsetLeft; initialY = btn.offsetTop;
+                btn.setPointerCapture(e.pointerId);
+            });
+
+            btn.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                btn.style.right = 'auto'; btn.style.bottom = 'auto';
+                btn.style.left = (initialX + (e.clientX - startX)) + 'px';
+                btn.style.top = (initialY + (e.clientY - startY)) + 'px';
+            });
+
+            btn.addEventListener('pointerup', () => { isDragging = false; });
+        }
+
+        function goToAdminPage() {
+            window.location.href = 'admin.html';
+        }
+
+        function handleAdminSecretTap() {
+            secretTapCount++;
+            if (secretTapCount >= 5) {
+                localStorage.setItem('isAdmin', 'true');
+                isAdmin = true;
+                checkAdminAccess();
+                showToast('Admin Mode Activated!');
+                secretTapCount = 0;
+            }
+            setTimeout(() => { secretTapCount = 0; }, 3000);
+        }
+
+        function checkAdminAccess() {
+            if (isAdmin) {
+                document.getElementById('adminPanelFloatingBtn').classList.remove('hidden');
+            }
+        }
 
         function loadSavedDetails() {
             let rawBanks = localStorage.getItem('user_banks_' + userId);
