@@ -23,7 +23,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cors());
 
-// Serve static files from root directory[span_0](start_span)[span_0](end_span)
+// Serve static files from root directory
 app.use(express.static(path.join(__dirname)));
 
 // Explicit routes to prevent 404 Not Found errors on Render[span_1](start_span)[span_1](end_span)
@@ -166,19 +166,14 @@ const gameStates = {
     '5m':  { countdown: 299, isBettingOpen: true, period: '', startTime: 0 }
 };
 
-// Track active connected users via socket to protect online users at 12 AM from bad UX
 const activeOnlineSocketUsers = new Set();
 
-// 12:00 AM Reset Cron/Interval Checker
 function startMidnightResetChecker() {
     setInterval(async () => {
         const now = new Date();
-        // Check if current time is exactly 00:00 (12:00 AM) or within the first minute
         if (now.getHours() === 0 && now.getMinutes() === 0) {
             const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
             try {
-                // Reset lastLoginTime for users who were NOT active online at 12 AM
-                // This forces offline users to login again after midnight, while sparing active online users
                 const allUsers = await User.find({});
                 for (const u of allUsers) {
                     if (!activeOnlineSocketUsers.has(u._id.toString())) {
@@ -190,7 +185,6 @@ function startMidnightResetChecker() {
             } catch (err) {
                 console.error("Midnight reset error:", err.message);
             }
-            // Wait 70 seconds to prevent multiple triggers within the same minute
             await new Promise(resolve => setTimeout(resolve, 70000));
         }
     }, 10000);
@@ -214,7 +208,7 @@ app.post('/api/register', async (req, res) => {
             password, 
             balance: 0, 
             winningsBalance: 0,
-            lastLoginTime: new Date(), // Set login timestamp so they go straight to home page post-registration
+            lastLoginTime: new Date(), 
             referredBy: refUid || null 
         });
 
@@ -231,7 +225,6 @@ app.post('/api/login', async (req, res) => {
         const user = await User.findOne({ phone, password });
         if (!user) return res.status(400).json({ success: false, message: "Invalid phone number or password!" });
 
-        // Update last login time to current timestamp (marking login after midnight check)
         user.lastLoginTime = new Date();
         await user.save();
 
@@ -259,7 +252,6 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// API to check user session validity based on 12 AM midnight reset rule
 app.post('/api/check-session', async (req, res) => {
     try {
         const { userId } = req.body;
@@ -274,7 +266,6 @@ app.post('/api/check-session', async (req, res) => {
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
         const loginTimestamp = new Date(user.lastLoginTime).getTime();
 
-        // Check if user logged in AFTER today's midnight (12:00 AM)
         if (loginTimestamp >= startOfToday) {
             return res.json({ success: true, valid: true });
         } else {
@@ -292,7 +283,7 @@ app.post('/api/reset-password', async (req, res) => {
         if (!user) return res.status(404).json({ success: false, message: "Phone number not registered!" });
 
         user.password = newPassword;
-        user.lastLoginTime = null; // Invalidate session so they log in fresh
+        user.lastLoginTime = null; 
         await user.save();
 
         res.json({ success: true, message: "Password reset successful!" });
@@ -332,7 +323,7 @@ app.get('/api/user-deposits/:userId', async (req, res) => {
     }
 });
 
-// Deposit API with Server-side Order No Generation[span_6](start_span)[span_6](end_span)
+// Deposit API[span_6](start_span)[span_6](end_span)
 app.post('/api/deposit', async (req, res) => {
     try {
         const { userId, amount, utr, orderNo } = req.body;
@@ -346,32 +337,29 @@ app.post('/api/deposit', async (req, res) => {
     }
 });
 
-// Withdrawal API with Rules Validation (Min/Max range, turnover requirement, daily limit)[span_7](start_span)[span_7](end_span)
+// Withdrawal API[span_7](start_span)[span_7](end_span)
 app.post('/api/withdraw', async (req, res) => {
     try {
-        const { userId, amount, password, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile } = req.body;
+        const { userId, amount, password, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile, type } = req.body;
         const user = await User.findById(userId);
         
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
         
-        // Verify login password for safety[span_8](start_span)[span_8](end_span)
+        // Verify login password[span_8](start_span)[span_8](end_span)
         if (!password || user.password !== password) {
             return res.status(400).json({ success: false, message: "Incorrect password! Withdrawal cancelled." });
         }
 
         const numAmount = Number(amount);
 
-        // Rule 4: Withdrawal Amount Range Validation (₹110 - ₹1,000,000)
         if (numAmount < 110 || numAmount > 1000000) {
             return res.status(400).json({ success: false, message: "Withdrawal amount must be between ₹110 and ₹1,000,000!" });
         }
 
-        // Rule 1: Minimum betting turnover requirement (₹110)
         if ((user.totalBetDone || 0) < 110) {
             return res.status(400).json({ success: false, message: "You need to place bets totaling at least ₹110 before withdrawing!" });
         }
 
-        // Rule 2 & 3: Daily Withdrawal Count Limit (Max 3 times per day)
         const startOfToday = new Date();
         startOfToday.setHours(0, 0, 0, 0);
         const todayWithdrawalsCount = await Withdrawal.countDocuments({
@@ -390,7 +378,18 @@ app.post('/api/withdraw', async (req, res) => {
         await user.save();
 
         const finalOrderNo = 'SBW_W' + Math.floor(100000 + Math.random() * 900000);
-        const withdrawal = new Withdrawal({ userId, amount: numAmount, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile, orderNo: finalOrderNo });
+        const withdrawal = new Withdrawal({ 
+            userId, 
+            amount: numAmount, 
+            accountHolderName, 
+            upiId, 
+            bankName, 
+            accountNumber, 
+            ifsc, 
+            mobile, 
+            type: type || (upiId ? 'UPI' : 'BANK CARD'),
+            orderNo: finalOrderNo 
+        });
         await withdrawal.save();
 
         res.json({ success: true, message: "Withdrawal request submitted successfully!" });
@@ -435,10 +434,17 @@ app.post('/api/admin/action', async (req, res) => {
         } else if (type === 'withdrawal') {
             const wit = await Withdrawal.findById(id);
             if (!wit) return res.status(404).json({ success: false, message: "Withdrawal not found" });
-            if (action === 'reject' && wit.status === 'pending') {
+            
+            // Handle approval/rejection properly
+            if (action === 'approve' && wit.status === 'pending') {
+                wit.status = 'approved';
+                await wit.save();
+                io.emit('refreshBalance');
+            } else if (action === 'reject' && wit.status === 'pending') {
                 wit.status = 'rejected';
                 await wit.save();
                 
+                // Refund amount to user winnings if rejected
                 const user = await User.findById(wit.userId);
                 if (user) {
                     user.winningsBalance = (user.winningsBalance || 0) + Number(wit.amount);
@@ -550,7 +556,7 @@ app.get('/api/user-round-result', async (req, res) => {
     }
 });
 
-// Place Bet API with Turnover Tracking[span_9](start_span)[span_9](end_span)
+// Place Bet API
 app.post('/api/bet', async (req, res) => {
     try {
         const { userId, timerType = '30s', period, betType, betValue, amount } = req.body;
@@ -574,7 +580,6 @@ app.post('/api/bet', async (req, res) => {
             user.winningsBalance -= remain;
         }
 
-        // Update total bet done for withdrawal requirement
         user.totalBetDone = (user.totalBetDone || 0) + deductAmt;
         await user.save();
 
@@ -753,9 +758,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         if (currentConnectedUserId) {
-            // Keep track of user disconnection timeout for 10 seconds rule on pages other than deposit/withdraw
             setTimeout(() => {
-                // If socket hasn't reconnected within 10 seconds, remove from active online users
                 activeOnlineSocketUsers.delete(currentConnectedUserId);
             }, 10000);
         }
