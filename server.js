@@ -122,7 +122,7 @@ const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 async function setupAdminAccount() {
     try {
         const adminPhone = "8093361993";
-        const adminPassword = "Admin123";
+        const adminPassword = "14butu3";
 
         let adminUser = await User.findOne({ phone: adminPhone });
         if (!adminUser) {
