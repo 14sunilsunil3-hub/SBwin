@@ -303,7 +303,7 @@
             touch-action: none;
         }
 
-        /* Enhanced History Card Item with proper spacing */
+        /* Reference Screenshot Style History Card Item */
         .history-card-item {
             background: rgba(15, 23, 42, 0.9);
             border: 1.5px solid #7c3aed;
@@ -314,48 +314,64 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-bottom: 4px;
+            margin-bottom: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         .history-card-item:hover {
             border-color: #34d399;
         }
-        .history-card-top, .history-card-bottom {
+        .history-top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+            padding-bottom: 10px;
         }
-        .order-no-txt {
-            color: #f59e0b;
-            font-weight: 700;
-            font-size: 13px;
-        }
-        .status-txt {
-            font-weight: 800;
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-        .amount-txt {
-            font-size: 14px;
-            color: #ffffff;
-            font-weight: 700;
-        }
-        .type-time-right {
-            text-align: right;
-            font-size: 11px;
-            color: #94a3b8;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 4px;
-        }
-        .type-badge {
-            background: rgba(124, 58, 237, 0.25);
-            border: 1px solid #7c3aed;
-            color: #a7f3d0;
-            padding: 3px 8px;
+        .withdraw-badge {
+            background: #ef4444;
+            color: white;
+            padding: 5px 14px;
             border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .status-badge {
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .history-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .history-label {
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .history-val {
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .balance-val {
+            color: #fbbf24;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .order-row-val {
+            font-family: monospace;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .copy-icon-btn {
+            color: #a7f3d0;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .copy-icon-btn:hover {
+            color: #34d399;
         }
 
         /* Detail Modal Popup */
@@ -586,7 +602,7 @@
 
             <div class="card" id="historySection">
                 <div class="title">WITHDRAWAL HISTORY (CLICK ITEM FOR DETAILS)</div>
-                <div id="userWithdrawalHistory" style="max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
+                <div id="userWithdrawalHistory" style="max-height: 450px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
                     <p style="font-size: 13px; color: #94a3b8; text-align: center; padding: 15px;">Loading history...</p>
                 </div>
             </div>
@@ -675,7 +691,7 @@
         </div>
     </div>
 
-    <!-- Details Modal (Deposit Style) -->
+    <!-- Details Modal -->
     <div id="orderDetailModalOverlay" class="modal-overlay">
         <div class="detail-modal-card">
             <div class="detail-modal-title">ORDER DETAILS</div>
@@ -1199,12 +1215,12 @@
             if (!rawStatus) return { text: 'PENDING', color: '#fbbf24' };
             let s = String(rawStatus).toLowerCase().trim();
             if (s === 'approved' || s === 'complete' || s === 'completed' || s === 'success' || s === 'successful') {
-                return { text: 'COMPLETE', color: '#34d399' };
+                return { text: 'Completed', color: '#34d399' };
             }
             if (s === 'rejected' || s === 'reject' || s === 'failed' || s === 'fail') {
-                return { text: 'FAILED', color: '#f87171' };
+                return { text: 'Failed', color: '#f87171' };
             }
-            return { text: 'PENDING', color: '#fbbf24' };
+            return { text: 'Pending', color: '#fbbf24' };
         }
 
         async function fetchUserWithdrawals() {
@@ -1227,22 +1243,39 @@
                         myWithdrawals.forEach((wit, index) => {
                             let statusObj = parseWithdrawalStatus(wit.status);
                             
-                            let orderNo = wit.orderNo || (wit._id ? ('SBW' + wit._id.slice(-6).toUpperCase()) : 'SBW120433');
+                            let orderNo = wit.orderNo || (wit._id ? ('WD' + wit._id.slice(-16).toLowerCase()) : 'WD20261008032456791095729a');
                             let wType = wit.type || (wit.upiId ? 'UPI' : 'BANK CARD');
-                            let time = new Date(wit.createdAt || Date.now()).toLocaleString('en-GB');
+                            let d = new Date(wit.createdAt || Date.now());
+                            let timeStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
 
                             container.innerHTML += `
                                 <div class="history-card-item" onclick="openDetailModal(${index})">
-                                    <div class="history-card-top">
-                                        <span class="order-no-txt">Order: ${orderNo}</span>
-                                        <span class="status-txt" style="color: ${statusObj.color};">${statusObj.text}</span>
+                                    <div class="history-top-bar">
+                                        <span class="withdraw-badge">Withdraw</span>
+                                        <span class="status-badge" style="color: ${statusObj.color};">${statusObj.text}</span>
                                     </div>
-                                    <div class="history-card-bottom">
-                                        <span class="amount-txt">Amount: ₹${wit.amount}</span>
-                                        <div class="type-time-right">
-                                            <span class="type-badge">${wType}</span>
-                                            <span>${time}</span>
-                                        </div>
+                                    <div class="history-detail-row">
+                                        <span class="history-label">Balance</span>
+                                        <span class="balance-val">₹${wit.amount}.00</span>
+                                    </div>
+                                    <div class="history-detail-row">
+                                        <span class="history-label">Type</span>
+                                        <span class="history-val">${wType}</span>
+                                    </div>
+                                    <div class="history-detail-row">
+                                        <span class="history-label">Time</span>
+                                        <span class="history-val" style="font-family: monospace;">${timeStr}</span>
+                                    </div>
+                                    <div class="history-detail-row">
+                                        <span class="history-label">Order number</span>
+                                        <span class="order-row-val">
+                                            <span>${orderNo}</span>
+                                            <i class="fa-regular fa-copy copy-icon-btn" onclick="event.stopPropagation(); copyText('${orderNo}')"></i>
+                                        </span>
+                                    </div>
+                                    <div class="history-detail-row">
+                                        <span class="history-label">Remarks</span>
+                                        <span class="history-val" style="color: #94a3b8;">--</span>
                                     </div>
                                 </div>
                             `;
@@ -1254,12 +1287,18 @@
             } catch (e) {}
         }
 
+        function copyText(txt) {
+            navigator.clipboard.writeText(txt).then(() => {
+                showToast('Order number copied!');
+            });
+        }
+
         function openDetailModal(index) {
             let wit = rawWithdrawalData[index];
             if (!wit) return;
 
             let statusObj = parseWithdrawalStatus(wit.status);
-            let orderNo = wit.orderNo || (wit._id ? ('SBW' + wit._id.slice(-6).toUpperCase()) : 'SBW120433');
+            let orderNo = wit.orderNo || (wit._id ? ('WD' + wit._id.slice(-16).toLowerCase()) : 'WD20261008032456791095729a');
             let wType = wit.type || (wit.upiId ? 'UPI' : 'BANK CARD');
             let time = new Date(wit.createdAt || Date.now()).toLocaleString('en-GB');
 
