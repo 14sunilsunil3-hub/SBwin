@@ -502,6 +502,11 @@
         let timeLeft = 600;
 
         window.onload = function() {
+            // Capture and store the referring page if arriving from another page
+            if (document.referrer && !document.referrer.includes('deposit.html')) {
+                sessionStorage.setItem('deposit_return_url', document.referrer);
+            }
+
             if (userId) refreshData();
             checkAdminAccess();
             initDraggableButton();
@@ -574,7 +579,16 @@
             if (currentView === 'step2') {
                 document.getElementById('cancelWarningModal').style.display = 'flex';
             } else {
-                window.location.href = localStorage.getItem('deposit_return_page') || 'assist/win-go.html';
+                redirectToPreviousPage();
+            }
+        }
+
+        function redirectToPreviousPage() {
+            let returnUrl = sessionStorage.getItem('deposit_return_url');
+            if (returnUrl) {
+                window.location.href = returnUrl;
+            } else {
+                window.location.href = 'index.html#account';
             }
         }
 
