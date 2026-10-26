@@ -476,8 +476,8 @@
         <div id="viewWithdrawMain" class="view-page">
             <div class="wallet-card">
                 <div class="wallet-info">
-                    <div class="label">Available balance</div>
-                    <div class="balance">₹<span id="userWinningsBalance">0.00</span></div>
+                    <div class="label">Total Balance</div>
+                    <div class="balance">₹<span id="userTotalBalance">0.00</span></div>
                 </div>
                 <div class="refresh-btn" onclick="refreshData()"><i class="fa-solid fa-rotate-right"></i></div>
             </div>
@@ -1128,17 +1128,23 @@
         }
 
         async function refreshData() {
-            await fetchWinningsBalance();
+            await fetchBalances();
             await fetchUserWithdrawals();
         }
 
-        async function fetchWinningsBalance() {
+        async function fetchBalances() {
             try {
                 let res = await fetch(`/api/user/${userId}`);
                 let data = await res.json();
                 if (data.success) {
-                    currentWinnings = parseFloat(data.winningsBalance || 0);
-                    document.getElementById('userWinningsBalance').textContent = currentWinnings.toFixed(2);
+                    let walletBal = parseFloat(data.balance || 0);
+                    let winningsBal = parseFloat(data.winningsBalance || 0);
+                    let bonusBal = parseFloat(data.bonusBalance || data.rewardsBalance || 0);
+                    
+                    let total = walletBal + winningsBal + bonusBal;
+                    document.getElementById('userTotalBalance').textContent = total.toFixed(2);
+
+                    currentWinnings = winningsBal;
                     document.getElementById('subWinningsBal').textContent = currentWinnings.toFixed(2);
                     
                     let totalBetDone = parseFloat(data.user?.totalBetDone || data.totalBetDone || 0);
