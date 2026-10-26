@@ -703,8 +703,6 @@
 
         let rawWithdrawalData = [];
 
-        let previousReferrerPage = document.referrer;
-
         const INDIAN_BANKS = [
             "State Bank of India", "HDFC Bank", "ICICI Bank", "Punjab National Bank", "Bank of Baroda",
             "Axis Bank", "Canara Bank", "Union Bank of India", "Kotak Mahindra Bank", "IndusInd Bank",
@@ -718,6 +716,18 @@
         ];
 
         window.onload = async function() {
+            // Check if coming from index account tab or game pages
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('from') === 'account') {
+                sessionStorage.setItem('withdraw_return_url', 'index.html#account');
+            } else if (document.referrer && !document.referrer.includes('withdraw.html')) {
+                let ref = document.referrer;
+                if (ref.includes('index.html') && !ref.includes('#')) {
+                    ref = 'index.html#account';
+                }
+                sessionStorage.setItem('withdraw_return_url', ref);
+            }
+
             renderBankList(INDIAN_BANKS);
             checkAdminAccess();
             initDraggableButton();
@@ -1022,12 +1032,11 @@
                 document.getElementById('headerTitleText').textContent = 'WITHDRAW';
                 document.getElementById('supportIconBtn').style.display = 'flex';
             } else {
-                if (previousReferrerPage && previousReferrerPage !== '' && !previousReferrerPage.includes('withdraw.html')) {
-                    window.location.href = previousReferrerPage;
-                } else if (window.history.length > 1) {
-                    window.history.back();
+                let returnUrl = sessionStorage.getItem('withdraw_return_url');
+                if (returnUrl) {
+                    window.location.href = returnUrl;
                 } else {
-                    window.location.href = 'win-go.html';
+                    window.location.href = 'index.html#account';
                 }
             }
         }
