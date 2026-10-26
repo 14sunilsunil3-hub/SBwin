@@ -1198,10 +1198,10 @@
                         }
                     }
 
-                    if (data.countdown === 0 || Math.abs(timeLeft - data.countdown) >= 1) {
+                    if (Math.abs(timeLeft - data.countdown) >= 1 || data.countdown === 0) {
                         timeLeft = data.countdown;
-                        updateDisplayTime(timeLeft);
                     }
+                    updateDisplayTime(timeLeft);
                 }
             });
 
