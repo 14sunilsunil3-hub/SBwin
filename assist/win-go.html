@@ -973,16 +973,16 @@
         </div>
 
         <div class="game-modes">
-            <div class="mode-card active" id="mode-30s" onclick="switchTimer('30s', 29)">
+            <div class="mode-card active" id="mode-30s" onclick="switchTimer('30s')">
                 <p>🕧 30sec</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
-            <div class="mode-card" id="mode-60s" onclick="switchTimer('60s', 59)">
+            <div class="mode-card" id="mode-60s" onclick="switchTimer('60s')">
                 <p>🕛 1 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
-            <div class="mode-card" id="mode-3m" onclick="switchTimer('3m', 179)">
+            <div class="mode-card" id="mode-3m" onclick="switchTimer('3m')">
                 <p>🕒 3 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
-            <div class="mode-card" id="mode-5m" onclick="switchTimer('5m', 299)">
+            <div class="mode-card" id="mode-5m" onclick="switchTimer('5m')">
                 <p>🕔 5 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
             </div>
         </div>
@@ -1079,6 +1079,7 @@
                     <div class="stat-row"><span class="stat-header">Max consecutive</span><span>2</span><span>2</span><span>1</span><span>2</span><span>3</span><span>3</span><span>2</span><span>1</span><span>2</span><span>2</span></div>
                 </div>
 
+                , grid-wrapper>
                 <div class="grid-wrapper">
                     <canvas id="chartCanvas"></canvas>
                     <div id="chartRowsContainer"></div>
@@ -1105,6 +1106,9 @@
 
         let currentTimerType = '30s';
         let timeLeft = 29;
+        let serverCountdownData = { '30s': 29, '60s': 59, '3m': 179, '5m': 299 };
+        let serverPeriodData = { '30s': '---', '60s': '---', '3m': '---', '5m': '---' };
+        
         let clientTimerInterval = null;
         let activeBetType = '';
         let activeBetValue = '';
@@ -1132,9 +1136,8 @@
         }
         fetchUserData();
 
-        function switchTimer(type, seconds) {
+        function switchTimer(type) {
             currentTimerType = type;
-            timeLeft = seconds;
             currentPage = 1;
             document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
             document.getElementById(`mode-${type}`).classList.add('active');
@@ -1144,6 +1147,15 @@
             else if (type === '3m') modeTitleText = 'WinGo 3Min';
             else if (type === '5m') modeTitleText = 'WinGo 5Min';
             document.getElementById('modeTitleDisplay').innerText = modeTitleText;
+
+            // FIX: Turant server ke live countdown aur period par switch karo bina mismatch ke
+            if (serverCountdownData[type] !== undefined) {
+                timeLeft = serverCountdownData[type];
+                updateDisplayTime(timeLeft);
+            }
+            if (serverPeriodData[type]) {
+                document.getElementById('periodId').innerText = serverPeriodData[type];
+            }
 
             loadHistoryData();
         }
@@ -1173,6 +1185,7 @@
             clientTimerInterval = setInterval(() => {
                 if (timeLeft > 0) {
                     timeLeft--;
+                    serverCountdownData[currentTimerType] = timeLeft;
                     updateDisplayTime(timeLeft);
                     
                     if (timeLeft === 1) {
@@ -1186,6 +1199,9 @@
 
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
+                serverCountdownData[type] = data.countdown;
+                serverPeriodData[type] = data.period;
+
                 if (currentTimerType === type) {
                     document.getElementById('periodId').innerText = data.period;
 
