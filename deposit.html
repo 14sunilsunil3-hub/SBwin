@@ -128,16 +128,6 @@
             cursor: pointer;
             transition: transform 0.3s ease;
         }
-        .notice-box {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px dashed #f87171;
-            padding: 16px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #fca5a5;
-        }
         .step2-top-bar {
             display: flex;
             justify-content: space-between;
@@ -160,11 +150,12 @@
         .instructions-box ul { list-style: none; padding-left: 0; }
         .instructions-box li {
             font-size: 13px;
-            color: #cbd5e1;
+            color: #34d399;
             margin-bottom: 12px;
             display: flex;
             align-items: flex-start;
             gap: 10px;
+            line-height: 1.5;
         }
         .instructions-box li i { color: #34d399; margin-top: 3px; }
         
@@ -301,7 +292,6 @@
             margin-top: 8px;
         }
         
-        /* Updated Deposit Badge to Green */
         .history-card-item {
             background: rgba(15, 23, 42, 0.9);
             border: 1.5px solid #7c3aed;
@@ -441,11 +431,6 @@
                 <div class="refresh-btn" onclick="refreshData()"><i class="fa-solid fa-rotate-right"></i></div>
             </div>
 
-            <div class="notice-box">
-                <i class="fa-solid fa-triangle-exclamation"></i> 
-                <b>Notice:</b> Deposit system is operated manually, so don't panic, cooperate with us. Your money is 100% safe. Please pay your selected amount, otherwise your deposit will be rejected!
-            </div>
-
             <div class="card">
                 <div class="title">Select Deposit Amount</div>
                 <div class="amount-grid">
@@ -473,6 +458,7 @@
             <div class="instructions-box">
                 <div class="title"><i class="fa-solid fa-book"></i> Recharge Instructions</div>
                 <ul>
+                    <li><i class="fa-solid fa-diamond"></i> Deposit system is operated manually, so don't panic, cooperate with us. Your money is 100% safe. Please pay your selected amount, otherwise your deposit will be rejected!</li>
                     <li><i class="fa-solid fa-diamond"></i> If the transfer time is up, please fill out the deposit form again.</li>
                     <li><i class="fa-solid fa-diamond"></i> The transfer amount must match the order you created, otherwise the money cannot be credited successfully.</li>
                     <li><i class="fa-solid fa-diamond"></i> If you transfer the wrong amount, our company will not be responsible for the lost amount!</li>
