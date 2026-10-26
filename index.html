@@ -179,34 +179,13 @@
     <!-- TOP HEADER -->
     <div class="bg-gray-900/80 backdrop-blur-md p-3 border-b border-emerald-500/20 flex items-center justify-between sticky top-0 z-30 shadow-sm">
       <h1 class="text-2xl font-extrabold bg-gradient-to-r from-purple-400 to-emerald-400 bg-clip-text text-transparent tracking-tight">sbwin</h1>
-      <div class="flex items-center space-x-2">
-        <span class="text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full">VIP 3</span>
-      </div>
     </div>
 
     <!-- PAGE 1: HOME PAGE -->
     <section id="page-home" class="page-view space-y-4 p-3">
       
-      <!-- Top Promos -->
-      <div class="grid grid-cols-2 gap-2">
-        <div class="gradient-card-dark border border-purple-500/30 p-2.5 rounded-2xl flex items-center justify-between shadow">
-          <div>
-            <p class="text-[11px] font-bold text-emerald-300">Wheel of fortune</p>
-            <button onclick="switchTab('invite')" class="mt-1 bg-purple-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow">View</button>
-          </div>
-          <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center font-bold text-purple-300">🎡</div>
-        </div>
-        <div class="gradient-card-dark border border-emerald-500/30 p-2.5 rounded-2xl flex items-center justify-between shadow">
-          <div>
-            <p class="text-[11px] font-bold text-emerald-300">Welcome Bonus</p>
-            <button onclick="showToast('Welcome Bonus Claimed!')" class="mt-1 bg-emerald-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow">View</button>
-          </div>
-          <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center font-bold text-emerald-300">💎</div>
-        </div>
-      </div>
-
       <!-- ALL GAMES SECTION -->
-      <div class="space-y-3">
+      <div class="space-y-3 pt-2">
         <div class="flex items-center justify-between">
           <h3 class="text-xs font-black uppercase text-emerald-300 tracking-wider">Popular Games</h3>
         </div>
@@ -336,7 +315,7 @@
       </div>
     </section>
 
-    <!-- PAGE 5: ACCOUNT / PROFILE PAGE (Updated to Mine theme structure) -->
+    <!-- PAGE 5: ACCOUNT / PROFILE PAGE (Updated) -->
     <section id="page-account" class="page-view hidden space-y-0 p-0">
       
       <!-- Top Green Profile Header -->
@@ -403,10 +382,20 @@
               <div class="menu-item-right" style="display: flex; align-items: center; gap: 8px; color: #94a3b8;"><i class="fa-solid fa-chevron-right"></i></div>
           </a>
 
-          <a href="#" onclick="showToast('Loading Transaction History...')" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <!-- Deposit History Button -->
+          <a href="deposit.html" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
               <div class="menu-item-left" style="display: flex; align-items: center; gap: 14px;">
                   <div class="menu-icon-box" style="color: #34d399; font-size: 18px; width: 24px; text-align: center;"><i class="fa-solid fa-wallet"></i></div>
-                  <div class="menu-item-title" style="font-size: 14px; font-weight: 600; color: #fff;">Balance Record</div>
+                  <div class="menu-item-title" style="font-size: 14px; font-weight: 600; color: #fff;">Deposit History</div>
+              </div>
+              <div class="menu-item-right" style="display: flex; align-items: center; gap: 8px; color: #94a3b8;"><i class="fa-solid fa-chevron-right"></i></div>
+          </a>
+
+          <!-- Withdraw History Button -->
+          <a href="withdraw.html" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+              <div class="menu-item-left" style="display: flex; align-items: center; gap: 14px;">
+                  <div class="menu-icon-box" style="color: #34d399; font-size: 18px; width: 24px; text-align: center;"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+                  <div class="menu-item-title" style="font-size: 14px; font-weight: 600; color: #fff;">Withdraw History</div>
               </div>
               <div class="menu-item-right" style="display: flex; align-items: center; gap: 8px; color: #94a3b8;"><i class="fa-solid fa-chevron-right"></i></div>
           </a>
@@ -415,14 +404,6 @@
               <div class="menu-item-left" style="display: flex; align-items: center; gap: 14px;">
                   <div class="menu-icon-box" style="color: #34d399; font-size: 18px; width: 24px; text-align: center;"><i class="fa-solid fa-gamepad"></i></div>
                   <div class="menu-item-title" style="font-size: 14px; font-weight: 600; color: #fff;">Game History</div>
-              </div>
-              <div class="menu-item-right" style="display: flex; align-items: center; gap: 8px; color: #94a3b8;"><i class="fa-solid fa-chevron-right"></i></div>
-          </a>
-
-          <a href="#" onclick="showToast('Calculating Statistics...')" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-              <div class="menu-item-left" style="display: flex; align-items: center; gap: 14px;">
-                  <div class="menu-icon-box" style="color: #34d399; font-size: 18px; width: 24px; text-align: center;"><i class="fa-solid fa-chart-line"></i></div>
-                  <div class="menu-item-title" style="font-size: 14px; font-weight: 600; color: #fff;">Game Statistics</div>
               </div>
               <div class="menu-item-right" style="display: flex; align-items: center; gap: 8px; color: #94a3b8;"><i class="fa-solid fa-chevron-right"></i></div>
           </a>
