@@ -382,7 +382,7 @@
               <div class="menu-item-right" style="display: flex; align-items: center; gap: 8px; color: #94a3b8;"><i class="fa-solid fa-chevron-right"></i></div>
           </a>
 
-                    <!-- Deposit History Button -->
+          <!-- Deposit History Button -->
           <a href="deposit-history.html" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
               <div class="menu-item-left" style="display: flex; align-items: center; gap: 14px;">
                   <div class="menu-icon-box" style="color: #34d399; font-size: 18px; width: 24px; text-align: center;"><i class="fa-solid fa-wallet"></i></div>
@@ -399,7 +399,6 @@
               </div>
               <div class="menu-item-right" style="display: flex; align-items: center; gap: 8px; color: #94a3b8;"><i class="fa-solid fa-chevron-right"></i></div>
           </a>
-
 
           <a href="#" onclick="showToast('Loading Game History...')" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
               <div class="menu-item-left" style="display: flex; align-items: center; gap: 14px;">
@@ -505,6 +504,13 @@
     const socket = io();
     let userId = localStorage.getItem('rewards_userId');
 
+    // Handle hash on load to automatically open Account page if redirected with #account
+    window.addEventListener('DOMContentLoaded', () => {
+        if (window.location.hash === '#account') {
+            switchTab('account');
+        }
+    });
+
     // Register active user session via socket to prevent offline reset if online at 12 AM
     if (userId) {
         socket.emit('registerUserSession', userId);
@@ -536,11 +542,11 @@
 
     validateUserSession();
 
-    // 10-Second Background Inactivity Check (Excludes deposit.html & withdraw.html)
+    // 10-Second Background Inactivity Check
     let backgroundTimer = null;
     document.addEventListener('visibilitychange', () => {
         let currentPath = window.location.pathname;
-        let isExemptPage = currentPath.includes('deposit.html') || currentPath.includes('withdraw.html');
+        let isExemptPage = currentPath.includes('deposit.html') || currentPath.includes('withdraw.html') || currentPath.includes('deposit-history.html') || currentPath.includes('withdraw-history.html');
 
         if (document.hidden) {
             if (!isExemptPage) {
