@@ -121,51 +121,6 @@
         text-transform: uppercase;
     }
 
-    /* History Card Styling */
-    .history-card-item {
-        background: rgba(15, 23, 42, 0.9);
-        border: 1.5px solid #7c3aed;
-        border-radius: 16px;
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 14px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-    .history-top-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid rgba(124, 58, 237, 0.3);
-        padding-bottom: 10px;
-    }
-    .history-badge {
-        padding: 4px 12px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 700;
-        color: white;
-    }
-    .status-badge {
-        font-size: 13px;
-        font-weight: 700;
-    }
-    .history-detail-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 13px;
-    }
-    .history-label {
-        color: #94a3b8;
-        font-weight: 600;
-    }
-    .history-val {
-        color: #ffffff;
-        font-weight: 600;
-    }
-
     #fullPageLoader {
         position: fixed;
         inset: 0;
@@ -427,8 +382,8 @@
               <div class="menu-item-right" style="display: flex; align-items: center; gap: 8px; color: #94a3b8;"><i class="fa-solid fa-chevron-right"></i></div>
           </a>
 
-          <!-- Deposit History Button -->
-          <a href="#" onclick="openDepositHistoryPage()" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <!-- Deposit History Redirect Button -->
+          <a href="deposit-history.html" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
               <div class="menu-item-left" style="display: flex; align-items: center; gap: 14px;">
                   <div class="menu-icon-box" style="color: #34d399; font-size: 18px; width: 24px; text-align: center;"><i class="fa-solid fa-wallet"></i></div>
                   <div class="menu-item-title" style="font-size: 14px; font-weight: 600; color: #fff;">Deposit History</div>
@@ -436,8 +391,8 @@
               <div class="menu-item-right" style="display: flex; align-items: center; gap: 8px; color: #94a3b8;"><i class="fa-solid fa-chevron-right"></i></div>
           </a>
 
-          <!-- Withdraw History Button -->
-          <a href="#" onclick="openWithdrawHistoryPage()" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <!-- Withdraw History Redirect Button -->
+          <a href="withdraw-history.html" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
               <div class="menu-item-left" style="display: flex; align-items: center; gap: 14px;">
                   <div class="menu-icon-box" style="color: #34d399; font-size: 18px; width: 24px; text-align: center;"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
                   <div class="menu-item-title" style="font-size: 14px; font-weight: 600; color: #fff;">Withdraw History</div>
@@ -500,34 +455,6 @@
       <!-- Logout Button -->
       <div class="logout-btn-container" style="padding: 6px 16px 30px 16px;">
         <button onclick="handleLogout()" class="w-full" style="background: transparent; border: 1.5px solid #34d399; color: #34d399; padding: 14px; border-radius: 20px; font-weight: bold; font-size: 15px; cursor: pointer; text-align: center;">Log out</button>
-      </div>
-    </section>
-
-    <!-- PAGE 6: DEPOSIT HISTORY PAGE -->
-    <section id="page-deposit-history" class="page-view hidden space-y-4 p-4">
-      <div class="flex items-center space-x-3 pb-3 border-b border-emerald-500/20">
-        <button onclick="switchTab('account')" class="w-9 h-9 bg-purple-900/50 border border-purple-500/40 rounded-xl flex items-center justify-center text-white font-bold">
-          &lt;
-        </button>
-        <h2 class="text-base font-bold text-emerald-300 uppercase tracking-wider">Deposit History</h2>
-      </div>
-
-      <div id="depositHistoryContainer" class="space-y-3 pt-2">
-        <p class="text-xs text-gray-400 text-center py-6">Loading deposit history...</p>
-      </div>
-    </section>
-
-    <!-- PAGE 7: WITHDRAW HISTORY PAGE -->
-    <section id="page-withdraw-history" class="page-view hidden space-y-4 p-4">
-      <div class="flex items-center space-x-3 pb-3 border-b border-emerald-500/20">
-        <button onclick="switchTab('account')" class="w-9 h-9 bg-purple-900/50 border border-purple-500/40 rounded-xl flex items-center justify-center text-white font-bold">
-          &lt;
-        </button>
-        <h2 class="text-base font-bold text-emerald-300 uppercase tracking-wider">Withdraw History</h2>
-      </div>
-
-      <div id="withdrawHistoryContainer" class="space-y-3 pt-2">
-        <p class="text-xs text-gray-400 text-center py-6">Loading withdrawal history...</p>
       </div>
     </section>
 
@@ -612,7 +539,7 @@
     let backgroundTimer = null;
     document.addEventListener('visibilitychange', () => {
         let currentPath = window.location.pathname;
-        let isExemptPage = currentPath.includes('deposit.html') || currentPath.includes('withdraw.html');
+        let isExemptPage = currentPath.includes('deposit.html') || currentPath.includes('withdraw.html') || currentPath.includes('deposit-history.html') || currentPath.includes('withdraw-history.html');
 
         if (document.hidden) {
             if (!isExemptPage) {
@@ -658,115 +585,6 @@
         }
     }
 
-    function openDepositHistoryPage() {
-        switchTab('deposit-history');
-        fetchUserDeposits();
-    }
-
-    function openWithdrawHistoryPage() {
-        switchTab('withdraw-history');
-        fetchUserWithdrawals();
-    }
-
-    async function fetchUserDeposits() {
-        let container = document.getElementById('depositHistoryContainer');
-        container.innerHTML = '<p class="text-xs text-gray-400 text-center py-6">Loading deposit history...</p>';
-        try {
-            let res = await fetch('/api/admin/deposits');
-            let data = await res.json();
-            if (data.success && data.deposits) {
-                let myDeposits = data.deposits.filter(d => d.userId && (d.userId._id === userId || d.userId === userId));
-                if (myDeposits.length > 0) {
-                    container.innerHTML = '';
-                    myDeposits.forEach((dep) => {
-                        let statusColor = dep.status === 'APPROVED' ? '#34d399' : (dep.status === 'REJECTED' ? '#f87171' : '#fbbf24');
-                        let statusText = dep.status || 'PENDING';
-                        let d = new Date(dep.createdAt || Date.now());
-                        let timeStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-                        let utr = dep.utrNumber || 'N/A';
-
-                        container.innerHTML += `
-                            <div class="history-card-item">
-                                <div class="history-top-bar">
-                                    <span class="history-badge" style="background: #10b981;">Deposit</span>
-                                    <span class="status-badge" style="color: ${statusColor};">${statusText}</span>
-                                </div>
-                                <div class="history-detail-row">
-                                    <span class="history-label">Amount</span>
-                                    <span class="history-val" style="color: #34d399; font-weight: 800; font-size: 15px;">₹${dep.amount}.00</span>
-                                </div>
-                                <div class="history-detail-row">
-                                    <span class="history-label">UTR Number</span>
-                                    <span class="history-val" style="font-family: monospace;">${utr}</span>
-                                </div>
-                                <div class="history-detail-row">
-                                    <span class="history-label">Time</span>
-                                    <span class="history-val" style="font-family: monospace; font-size: 12px; color: #cbd5e1;">${timeStr}</span>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    container.innerHTML = '<p class="text-xs text-gray-400 text-center py-6">No deposit history found.</p>';
-                }
-            }
-        } catch(e) {
-            container.innerHTML = '<p class="text-xs text-rose-400 text-center py-6">Failed to load deposit history.</p>';
-        }
-    }
-
-    async function fetchUserWithdrawals() {
-        let container = document.getElementById('withdrawHistoryContainer');
-        container.innerHTML = '<p class="text-xs text-gray-400 text-center py-6">Loading withdrawal history...</p>';
-        try {
-            let res = await fetch('/api/admin/requests');
-            let data = await res.json();
-            if (data.success && data.withdrawals) {
-                let myWithdrawals = data.withdrawals.filter(w => w.userId && (w.userId._id === userId || w.userId === userId));
-                if (myWithdrawals.length > 0) {
-                    container.innerHTML = '';
-                    myWithdrawals.forEach((wit) => {
-                        let statusColor = wit.status === 'APPROVED' ? '#34d399' : (wit.status === 'REJECTED' ? '#f87171' : '#fbbf24');
-                        let statusText = wit.status || 'PENDING';
-                        let orderNo = wit.orderNo || (wit._id ? ('WD' + wit._id.slice(-12).toLowerCase()) : 'WD20261008');
-                        let wType = wit.type || (wit.upiId ? 'UPI' : 'BANK CARD');
-                        let d = new Date(wit.createdAt || Date.now());
-                        let timeStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-
-                        container.innerHTML += `
-                            <div class="history-card-item">
-                                <div class="history-top-bar">
-                                    <span class="history-badge" style="background: #ef4444;">Withdraw</span>
-                                    <span class="status-badge" style="color: ${statusColor};">${statusText}</span>
-                                </div>
-                                <div class="history-detail-row">
-                                    <span class="history-label">Balance</span>
-                                    <span class="history-val" style="color: #fbbf24; font-weight: 800; font-size: 15px;">₹${wit.amount}.00</span>
-                                </div>
-                                <div class="history-detail-row">
-                                    <span class="history-label">Type</span>
-                                    <span class="history-val">${wType}</span>
-                                </div>
-                                <div class="history-detail-row">
-                                    <span class="history-label">Order Number</span>
-                                    <span class="history-val" style="font-family: monospace; font-size: 12px; color: #cbd5e1;">${orderNo}</span>
-                                </div>
-                                <div class="history-detail-row">
-                                    <span class="history-label">Time</span>
-                                    <span class="history-val" style="font-family: monospace; font-size: 12px; color: #cbd5e1;">${timeStr}</span>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    container.innerHTML = '<p class="text-xs text-gray-400 text-center py-6">No withdrawal history found.</p>';
-                }
-            }
-        } catch(e) {
-            container.innerHTML = '<p class="text-xs text-rose-400 text-center py-6">Failed to load withdrawal history.</p>';
-        }
-    }
-
     function copyUid() {
         let uidText = document.getElementById('profile-uid').textContent;
         navigator.clipboard.writeText(uidText).then(() => {
@@ -804,15 +622,14 @@
       const selectedPage = document.getElementById(`page-${tabName}`);
       if (selectedPage) selectedPage.classList.remove('hidden');
 
-      let targetNavTab = (tabName === 'deposit-history' || tabName === 'withdraw-history') ? 'account' : tabName;
-      const activeNav = document.getElementById(`nav-${targetNavTab}`);
+      const activeNav = document.getElementById(`nav-${tabName}`);
       if (activeNav) {
         activeNav.classList.remove('text-gray-400');
         activeNav.classList.add('text-emerald-400');
       }
 
       let topHeader = document.getElementById('topMainHeader');
-      if (tabName === 'account' || tabName === 'deposit-history' || tabName === 'withdraw-history' || tabName === 'invite') {
+      if (tabName === 'account' || tabName === 'invite') {
         topHeader.style.display = 'none';
       } else {
         topHeader.style.display = 'flex';
