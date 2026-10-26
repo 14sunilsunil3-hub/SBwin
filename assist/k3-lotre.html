@@ -1,1 +1,143 @@
-<h1> Coming Soon...</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Game - SBWIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: linear-gradient(135deg, #2e1065, #022c22);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: linear-gradient(135deg, #1e1b4b, #064e3b);
+            min-height: 100vh;
+            padding: 80px 20px 40px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 500px;
+            display: grid;
+            grid-template-columns: 40px 1fr 40px;
+            align-items: center;
+            padding: 14px 16px;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(124, 58, 237, 0.4);
+        }
+        .header h2 {
+            font-style: italic;
+            font-weight: 800;
+            background: linear-gradient(135deg, #c084fc, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            font-size: 18px;
+            text-align: center;
+        }
+        .header-back-btn {
+            background: rgba(30, 27, 75, 0.8);
+            border: 1px solid #7c3aed;
+            color: #fff;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .game-preview-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid #7c3aed;
+            border-radius: 24px;
+            padding: 24px;
+            text-align: center;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .game-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+        .coming-soon-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+            animation: pulseGlow 2s infinite;
+        }
+        @keyframes pulseGlow {
+            0% { transform: scale(1); box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 8px 25px rgba(245, 158, 11, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4); }
+        }
+        .desc-text {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="../index.html" class="header-back-btn">&lt;</a>
+        <div class="header-center"><h2>Game View</h2></div>
+        <div></div>
+    </div>
+
+    <div class="container">
+        <div class="game-preview-card">
+            <!--../assets/k3.png  -->
+            <img src="../assets/wingo.png" alt="Game Preview" class="game-img" id="gameImage">
+            <div class="coming-soon-badge">Coming Soon</div>
+            <p class="desc-text">We are building an amazing experience for this game. Stay tuned, logic will be updated soon!</p>
+        </div>
+    </div>
+
+    <script>
+        // Optional: Aap URL ya filename ke mutabiq title aur image dynamically bhi set kar sakte ho
+    </script>
+</body>
+</html>
