@@ -26,7 +26,7 @@
             max-width: 500px;
             background: linear-gradient(135deg, #1e1b4b, #064e3b);
             min-height: 100vh;
-            padding: 75px 18px 40px 18px;
+            padding: 75px 16px 40px 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             position: relative;
         }
@@ -70,22 +70,68 @@
             font-weight: bold;
             cursor: pointer;
         }
-        .card {
-            background: rgba(15, 23, 42, 0.75);
+
+        /* Detailed History Card Style matching 2nd image */
+        .history-card-item {
+            background: rgba(15, 23, 42, 0.85);
             border: 1.5px solid #7c3aed;
-            border-radius: 20px;
-            padding: 18px;
-            margin-bottom: 18px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
         }
-        .title {
-            font-size: 13px;
-            color: #a7f3d0;
+        .history-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+            padding-bottom: 10px;
+        }
+        .withdraw-badge {
+            background: #ef4444;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
             font-weight: bold;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
+        .status-text {
+            font-size: 14px;
+            font-weight: 800;
+        }
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .history-label {
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .history-val {
+            color: #fff;
+            font-weight: 600;
+            font-family: monospace;
+        }
+        .copy-icon {
+            color: #34d399;
+            cursor: pointer;
+            margin-left: 6px;
+            font-size: 12px;
+        }
+
+        #toast {
+            position: fixed; top: 25px; left: 50%; transform: translateX(-50%) translateY(-20px);
+            background: #10b981; color: white; padding: 10px 20px; border-radius: 35px;
+            font-size: 13px; font-weight: bold; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 300000;
+            text-align: center;
+        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
         #fullPageLoader {
             position: fixed;
             inset: 0;
@@ -130,18 +176,17 @@
         </div>
     </div>
 
+    <div id="toast">Copied successfully!</div>
+
     <div class="header">
-        <a href="index.html" class="header-back-btn">&lt;</a>
+        <a href="index.html#account" class="header-back-btn">&lt;</a>
         <div class="header-center"><h2>Withdraw History</h2></div>
         <div style="width: 38px;"></div>
     </div>
 
     <div class="container">
-        <div class="card" id="historySection">
-            <div class="title">Withdrawal History Records</div>
-            <div id="userWithdrawalHistory" style="display: flex; flex-direction: column; gap: 10px;">
-                <p style="font-size: 13px; color: #94a3b8; text-align: center; padding: 15px;">Loading history...</p>
-            </div>
+        <div id="userWithdrawalHistory" style="display: flex; flex-direction: column; gap: 14px;">
+            <p style="font-size: 13px; color: #94a3b8; text-align: center; padding: 25px;">Loading history...</p>
         </div>
     </div>
 
@@ -175,19 +220,44 @@
                         myWithdrawals.forEach((wit) => {
                             let isApproved = wit.status === 'approved' || wit.status === 'APPROVED';
                             let isRejected = wit.status === 'rejected' || wit.status === 'REJECTED';
-                            let displayStatus = isApproved ? 'Completed' : (isRejected ? 'Failed' : wit.status);
+                            let displayStatus = isApproved ? 'Completed' : (isRejected ? 'Failed' : 'Approve');
                             let statusColor = isApproved ? '#34d399' : (isRejected ? '#f87171' : '#fbbf24');
-                            let time = new Date(wit.createdAt || Date.now()).toLocaleString();
+                            
+                            let d = new Date(wit.createdAt || Date.now());
+                            let timeStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
+                            
+                            let orderNo = wit.orderNo || ('SBW_W' + Math.floor(100000 + Math.random() * 900000));
+                            let wType = wit.type || (wit.upiId ? 'UPI' : 'BANK CARD');
+                            let remarks = wit.remarks || '--';
 
                             container.innerHTML += `
-                                <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid #7c3aed; padding: 14px; border-radius: 12px; font-size: 13px;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                        <span style="color: #fbbf24; font-weight: bold; font-size: 15px;">₹${wit.amount}.00</span>
-                                        <span style="color: ${statusColor}; text-transform: uppercase; font-weight: bold;">${displayStatus}</span>
+                                <div class="history-card-item">
+                                    <div class="history-top-row">
+                                        <span class="withdraw-badge">Withdraw</span>
+                                        <span class="status-text" style="color: ${statusColor};">${displayStatus}</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8;">
-                                        <span>Type: ${wit.type || 'BANK / UPI'}</span>
-                                        <span>${time}</span>
+                                    <div class="history-row">
+                                        <span class="history-label">Balance</span>
+                                        <span class="history-val" style="color: #fbbf24; font-weight: 800; font-size: 15px;">₹${wit.amount}.00</span>
+                                    </div>
+                                    <div class="history-row">
+                                        <span class="history-label">Type</span>
+                                        <span class="history-val">${wType}</span>
+                                    </div>
+                                    <div class="history-row">
+                                        <span class="history-label">Time</span>
+                                        <span class="history-val">${timeStr}</span>
+                                    </div>
+                                    <div class="history-row">
+                                        <span class="history-label">Order number</span>
+                                        <span class="history-val">
+                                            ${orderNo} 
+                                            <i class="fa-regular fa-copy copy-icon" onclick="copyOrderNo('${orderNo}')"></i>
+                                        </span>
+                                    </div>
+                                    <div class="history-row">
+                                        <span class="history-label">Remarks</span>
+                                        <span class="history-val" style="color: #94a3b8;">${remarks}</span>
                                     </div>
                                 </div>
                             `;
@@ -199,6 +269,19 @@
             } catch (e) {
                 document.getElementById('userWithdrawalHistory').innerHTML = '<p style="font-size: 13px; color: #f87171; text-align: center; padding: 25px;">Failed to load history.</p>';
             }
+        }
+
+        function copyOrderNo(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Order number copied!');
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2200);
         }
     </script>
 </body>
