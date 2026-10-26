@@ -425,8 +425,8 @@
         <div id="step1View">
             <div class="wallet-card">
                 <div class="wallet-info">
-                    <div class="label">Wallet Balance</div>
-                    <div class="balance">₹<span id="userWalletBalance">0.00</span></div>
+                    <div class="label" id="walletCardLabel">Total Balance</div>
+                    <div class="balance">₹<span id="userTotalBalance">0.00</span></div>
                 </div>
                 <div class="refresh-btn" onclick="refreshData()"><i class="fa-solid fa-rotate-right"></i></div>
             </div>
@@ -607,16 +607,23 @@
         }
 
         function refreshData() {
-            fetchWalletBalance();
+            fetchTotalBalance();
             fetchUserDeposits();
         }
 
-        async function fetchWalletBalance() {
+        async function fetchTotalBalance() {
             if (!userId) return;
             try {
                 let res = await fetch(`/api/user/${userId}`);
                 let data = await res.json();
-                if (data.success) document.getElementById('userWalletBalance').textContent = parseFloat(data.balance).toFixed(2);
+                if (data.success) {
+                    let walletBal = parseFloat(data.balance || 0);
+                    let winningsBal = parseFloat(data.winningsBalance || 0);
+                    let bonusBal = parseFloat(data.bonusBalance || data.rewardsBalance || 0);
+                    
+                    let total = walletBal + winningsBal + bonusBal;
+                    document.getElementById('userTotalBalance').textContent = total.toFixed(2);
+                }
             } catch (e) {}
         }
 
