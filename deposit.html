@@ -502,9 +502,16 @@
         let timeLeft = 600;
 
         window.onload = function() {
-            // Capture and store the referring page if arriving from another page
-            if (document.referrer && !document.referrer.includes('deposit.html')) {
-                sessionStorage.setItem('deposit_return_url', document.referrer);
+            // Check if coming from index account tab or game pages
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('from') === 'account') {
+                sessionStorage.setItem('deposit_return_url', 'index.html#account');
+            } else if (document.referrer && !document.referrer.includes('deposit.html')) {
+                let ref = document.referrer;
+                if (ref.includes('index.html') && !ref.includes('#')) {
+                    ref = 'index.html#account'; // default fallback for index to account tab if coming from mine
+                }
+                sessionStorage.setItem('deposit_return_url', ref);
             }
 
             if (userId) refreshData();
