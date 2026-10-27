@@ -815,25 +815,171 @@
             font-weight: bold;
         }
 
+        /* Result Popup Styles (Matching Reference Images) */
         .result-popup-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0, 0, 0, 0.75);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 30000;
+            backdrop-filter: blur(5px);
         }
-        .result-popup-box {
-            width: 85%;
-            max-width: 320px;
-            border-radius: 20px;
-            padding: 25px;
+        .result-popup-container {
+            width: 90%;
+            max-width: 360px;
+            border-radius: 25px;
+            padding: 24px 16px 20px 16px;
             text-align: center;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popupScale {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .result-popup-container.win {
+            background: linear-gradient(135deg, #f59e0b, #d97706, #b45309);
+            border: 3px solid #fef3c7;
+        }
+        .result-popup-container.loss {
+            background: linear-gradient(135deg, #64748b, #475569, #334155);
+            border: 3px solid #cbd5e1;
+        }
+
+        /* 3D Wing / Badge Header on top of popup */
+        .popup-badge-header {
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        .result-popup-container.win .popup-badge-header {
+            background: radial-gradient(circle, #fef3c7 20%, #fbbf24 80%);
+            border: 3px solid #fff;
+            color: #d97706;
+        }
+        .result-popup-container.loss .popup-badge-header {
+            background: radial-gradient(circle, #e2e8f0 20%, #94a3b8 80%);
+            border: 3px solid #fff;
+            color: #475569;
+        }
+        .popup-badge-header i { font-size: 36px; }
+
+        .popup-title {
+            font-size: 28px;
+            font-weight: 900;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .result-popup-container.win .popup-title { color: #ffffff; }
+        .result-popup-container.loss .popup-title { color: #f1f5f9; }
+
+        .lottery-results-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            font-weight: bold;
+            color: rgba(255,255,255,0.9);
+        }
+        .res-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 800;
             color: #fff;
         }
-        .result-popup-box.win { background: linear-gradient(135deg, #1e1b4b, #064e3b); border: 2px solid #34d399; }
-        .result-popup-box.loss { background: linear-gradient(135deg, #7f8c8d, #34495e); border: 2px solid #bdc3c7; }
+        .res-badge.green { background: #10b981; }
+        .res-badge.red { background: #ef4444; }
+        .res-badge.violet { background: #8b5cf6; }
+        .res-badge.num-circle { width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #fff; color: #1e1b4b; font-weight: 900; }
+        .res-badge.big { background: #f59e0b; }
+        .res-badge.small { background: #3b82f6; }
+
+        /* Receipt Slip Style */
+        .receipt-slip {
+            background: #ffffff;
+            color: #1e293b;
+            border-radius: 14px;
+            padding: 18px 12px;
+            margin-bottom: 15px;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .receipt-slip::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            right: 20px;
+            height: 8px;
+            background: repeating-linear-gradient(-45deg, transparent, transparent 6px, #e2e8f0 6px, #e2e8f0 12px);
+            border-radius: 4px;
+        }
+        .receipt-title {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .receipt-value {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+        .result-popup-container.win .receipt-value { color: #f59e0b; }
+        .result-popup-container.loss .receipt-value { color: #64748b; }
+
+        .receipt-details {
+            font-size: 12px;
+            color: #475569;
+            font-family: monospace;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        .popup-footer-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.9);
+            font-weight: bold;
+        }
+        .popup-close-btn {
+            position: absolute;
+            bottom: -55px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid #fff;
+            color: #fff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
 
         #toast {
             position: fixed;
@@ -899,16 +1045,39 @@
 
     <div id="toast">Action performed!</div>
 
+    <!-- Result Popup Overlay (Matching Images 1 & 2 Style) -->
     <div id="resultPopupOverlay" class="result-popup-overlay">
-        <div id="resultPopupBox" class="result-popup-box win">
-            <div id="resPopupTitle" style="font-size: 24px; font-weight: 900; margin-bottom: 15px;">WIN</div>
-            <div style="background: rgba(15,23,42,0.7); padding: 12px; border-radius: 10px; text-align: left; font-size: 13px; margin-bottom: 15px;">
-                <p>Period: <strong id="resPeriod">---</strong></p>
-                <p>Result Number: <strong id="resNum">---</strong></p>
-                <p>Size / Color: <strong id="resSizeColor">---</strong></p>
-                <p id="resAmountLabel">Amount: <strong id="resAmount" style="color: #34d399;">₹0.00</strong></p>
+        <div id="resultPopupContainer" class="result-popup-container win">
+            <div class="popup-badge-header">
+                <i class="fa-solid fa-rocket" id="popupHeaderIcon"></i>
             </div>
-            <button onclick="closeResultPopup()" style="width:100%; background:#10b981; color:#fff; border:none; padding:10px; border-radius:20px; font-weight:bold; cursor:pointer;">OK</button>
+            
+            <div class="popup-title" id="resPopupTitle">Congratulations</div>
+            
+            <div class="lottery-results-row">
+                <span>Lottery results</span>
+                <span class="res-badge" id="resColorBadge">Green</span>
+                <span class="res-badge num-circle" id="resNumBadge">3</span>
+                <span class="res-badge" id="resSizeBadge">Small</span>
+            </div>
+
+            <div class="receipt-slip">
+                <div class="receipt-title" id="receiptTitle">Bonus</div>
+                <div class="receipt-value" id="receiptAmount">₹1,960.00</div>
+                <div class="receipt-details">
+                    <div id="resPeriodText">Period: WinGo 1 Min</div>
+                    <div id="resPeriodIdText">20261012100010215</div>
+                </div>
+            </div>
+
+            <div class="popup-footer-row">
+                <i class="fa-regular fa-circle-check" style="color: #34d399; font-size: 15px;"></i>
+                <span id="autoCloseCountdown">3 seconds auto close</span>
+            </div>
+
+            <div class="popup-close-btn" onclick="closeResultPopup()">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
         </div>
     </div>
 
@@ -1118,6 +1287,7 @@
         let quantity = 1;
         let selectedBarMultiplier = 1;
         let isRandomSelecting = false;
+        let resultAutoCloseTimer = null;
 
         let currentHistoryTab = 'history';
         let currentPage = 1;
@@ -1316,7 +1486,7 @@
 
         function selectMult(m, el) {
             multiplier = m;
-            quantity = m; // Update quantity input box automatically when multiplier button is clicked
+            quantity = m;
             document.getElementById('betQty').value = quantity;
             document.querySelectorAll('.mult-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
@@ -1328,7 +1498,6 @@
             multiplier = quantity;
             document.getElementById('betQty').value = quantity;
             
-            // Sync active state on multiplier buttons if exact match exists
             document.querySelectorAll('.mult-btn').forEach(b => {
                 if (b.innerText === `${quantity}X`) {
                     b.classList.add('active');
@@ -1601,28 +1770,55 @@
             let res = await fetch(`/api/user-round-result?userId=${userId}&period=${period}&timerType=${currentTimerType}`).then(r => r.json());
             if (res.success && res.hasBet) {
                 let data = res.betData;
-                const popup = document.getElementById('resultPopupOverlay');
-                const box = document.getElementById('resultPopupBox');
-                document.getElementById('resPeriod').innerText = period;
-                document.getElementById('resNum').innerText = data.number;
-                document.getElementById('resSizeColor').innerText = `${data.size.toUpperCase()} / ${data.color}`;
+                const overlay = document.getElementById('resultPopupOverlay');
+                const container = document.getElementById('resultPopupContainer');
+                const headerIcon = document.getElementById('popupHeaderIcon');
+                
+                // Set Lottery Results details
+                document.getElementById('resColorBadge').innerText = data.color.charAt(0).toUpperCase() + data.color.slice(1);
+                document.getElementById('resColorBadge').className = `res-badge ${data.color.toLowerCase()}`;
+                document.getElementById('resNumBadge').innerText = data.number;
+                document.getElementById('resSizeBadge').innerText = data.size.toUpperCase();
+                document.getElementById('resSizeBadge').className = `res-badge ${data.size.toLowerCase()}`;
+
+                document.getElementById('resPeriodText').innerText = `Period: ${document.getElementById('modeTitleDisplay').innerText}`;
+                document.getElementById('resPeriodIdText').innerText = period;
 
                 if (data.status === 'win') {
-                    box.className = 'result-popup-box win';
-                    document.getElementById('resPopupTitle').innerText = 'WIN';
-                    document.getElementById('resAmountLabel').innerText = 'Winning Amount:';
-                    document.getElementById('resAmount').innerText = `₹ ${data.payout.toFixed(2)}`;
+                    container.className = 'result-popup-container win';
+                    headerIcon.className = 'fa-solid fa-rocket';
+                    document.getElementById('resPopupTitle').innerText = 'Congratulations';
+                    document.getElementById('receiptTitle').innerText = 'Bonus';
+                    document.getElementById('receiptAmount').innerText = `₹${data.payout.toFixed(2)}`;
                 } else {
-                    box.className = 'result-popup-box loss';
-                    document.getElementById('resPopupTitle').innerText = 'LOSS';
-                    document.getElementById('resAmountLabel').innerText = 'Loss Amount:';
-                    document.getElementById('resAmount').innerText = `₹ ${data.amount.toFixed(2)}`;
+                    container.className = 'result-popup-container loss';
+                    headerIcon.className = 'fa-solid fa-face-frown';
+                    document.getElementById('resPopupTitle').innerText = 'Sorry';
+                    document.getElementById('receiptTitle').innerText = 'Lose';
+                    document.getElementById('receiptAmount').innerText = `₹${data.amount.toFixed(2)}`;
                 }
-                popup.style.display = 'flex';
+
+                overlay.style.display = 'flex';
+
+                // 3 Seconds Auto Close Timer
+                let secLeft = 3;
+                document.getElementById('autoCloseCountdown').innerText = `${secLeft} seconds auto close`;
+                if (resultAutoCloseTimer) clearInterval(resultAutoCloseTimer);
+                
+                resultAutoCloseTimer = setInterval(() => {
+                    secLeft--;
+                    if (secLeft > 0) {
+                        document.getElementById('autoCloseCountdown').innerText = `${secLeft} seconds auto close`;
+                    } else {
+                        clearInterval(resultAutoCloseTimer);
+                        closeResultPopup();
+                    }
+                }, 1000);
             }
         }
 
         function closeResultPopup() {
+            if (resultAutoCloseTimer) clearInterval(resultAutoCloseTimer);
             document.getElementById('resultPopupOverlay').style.display = 'none';
         }
 
