@@ -23,10 +23,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cors());
 
-// Serve static files from root directory[span_1](start_span)[span_1](end_span)
 app.use(express.static(path.join(__dirname)));
 
-// Explicit routes to prevent 404 Not Found errors on Render[span_2](start_span)[span_2](end_span)
 app.get('/admin.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
@@ -45,7 +43,6 @@ function generateUID() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// User Schema - Permanent Database Storage[span_3](start_span)[span_3](end_span)
 const userSchema = new mongoose.Schema({
     uid: { type: String, unique: true, default: generateUID },
     phone: { type: String, required: true, unique: true },
@@ -116,7 +113,6 @@ const withdrawalSchema = new mongoose.Schema({
 });
 const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
-// Admin Numbers Configuration[span_4](start_span)[span_4](end_span)
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
 async function setupAdminAccount() {
@@ -180,10 +176,7 @@ function startMidnightResetChecker() {
                         await u.save();
                     }
                 }
-                console.log("Midnight 12 AM reset executed successfully.");
-            } catch (err) {
-                console.error("Midnight reset error:", err.message);
-            }
+            } catch (err) {}
             await new Promise(resolve => setTimeout(resolve, 70000));
         }
     }, 10000);
@@ -193,7 +186,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'auth.html'));
 });
 
-// Registration API[span_5](start_span)[span_5](end_span)
 app.post('/api/register', async (req, res) => {
     try {
         const { phone, password, refUid } = req.body;
@@ -258,7 +250,7 @@ app.post('/api/check-session', async (req, res) => {
 
         const user = await User.findById(userId);
         if (!user || !user.lastLoginTime) {
-            return res.json({ success: true, valid: false, message: "Session expired or logged out after midnight." });
+            return res.json({ success: true, valid: false, message: "Session expired." });
         }
 
         const now = new Date();
@@ -268,7 +260,7 @@ app.post('/api/check-session', async (req, res) => {
         if (loginTimestamp >= startOfToday) {
             return res.json({ success: true, valid: true });
         } else {
-            return res.json({ success: true, valid: false, message: "Please log in again after midnight reset." });
+            return res.json({ success: true, valid: false, message: "Please log in again." });
         }
     } catch (err) {
         res.status(500).json({ success: false, valid: false, message: err.message });
@@ -322,7 +314,6 @@ app.get('/api/user-deposits/:userId', async (req, res) => {
     }
 });
 
-// Deposit API[span_6](start_span)[span_6](end_span)
 app.post('/api/deposit', async (req, res) => {
     try {
         const { userId, amount, utr, orderNo } = req.body;
@@ -336,7 +327,6 @@ app.post('/api/deposit', async (req, res) => {
     }
 });
 
-// Withdrawal API[span_7](start_span)[span_7](end_span)
 app.post('/api/withdraw', async (req, res) => {
     try {
         const { userId, amount, password, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile, type } = req.body;
@@ -345,29 +335,16 @@ app.post('/api/withdraw', async (req, res) => {
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
         
         if (!password || user.password !== password) {
-            return res.status(400).json({ success: false, message: "Incorrect password! Withdrawal cancelled." });
+            return res.status(400).json({ success: false, message: "Incorrect password!" });
         }
 
         const numAmount = Number(amount);
-
         if (numAmount < 110 || numAmount > 1000000) {
-            return res.status(400).json({ success: false, message: "Withdrawal amount must be between ₹110 and ₹1,000,000!" });
+            return res.status(400).json({ success: false, message: "Amount must be between ₹110 and ₹1,000,000!" });
         }
 
         if ((user.totalBetDone || 0) < 110) {
-            return res.status(400).json({ success: false, message: "You need to place bets totaling at least ₹110 before withdrawing!" });
-        }
-
-        const startOfToday = new Date();
-        startOfToday.setHours(0, 0, 0, 0);
-        const todayWithdrawalsCount = await Withdrawal.countDocuments({
-            userId: userId,
-            createdAt: { $gte: startOfToday },
-            status: { $ne: 'rejected' }
-        });
-
-        if (todayWithdrawalsCount >= 3) {
-            return res.status(400).json({ success: false, message: "Daily withdrawal limit of 3 times reached!" });
+            return res.status(400).json({ success: false, message: "Place bets totaling at least ₹110 before withdrawing!" });
         }
 
         if (user.winningsBalance < numAmount) return res.status(400).json({ success: false, message: "Insufficient winnings balance!" });
@@ -377,16 +354,8 @@ app.post('/api/withdraw', async (req, res) => {
 
         const finalOrderNo = 'SBW_W' + Math.floor(100000 + Math.random() * 900000);
         const withdrawal = new Withdrawal({ 
-            userId, 
-            amount: numAmount, 
-            accountHolderName, 
-            upiId, 
-            bankName, 
-            accountNumber, 
-            ifsc, 
-            mobile, 
-            type: type || (upiId ? 'UPI' : 'BANK CARD'),
-            orderNo: finalOrderNo 
+            userId, amount: numAmount, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile, 
+            type: type || (upiId ? 'UPI' : 'BANK CARD'), orderNo: finalOrderNo 
         });
         await withdrawal.save();
 
@@ -406,7 +375,6 @@ app.get('/api/admin/requests', async (req, res) => {
     }
 });
 
-// ORDER NUMBER BASED ADMIN ACTION HANDLER (Deposit & Withdrawal)
 app.post('/api/admin/action', async (req, res) => {
     try {
         const { type, id, orderNo, action, reason } = req.body;
@@ -417,41 +385,36 @@ app.post('/api/admin/action', async (req, res) => {
             const dep = await Deposit.findOne(query);
             if (!dep) return res.status(404).json({ success: false, message: "Deposit not found" });
 
-            if ((act === 'approve' || act === 'approved' || act === 'complete' || act === 'completed' || act === 'success') && dep.status === 'pending') {
+            if ((act.includes('approve') || act.includes('complete') || act.includes('success')) && dep.status === 'pending') {
                 dep.status = 'approved';
                 await dep.save();
-                
                 const user = await User.findById(dep.userId);
                 if (user) {
                     user.balance = (user.balance || 0) + Number(dep.amount);
                     await user.save();
                 }
                 io.emit('refreshBalance');
-            } else if (act === 'reject' || act === 'rejected' || act === 'fail' || act === 'failed') {
+            } else if (act.includes('reject') || act.includes('fail')) {
                 if (dep.status !== 'rejected') {
                     dep.status = 'rejected';
                     if (reason) dep.rejectReason = reason;
                     await dep.save();
                     io.emit('refreshBalance');
                 }
-            } else {
-                dep.status = action;
-                await dep.save();
             }
         } else if (type === 'withdrawal') {
             let query = orderNo ? { orderNo } : { _id: id };
             const wit = await Withdrawal.findOne(query);
-            if (!wit) return res.status(404).json({ success: false, message: "Withdrawal order not found" });
+            if (!wit) return res.status(404).json({ success: false, message: "Withdrawal not found" });
             
-            if (act === 'approve' || act === 'approved' || act === 'complete' || act === 'completed' || act === 'success') {
+            if (act.includes('approve') || act.includes('complete') || act.includes('success')) {
                 wit.status = 'approved';
                 await wit.save();
                 io.emit('refreshBalance');
-            } else if (act === 'reject' || act === 'rejected' || act === 'fail' || act === 'failed') {
+            } else if (act.includes('reject') || act.includes('fail')) {
                 if (wit.status !== 'rejected') {
                     wit.status = 'rejected';
                     await wit.save();
-                    
                     const user = await User.findById(wit.userId);
                     if (user) {
                         user.winningsBalance = (user.winningsBalance || 0) + Number(wit.amount);
@@ -459,9 +422,6 @@ app.post('/api/admin/action', async (req, res) => {
                     }
                     io.emit('refreshBalance');
                 }
-            } else {
-                wit.status = action;
-                await wit.save();
             }
         }
         res.json({ success: true, message: "Action executed successfully!" });
@@ -564,7 +524,6 @@ app.get('/api/user-round-result', async (req, res) => {
     }
 });
 
-// Place Bet API[span_8](start_span)[span_8](end_span)
 app.post('/api/bet', async (req, res) => {
     try {
         const { userId, timerType = '30s', period, betType, betValue, amount } = req.body;
@@ -661,75 +620,52 @@ function startTimerLoop(timerType, intervalSeconds) {
     const state = gameStates[timerType];
     const intervalMs = intervalSeconds * 1000;
     
-    const initTimer = () => {
+    const updateState = async () => {
         const now = Date.now();
         const startOfDay = new Date(new Date(now).setHours(0,0,0,0)).getTime();
         const elapsedMs = now - startOfDay;
         const currentIntervalIndex = Math.floor(elapsedMs / intervalMs);
         
-        state.startTime = startOfDay + (currentIntervalIndex * intervalMs);
-        const elapsedIntoInterval = now - state.startTime;
-        state.countdown = intervalSeconds - Math.floor(elapsedIntoInterval / 1000) - 1;
-        if (state.countdown < 0) state.countdown = 0;
+        const currentIntervalStart = startOfDay + (currentIntervalIndex * intervalMs);
+        const nextIntervalStart = currentIntervalStart + intervalMs;
+        const timeLeftMs = nextIntervalStart - now;
+        
+        let countdown = Math.floor(timeLeftMs / 1000);
+        if (countdown < 0) countdown = 0;
+        if (countdown >= intervalSeconds) countdown = intervalSeconds - 1;
 
-        state.period = getPeriodCodeForTime(timerType, state.startTime);
-        state.isBettingOpen = state.countdown > 5;
+        const newPeriod = getPeriodCodeForTime(timerType, currentIntervalStart);
+
+        if (state.period && state.period !== newPeriod) {
+            const oldPeriod = state.period;
+            const outcome = await getGameOutcome(oldPeriod, timerType);
+
+            const existingResult = await GameResult.findOne({ period: oldPeriod });
+            if (!existingResult) {
+                const gameResult = new GameResult({
+                    timerType, period: oldPeriod, number: outcome.number, color: outcome.color, size: outcome.size
+                });
+                await gameResult.save();
+            }
+
+            await processBetsForPeriod(oldPeriod, timerType, outcome);
+
+            io.emit(`gameResult_${timerType}`, {
+                period: oldPeriod, number: outcome.number, color: outcome.color, size: outcome.size
+            });
+        }
+
+        state.period = newPeriod;
+        state.countdown = countdown;
+        state.isBettingOpen = countdown > 5;
+
+        io.emit(`timerTick_${timerType}`, { 
+            countdown: state.countdown, isBettingOpen: state.isBettingOpen, period: state.period 
+        });
     };
 
-    initTimer();
-
-    setInterval(async () => {
-        try {
-            const now = Date.now();
-            const elapsedIntoInterval = now - state.startTime;
-            let countdown = intervalSeconds - Math.floor(elapsedIntoInterval / 1000) - 1;
-
-            if (countdown < 0) {
-                countdown = 0;
-            }
-
-            if (now >= state.startTime + intervalMs) {
-                const oldPeriod = state.period;
-
-                const outcome = await getGameOutcome(oldPeriod, timerType);
-
-                const existingResult = await GameResult.findOne({ period: oldPeriod });
-                if (!existingResult) {
-                    const gameResult = new GameResult({
-                        timerType, period: oldPeriod, number: outcome.number, color: outcome.color, size: outcome.size
-                    });
-                    await gameResult.save();
-                }
-
-                await processBetsForPeriod(oldPeriod, timerType, outcome);
-
-                io.emit(`gameResult_${timerType}`, {
-                    period: oldPeriod, number: outcome.number, color: outcome.color, size: outcome.size
-                });
-
-                state.startTime += intervalMs;
-                state.period = getPeriodCodeForTime(timerType, state.startTime);
-                state.isBettingOpen = true;
-                io.emit(`bettingStatus_${timerType}`, { isOpen: true, period: state.period });
-
-                const newElapsedIntoInterval = now - state.startTime;
-                countdown = intervalSeconds - Math.floor(newElapsedIntoInterval / 1000) - 1;
-            }
-
-            if (countdown <= 5 && state.isBettingOpen) {
-                state.isBettingOpen = false;
-                io.emit(`bettingStatus_${timerType}`, { isOpen: false, period: state.period });
-            }
-
-            state.countdown = countdown;
-
-            io.emit(`timerTick_${timerType}`, { 
-                countdown: state.countdown, isBettingOpen: state.isBettingOpen, period: state.period 
-            });
-        } catch (err) {
-            console.log(`Loop error:`, err.message);
-        }
-    }, 1000);
+    updateState();
+    setInterval(updateState, 1000);
 }
 
 app.get('*', (req, res) => {
