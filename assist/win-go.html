@@ -815,7 +815,7 @@
             font-weight: bold;
         }
 
-        /* Result Popup Styles fixed without canvas glitches */
+        /* Result Popup Styles fixed */
         .result-popup-overlay {
             position: fixed;
             inset: 0;
@@ -1012,7 +1012,7 @@
 
     <div id="toast">Action performed!</div>
 
-    <!-- Result Popup Overlay using Direct Transparent PNG Backgrounds -->
+    <!-- Result Popup Overlay using Smart Outer Background Transparency -->
     <div id="resultPopupOverlay" class="result-popup-overlay">
         <div id="resultPopupBg" class="result-popup-bg win">
             <div class="overlay-content">
@@ -1262,6 +1262,45 @@
         let maxAllowedPages = 50;
         let totalPages = 1;
         let isFirstLoadSync = false;
+
+        // Image Transparent Processing Cache & Smart Outer Background Removal
+        const processedImages = {};
+
+        function prepareTransparentImage(imageSrc, callback) {
+            if (processedImages[imageSrc]) {
+                callback(processedImages[imageSrc]);
+                return;
+            }
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.src = imageSrc;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+                
+                // Top-left corner pixel color as outer background reference (Magenta/Pink)
+                const rBg = data[0], gBg = data[1], bBg = data[2];
+                const threshold = 40;
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i], g = data[i+1], b = data[i+2];
+                    // Only clear pixels matching the outer background, keeping inside safe
+                    if (Math.abs(r - rBg) < threshold && Math.abs(g - gBg) < threshold && Math.abs(b - bBg) < threshold) {
+                        data[i+3] = 0; 
+                    }
+                }
+                ctx.putImageData(imgData, 0, 0);
+                const resultUrl = canvas.toDataURL('image/png');
+                processedImages[imageSrc] = resultUrl;
+                callback(resultUrl);
+            };
+        }
 
         async function fetchUserData() {
             if (!loggedInMobile && !userId) return;
@@ -1751,23 +1790,28 @@
                 document.getElementById('dynPeriodText').innerText = `Period: ${document.getElementById('modeTitleDisplay').innerText}`;
                 document.getElementById('dynPeriodIdText').innerText = period;
 
+                let rawImgPath = '../assets/loss-bg.png';
                 if (data.status === 'win') {
+                    rawImgPath = '../assets/win-bg.png';
                     popupBg.className = 'result-popup-bg win';
-                    popupBg.style.backgroundImage = "url('../assets/win-bg.png')";
                     document.getElementById('dynPopupTitle').innerText = 'CONGRATULATIONS';
                     document.getElementById('dynReceiptTitle').innerText = 'Bonus';
                     document.getElementById('dynReceiptAmount').innerText = `₹${data.payout.toFixed(2)}`;
                     document.getElementById('dynReceiptAmount').style.color = '#f59e0b';
                 } else {
+                    rawImgPath = '../assets/loss-bg.png';
                     popupBg.className = 'result-popup-bg loss';
-                    popupBg.style.backgroundImage = "url('../assets/loss-bg.png')";
                     document.getElementById('dynPopupTitle').innerText = 'SORRY';
                     document.getElementById('dynReceiptTitle').innerText = 'Lose';
                     document.getElementById('dynReceiptAmount').innerText = `₹${data.amount.toFixed(2)}`;
                     document.getElementById('dynReceiptAmount').style.color = '#64748b';
                 }
 
-                overlay.style.display = 'flex';
+                // Process image to remove outer magenta background dynamically
+                prepareTransparentImage(rawImgPath, (transparentUrl) => {
+                    popupBg.style.backgroundImage = `url('${transparentUrl}')`;
+                    overlay.style.display = 'flex';
+                });
 
                 // 3 Seconds Auto Close Timer
                 let secLeft = 3;
