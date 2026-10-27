@@ -1027,14 +1027,15 @@
                 <div class="ball green" onclick="openBetModal('number', '9')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>9</span></div>
             </div>
 
+            <!-- Multiplier & Random Bar -->
             <div class="multiplier-bar">
-                <button class="m-btn" onclick="showToast('Random multiplier')">Random</button>
-                <button class="m-btn active" onclick="showToast('Selected X1')">X1</button>
-                <button class="m-btn" onclick="showToast('Selected X5')">X5</button>
-                <button class="m-btn" onclick="showToast('Selected X10')">X10</button>
-                <button class="m-btn" onclick="showToast('Selected X20')">X20</button>
-                <button class="m-btn" onclick="showToast('Selected X50')">X50</button>
-                <button class="m-btn" onclick="showToast('Selected X100')">X100</button>
+                <button class="m-btn" onclick="triggerRandomBet()">Random</button>
+                <button class="m-btn active" onclick="selectBarMultiplier(1, this)">X1</button>
+                <button class="m-btn" onclick="selectBarMultiplier(5, this)">X5</button>
+                <button class="m-btn" onclick="selectBarMultiplier(10, this)">X10</button>
+                <button class="m-btn" onclick="selectBarMultiplier(20, this)">X20</button>
+                <button class="m-btn" onclick="selectBarMultiplier(50, this)">X50</button>
+                <button class="m-btn" onclick="selectBarMultiplier(100, this)">X100</button>
             </div>
 
             <div class="big-small">
@@ -1113,6 +1114,8 @@
         let baseAmount = 1;
         let multiplier = 1;
         let quantity = 1;
+        let selectedBarMultiplier = 1; // Bar theke select kora multiplier
+
         let currentHistoryTab = 'history';
         let currentPage = 1;
         let maxAllowedPages = 50;
@@ -1177,6 +1180,37 @@
             }
         }
 
+        // Multiplier bar theke select korar function
+        function selectBarMultiplier(m, el) {
+            selectedBarMultiplier = m;
+            quantity = m;
+            multiplier = m;
+            document.querySelectorAll('.multiplier-bar .m-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            showToast(`Multiplier set to X${m}`);
+        }
+
+        // Random button click handler (3 second delay / simulation effect)
+        function triggerRandomBet() {
+            if (timeLeft <= 5) {
+                showToast('Betting closed for this round!');
+                return;
+            }
+            showToast('Choosing random option...');
+            
+            setTimeout(() => {
+                const options = ['green', 'red', 'violet', 'big', 'small', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                const randomChoice = options[Math.floor(Math.random() * options.length)];
+                
+                let bType = 'number';
+                if (['green', 'red', 'violet'].includes(randomChoice)) bType = 'color';
+                else if (['big', 'small'].includes(randomChoice)) bType = 'size';
+
+                openBetModal(bType, randomChoice);
+                showToast(`Randomly picked: ${randomChoice.toUpperCase()}`);
+            }, 1000);
+        }
+
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
                 serverCountdownData[type] = data.countdown;
@@ -1214,6 +1248,11 @@
             activeBetType = type;
             activeBetValue = val;
 
+            // Bar theke selected quantity/multiplier automatic set hobe
+            multiplier = selectedBarMultiplier;
+            quantity = selectedBarMultiplier;
+            document.getElementById('betQty').value = quantity;
+
             const modal = document.getElementById('betModal');
             modal.className = 'bet-modal';
 
@@ -1227,6 +1266,16 @@
             document.getElementById('modalTitle').innerText = `Select ${val.toUpperCase()}`;
             modal.classList.add('active');
             document.getElementById('betModalOverlay').style.display = 'block';
+
+            // Modal er nijer multiplier button gulo sync kore dewa
+            document.querySelectorAll('.mult-btn').forEach(b => {
+                if (b.innerText === `X${selectedBarMultiplier}`) {
+                    b.classList.add('active');
+                } else {
+                    b.classList.remove('active');
+                }
+            });
+
             calcTotal();
         }
 
@@ -1236,12 +1285,9 @@
             document.getElementById('betModalOverlay').style.display = 'none';
 
             baseAmount = 1;
-            multiplier = 1;
-            quantity = 1;
-            document.getElementById('betQty').value = 1;
-
-            document.querySelectorAll('.chip-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
-            document.querySelectorAll('.mult-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+            multiplier = selectedBarMultiplier;
+            quantity = selectedBarMultiplier;
+            document.getElementById('betQty').value = quantity;
             calcTotal();
         }
 
@@ -1254,13 +1300,24 @@
 
         function selectMult(m, el) {
             multiplier = m;
+            quantity = m;
+            selectedBarMultiplier = m; // Bar er satheo sync hobe
             document.querySelectorAll('.mult-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
+            
+            // Bar er button gulo update kore dewa
+            document.querySelectorAll('.multiplier-bar .m-btn').forEach(b => {
+                if (b.innerText === `X${m}`) b.classList.add('active');
+                else b.classList.remove('active');
+            });
+
+            document.getElementById('betQty').value = quantity;
             calcTotal();
         }
 
         function changeQty(val) {
             quantity = Math.max(1, quantity + val);
+            multiplier = quantity;
             document.getElementById('betQty').value = quantity;
             calcTotal();
         }
@@ -1269,6 +1326,7 @@
             let val = parseInt(el.value);
             if (isNaN(val) || val < 1) quantity = 1;
             else quantity = val;
+            multiplier = quantity;
             calcTotal();
         }
 
