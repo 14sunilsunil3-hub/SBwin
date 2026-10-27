@@ -815,7 +815,7 @@
             font-weight: bold;
         }
 
-        /* Result Popup Styles - Pink Background Transparency Fixed */
+        /* Result Popup Styles with Transparent Background for Cropped PNG Template */
         .result-popup-overlay {
             position: fixed;
             inset: 0;
@@ -833,8 +833,7 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            background-color: transparent; /* Pink background ko transparent kiya */
-            mix-blend-mode: lighten; /* Sirf image dikhegi, pink background gayab ho jayega */
+            background-color: transparent;
             position: relative;
             animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -851,7 +850,6 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            mix-blend-mode: normal; /* Text par blend mode apply na ho taaki text saaf dikhe */
         }
 
         /* Popup Title Header (CONGRATULATIONS / SORRY) */
