@@ -815,11 +815,11 @@
             font-weight: bold;
         }
 
-        /* Result Popup Styles using Clean PNG Background Template */
+        /* Result Popup Styles with Solid Background Color behind PNG Template */
         .result-popup-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             display: none;
             justify-content: center;
             align-items: center;
@@ -833,6 +833,10 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+            /* Yahan background color add kar diya hai taaki transparent image me card ka color dikhe */
+            background-color: #1a153b;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
             position: relative;
             animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -1013,9 +1017,9 @@
 
     <div id="toast">Action performed!</div>
 
-    <!-- Result Popup Overlay using PNG Background Template -->
+    <!-- Result Popup Overlay using Assets PNG Background Template -->
     <div id="resultPopupOverlay" class="result-popup-overlay">
-        <div id="resultPopupBg" class="result-popup-bg win" style="background-image: url('win-bg.png');">
+        <div id="resultPopupBg" class="result-popup-bg win" style="background-image: url('assets/win-bg.png');">
             <div class="overlay-content">
                 <!-- Popup Title (Congratulations / Sorry) -->
                 <div class="dyn-popup-title" id="dynPopupTitle">CONGRATULATIONS</div>
