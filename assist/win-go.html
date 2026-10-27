@@ -815,166 +815,134 @@
             font-weight: bold;
         }
 
-        /* Result Popup Styles (Matching Reference Images) */
+        /* Result Popup Styles using Clean PNG Background Template */
         .result-popup-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.8);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 30000;
             backdrop-filter: blur(5px);
         }
-        .result-popup-container {
+        .result-popup-bg {
             width: 90%;
-            max-width: 360px;
-            border-radius: 25px;
-            padding: 24px 16px 20px 16px;
-            text-align: center;
+            max-width: 340px;
+            height: 440px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
             position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         @keyframes popupScale {
             0% { transform: scale(0.7); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-        .result-popup-container.win {
-            background: linear-gradient(135deg, #f59e0b, #d97706, #b45309);
-            border: 3px solid #fef3c7;
-        }
-        .result-popup-container.loss {
-            background: linear-gradient(135deg, #64748b, #475569, #334155);
-            border: 3px solid #cbd5e1;
-        }
 
-        /* 3D Wing / Badge Header on top of popup */
-        .popup-badge-header {
+        /* Dynamic Overlays positioned precisely over PNG template slots */
+        .overlay-content {
             position: absolute;
-            top: -45px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
+            inset: 0;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            text-align: center;
         }
-        .result-popup-container.win .popup-badge-header {
-            background: radial-gradient(circle, #fef3c7 20%, #fbbf24 80%);
-            border: 3px solid #fff;
-            color: #d97706;
-        }
-        .result-popup-container.loss .popup-badge-header {
-            background: radial-gradient(circle, #e2e8f0 20%, #94a3b8 80%);
-            border: 3px solid #fff;
-            color: #475569;
-        }
-        .popup-badge-header i { font-size: 36px; }
 
-        .popup-title {
-            font-size: 28px;
+        /* Popup Title Header (CONGRATULATIONS / SORRY) */
+        .dyn-popup-title {
+            position: absolute;
+            top: 75px;
+            width: 100%;
+            font-size: 24px;
             font-weight: 900;
-            margin-top: 35px;
-            margin-bottom: 15px;
             text-transform: uppercase;
             letter-spacing: 1px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        .result-popup-container.win .popup-title { color: #ffffff; }
-        .result-popup-container.loss .popup-title { color: #f1f5f9; }
+        .result-popup-bg.win .dyn-popup-title { color: #ffffff; }
+        .result-popup-bg.loss .dyn-popup-title { color: #f1f5f9; }
 
-        .lottery-results-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 18px;
-            font-size: 13px;
-            font-weight: bold;
-            color: rgba(255,255,255,0.9);
-        }
-        .res-badge {
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 800;
-            color: #fff;
-        }
-        .res-badge.green { background: #10b981; }
-        .res-badge.red { background: #ef4444; }
-        .res-badge.violet { background: #8b5cf6; }
-        .res-badge.num-circle { width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #fff; color: #1e1b4b; font-weight: 900; }
-        .res-badge.big { background: #f59e0b; }
-        .res-badge.small { background: #3b82f6; }
-
-        /* Receipt Slip Style */
-        .receipt-slip {
-            background: #ffffff;
-            color: #1e293b;
-            border-radius: 14px;
-            padding: 18px 12px;
-            margin-bottom: 15px;
-            box-shadow: inset 0 3px 6px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.2);
-            position: relative;
-        }
-        .receipt-slip::before {
-            content: '';
+        /* Lottery Results row positioning */
+        .dyn-lottery-row {
             position: absolute;
-            top: -8px;
-            left: 20px;
-            right: 20px;
-            height: 8px;
-            background: repeating-linear-gradient(-45deg, transparent, transparent 6px, #e2e8f0 6px, #e2e8f0 12px);
-            border-radius: 4px;
-        }
-        .receipt-title {
-            font-size: 12px;
-            color: #64748b;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        .receipt-value {
-            font-size: 24px;
-            font-weight: 900;
-            margin-bottom: 8px;
-        }
-        .result-popup-container.win .receipt-value { color: #f59e0b; }
-        .result-popup-container.loss .receipt-value { color: #64748b; }
-
-        .receipt-details {
-            font-size: 12px;
-            color: #475569;
-            font-family: monospace;
-            font-weight: bold;
-            line-height: 1.4;
-        }
-
-        .popup-footer-row {
+            top: 135px;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            font-size: 12px;
-            color: rgba(255,255,255,0.9);
+            font-size: 11px;
             font-weight: bold;
+            color: #fff;
         }
-        .popup-close-btn {
+        .dyn-badge {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .dyn-badge.green { background: #10b981; }
+        .dyn-badge.red { background: #ef4444; }
+        .dyn-badge.violet { background: #8b5cf6; }
+        .dyn-badge.num-circle { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #fff; color: #1e1b4b; font-weight: 900; }
+        .dyn-badge.big { background: #d97706; }
+        .dyn-badge.small { background: #2563eb; }
+
+        /* Receipt Slip Text Positioning over the white paper slot */
+        .dyn-receipt-area {
             position: absolute;
-            bottom: -55px;
+            top: 215px;
             left: 50%;
             transform: translateX(-50%);
-            width: 42px;
-            height: 42px;
+            width: 230px;
+            text-align: center;
+        }
+        .dyn-receipt-title {
+            font-size: 10px;
+            color: #64748b;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .dyn-receipt-val {
+            font-size: 22px;
+            font-weight: 900;
+            margin: 2px 0 4px 0;
+        }
+        .dyn-receipt-details {
+            font-size: 11px;
+            color: #475569;
+            font-family: monospace;
+            font-weight: bold;
+            line-height: 1.3;
+        }
+
+        /* Auto Close text positioning */
+        .dyn-autoclose {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            font-size: 11px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Close Button */
+        .popup-close-btn {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: rgba(255,255,255,0.2);
             border: 2px solid #fff;
             color: #fff;
-            font-size: 18px;
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1045,34 +1013,35 @@
 
     <div id="toast">Action performed!</div>
 
-    <!-- Result Popup Overlay (Matching Images 1 & 2 Style) -->
+    <!-- Result Popup Overlay using PNG Background Template -->
     <div id="resultPopupOverlay" class="result-popup-overlay">
-        <div id="resultPopupContainer" class="result-popup-container win">
-            <div class="popup-badge-header">
-                <i class="fa-solid fa-rocket" id="popupHeaderIcon"></i>
-            </div>
-            
-            <div class="popup-title" id="resPopupTitle">Congratulations</div>
-            
-            <div class="lottery-results-row">
-                <span>Lottery results</span>
-                <span class="res-badge" id="resColorBadge">Green</span>
-                <span class="res-badge num-circle" id="resNumBadge">3</span>
-                <span class="res-badge" id="resSizeBadge">Small</span>
-            </div>
+        <div id="resultPopupBg" class="result-popup-bg win" style="background-image: url('win-bg.png');">
+            <div class="overlay-content">
+                <!-- Popup Title (Congratulations / Sorry) -->
+                <div class="dyn-popup-title" id="dynPopupTitle">CONGRATULATIONS</div>
 
-            <div class="receipt-slip">
-                <div class="receipt-title" id="receiptTitle">Bonus</div>
-                <div class="receipt-value" id="receiptAmount">₹1,960.00</div>
-                <div class="receipt-details">
-                    <div id="resPeriodText">Period: WinGo 1 Min</div>
-                    <div id="resPeriodIdText">20261012100010215</div>
+                <!-- Lottery Results Dynamic Slot -->
+                <div class="dyn-lottery-row">
+                    <span>Lottery results</span>
+                    <span class="dyn-badge" id="dynColorBadge">Green</span>
+                    <span class="dyn-badge num-circle" id="dynNumBadge">3</span>
+                    <span class="dyn-badge" id="dynSizeBadge">Small</span>
                 </div>
-            </div>
 
-            <div class="popup-footer-row">
-                <i class="fa-regular fa-circle-check" style="color: #34d399; font-size: 15px;"></i>
-                <span id="autoCloseCountdown">3 seconds auto close</span>
+                <!-- Receipt Slip Text Positioning -->
+                <div class="dyn-receipt-area">
+                    <div class="dyn-receipt-title" id="dynReceiptTitle">Bonus</div>
+                    <div class="dyn-receipt-val" id="dynReceiptAmount" style="color: #f59e0b;">₹19.82</div>
+                    <div class="dyn-receipt-details">
+                        <div id="dynPeriodText">Period: WINGO 30SEC</div>
+                        <div id="dynPeriodIdText">20261027101253</div>
+                    </div>
+                </div>
+
+                <!-- Auto Close Countdown Slot -->
+                <div class="dyn-autoclose" id="dynAutoCloseText">
+                    <i class="fa-regular fa-circle-check" style="color: #34d399;"></i> 3 seconds auto close
+                </div>
             </div>
 
             <div class="popup-close-btn" onclick="closeResultPopup()">
@@ -1771,44 +1740,45 @@
             if (res.success && res.hasBet) {
                 let data = res.betData;
                 const overlay = document.getElementById('resultPopupOverlay');
-                const container = document.getElementById('resultPopupContainer');
-                const headerIcon = document.getElementById('popupHeaderIcon');
+                const popupBg = document.getElementById('resultPopupBg');
                 
-                // Set Lottery Results details
-                document.getElementById('resColorBadge').innerText = data.color.charAt(0).toUpperCase() + data.color.slice(1);
-                document.getElementById('resColorBadge').className = `res-badge ${data.color.toLowerCase()}`;
-                document.getElementById('resNumBadge').innerText = data.number;
-                document.getElementById('resSizeBadge').innerText = data.size.toUpperCase();
-                document.getElementById('resSizeBadge').className = `res-badge ${data.size.toLowerCase()}`;
+                // Set Lottery Results dynamic badges
+                document.getElementById('dynColorBadge').innerText = data.color.charAt(0).toUpperCase() + data.color.slice(1);
+                document.getElementById('dynColorBadge').className = `dyn-badge ${data.color.toLowerCase()}`;
+                document.getElementById('dynNumBadge').innerText = data.number;
+                document.getElementById('dynSizeBadge').innerText = data.size.toUpperCase();
+                document.getElementById('dynSizeBadge').className = `dyn-badge ${data.size.toLowerCase()}`;
 
-                document.getElementById('resPeriodText').innerText = `Period: ${document.getElementById('modeTitleDisplay').innerText}`;
-                document.getElementById('resPeriodIdText').innerText = period;
+                document.getElementById('dynPeriodText').innerText = `Period: ${document.getElementById('modeTitleDisplay').innerText}`;
+                document.getElementById('dynPeriodIdText').innerText = period;
 
                 if (data.status === 'win') {
-                    container.className = 'result-popup-container win';
-                    headerIcon.className = 'fa-solid fa-rocket';
-                    document.getElementById('resPopupTitle').innerText = 'Congratulations';
-                    document.getElementById('receiptTitle').innerText = 'Bonus';
-                    document.getElementById('receiptAmount').innerText = `₹${data.payout.toFixed(2)}`;
+                    popupBg.style.backgroundImage = "url('win-bg.png')";
+                    popupBg.className = 'result-popup-bg win';
+                    document.getElementById('dynPopupTitle').innerText = 'CONGRATULATIONS';
+                    document.getElementById('dynReceiptTitle').innerText = 'Bonus';
+                    document.getElementById('dynReceiptAmount').innerText = `₹${data.payout.toFixed(2)}`;
+                    document.getElementById('dynReceiptAmount').style.color = '#f59e0b';
                 } else {
-                    container.className = 'result-popup-container loss';
-                    headerIcon.className = 'fa-solid fa-face-frown';
-                    document.getElementById('resPopupTitle').innerText = 'Sorry';
-                    document.getElementById('receiptTitle').innerText = 'Lose';
-                    document.getElementById('receiptAmount').innerText = `₹${data.amount.toFixed(2)}`;
+                    popupBg.style.backgroundImage = "url('loss-bg.png')";
+                    popupBg.className = 'result-popup-bg loss';
+                    document.getElementById('dynPopupTitle').innerText = 'SORRY';
+                    document.getElementById('dynReceiptTitle').innerText = 'Lose';
+                    document.getElementById('dynReceiptAmount').innerText = `₹${data.amount.toFixed(2)}`;
+                    document.getElementById('dynReceiptAmount').style.color = '#64748b';
                 }
 
                 overlay.style.display = 'flex';
 
                 // 3 Seconds Auto Close Timer
                 let secLeft = 3;
-                document.getElementById('autoCloseCountdown').innerText = `${secLeft} seconds auto close`;
+                document.getElementById('dynAutoCloseText').innerHTML = `<i class="fa-regular fa-circle-check" style="color: #34d399;"></i> ${secLeft} seconds auto close`;
                 if (resultAutoCloseTimer) clearInterval(resultAutoCloseTimer);
                 
                 resultAutoCloseTimer = setInterval(() => {
                     secLeft--;
                     if (secLeft > 0) {
-                        document.getElementById('autoCloseCountdown').innerText = `${secLeft} seconds auto close`;
+                        document.getElementById('dynAutoCloseText').innerHTML = `<i class="fa-regular fa-circle-check" style="color: #34d399;"></i> ${secLeft} seconds auto close`;
                     } else {
                         clearInterval(resultAutoCloseTimer);
                         closeResultPopup();
