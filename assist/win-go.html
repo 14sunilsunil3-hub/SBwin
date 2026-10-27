@@ -761,18 +761,20 @@
 
         .chip-selector, .multiplier-selector {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             margin-bottom: 12px;
+            flex-wrap: wrap;
         }
         .chip-btn, .mult-btn {
             flex: 1;
+            min-width: 28px;
             background: rgba(15, 23, 42, 0.7);
             border: 1px solid rgba(124, 58, 237, 0.5);
             color: #a7f3d0;
             padding: 8px 2px;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             text-align: center;
         }
@@ -923,14 +925,17 @@
             <div class="chip-btn" onclick="selectBase(1000, this)">₹1000</div>
         </div>
 
-        <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 5px; font-weight: bold;">Multiplier</p>
+        <p style="font-size: 11px; color: #a7f3d0; margin-bottom: 5px; font-weight: bold;">Multiplier / Quantity</p>
         <div class="multiplier-selector">
-            <div class="mult-btn active" onclick="selectMult(1, this)">X1</div>
-            <div class="mult-btn" onclick="selectMult(5, this)">X5</div>
-            <div class="mult-btn" onclick="selectMult(10, this)">X10</div>
-            <div class="mult-btn" onclick="selectMult(20, this)">X20</div>
-            <div class="mult-btn" onclick="selectMult(50, this)">X50</div>
-            <div class="mult-btn" onclick="selectMult(100, this)">X100</div>
+            <div class="mult-btn active" onclick="selectMult(1, this)">1X</div>
+            <div class="mult-btn" onclick="selectMult(2, this)">2X</div>
+            <div class="mult-btn" onclick="selectMult(3, this)">3X</div>
+            <div class="mult-btn" onclick="selectMult(4, this)">4X</div>
+            <div class="mult-btn" onclick="selectMult(5, this)">5X</div>
+            <div class="mult-btn" onclick="selectMult(10, this)">10X</div>
+            <div class="mult-btn" onclick="selectMult(20, this)">20X</div>
+            <div class="mult-btn" onclick="selectMult(50, this)">50X</div>
+            <div class="mult-btn" onclick="selectMult(100, this)">100X</div>
         </div>
 
         <div class="qty-control">
@@ -1111,7 +1116,7 @@
         let baseAmount = 1;
         let multiplier = 1;
         let quantity = 1;
-        let selectedBarMultiplier = 1; // Bar se selected multiplier track karne ke liye
+        let selectedBarMultiplier = 1;
         let isRandomSelecting = false;
 
         let currentHistoryTab = 'history';
@@ -1154,29 +1159,25 @@
             
             let counter = 0;
             const flashInterval = setInterval(() => {
-                // Remove flashing from all balls
                 for (let i = 0; i <= 9; i++) {
                     let ball = document.getElementById(`ball-${i}`);
                     if (ball) ball.classList.remove('flashing');
                 }
-                // Random ball flash
                 let randomFlashNum = Math.floor(Math.random() * 10);
                 let activeBall = document.getElementById(`ball-${randomFlashNum}`);
                 if (activeBall) activeBall.classList.add('flashing');
 
                 counter += 200;
-                if (counter >= 5000) { // 5 seconds duration
+                if (counter >= 5000) {
                     clearInterval(flashInterval);
                     for (let i = 0; i <= 9; i++) {
                         let ball = document.getElementById(`ball-${i}`);
                         if (ball) ball.classList.remove('flashing');
                     }
 
-                    // Final random number selection (0 to 9)
                     let finalNum = Math.floor(Math.random() * 10);
                     isRandomSelecting = false;
 
-                    // Open bet modal with selected number and bar multiplier quantity
                     openBetModal('number', finalNum.toString());
                 }
             }, 200);
@@ -1262,7 +1263,6 @@
             activeBetType = type;
             activeBetValue = val;
 
-            // Bar se selected multiplier/quantity yahan automatically set hoga
             multiplier = selectedBarMultiplier;
             quantity = selectedBarMultiplier;
             document.getElementById('betQty').value = quantity;
@@ -1281,9 +1281,8 @@
             modal.classList.add('active');
             document.getElementById('betModalOverlay').style.display = 'block';
 
-            // Modal ke multiplier buttons ko bhi sync karein
             document.querySelectorAll('.mult-btn').forEach(b => {
-                if (b.innerText === `X${selectedBarMultiplier}`) {
+                if (b.innerText === `${selectedBarMultiplier}X`) {
                     b.classList.add('active');
                 } else {
                     b.classList.remove('active');
@@ -1317,6 +1316,8 @@
 
         function selectMult(m, el) {
             multiplier = m;
+            quantity = m; // Update quantity input box automatically when multiplier button is clicked
+            document.getElementById('betQty').value = quantity;
             document.querySelectorAll('.mult-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
             calcTotal();
@@ -1324,7 +1325,18 @@
 
         function changeQty(val) {
             quantity = Math.max(1, quantity + val);
+            multiplier = quantity;
             document.getElementById('betQty').value = quantity;
+            
+            // Sync active state on multiplier buttons if exact match exists
+            document.querySelectorAll('.mult-btn').forEach(b => {
+                if (b.innerText === `${quantity}X`) {
+                    b.classList.add('active');
+                } else {
+                    b.classList.remove('active');
+                }
+            });
+
             calcTotal();
         }
 
@@ -1332,16 +1344,26 @@
             let val = parseInt(el.value);
             if (isNaN(val) || val < 1) quantity = 1;
             else quantity = val;
+            multiplier = quantity;
+
+            document.querySelectorAll('.mult-btn').forEach(b => {
+                if (b.innerText === `${quantity}X`) {
+                    b.classList.add('active');
+                } else {
+                    b.classList.remove('active');
+                }
+            });
+
             calcTotal();
         }
 
         function calcTotal() {
-            let total = baseAmount * multiplier * quantity;
+            let total = baseAmount * multiplier;
             document.getElementById('totalBetCalc').innerText = `₹ ${total.toFixed(2)}`;
         }
 
         async function submitBet() {
-            let finalAmount = baseAmount * multiplier * quantity;
+            let finalAmount = baseAmount * multiplier;
             const period = document.getElementById('periodId').innerText;
             if (!userId) {
                 showToast('Please login first!');
