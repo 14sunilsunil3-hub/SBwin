@@ -815,7 +815,7 @@
             font-weight: bold;
         }
 
-        /* Result Popup Styles with Transparent Background for Cropped PNG Template */
+        /* Result Popup Styles fixed for exact 1000% proportion layout */
         .result-popup-overlay {
             position: fixed;
             inset: 0;
@@ -827,10 +827,9 @@
             backdrop-filter: blur(5px);
         }
         .result-popup-bg {
-            width: 90%;
-            max-width: 340px;
-            height: 440px;
-            background-size: contain;
+            width: 340px;
+            height: 480px;
+            background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
             background-color: transparent;
