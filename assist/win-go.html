@@ -1753,14 +1753,14 @@
                 document.getElementById('dynPeriodIdText').innerText = period;
 
                 if (data.status === 'win') {
-                    popupBg.style.backgroundImage = "url('win-bg.png')";
+                    popupBg.style.backgroundImage = "url('assets/win-bg.png')";
                     popupBg.className = 'result-popup-bg win';
                     document.getElementById('dynPopupTitle').innerText = 'CONGRATULATIONS';
                     document.getElementById('dynReceiptTitle').innerText = 'Bonus';
                     document.getElementById('dynReceiptAmount').innerText = `₹${data.payout.toFixed(2)}`;
                     document.getElementById('dynReceiptAmount').style.color = '#f59e0b';
                 } else {
-                    popupBg.style.backgroundImage = "url('loss-bg.png')";
+                    popupBg.style.backgroundImage = "url('assets/loss-bg.png')";
                     popupBg.className = 'result-popup-bg loss';
                     document.getElementById('dynPopupTitle').innerText = 'SORRY';
                     document.getElementById('dynReceiptTitle').innerText = 'Lose';
