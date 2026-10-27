@@ -815,7 +815,7 @@
             font-weight: bold;
         }
 
-        /* Result Popup Styles fixed for exact 1000% proportion layout */
+        /* Result Popup Styles fixed for exact proportions based on win-bg.png & loss-bg.png layout */
         .result-popup-overlay {
             position: fixed;
             inset: 0;
@@ -827,7 +827,7 @@
             backdrop-filter: blur(5px);
         }
         .result-popup-bg {
-            width: 340px;
+            width: 330px;
             height: 480px;
             background-size: 100% 100%;
             background-repeat: no-repeat;
@@ -851,24 +851,24 @@
             text-align: center;
         }
 
-        /* Popup Title Header (CONGRATULATIONS / SORRY) */
+        /* Popup Title Header (CONGRATULATIONS / SORRY) - perfectly aligned inside top banner */
         .dyn-popup-title {
             position: absolute;
-            top: 75px;
+            top: 132px;
             width: 100%;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 1px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .result-popup-bg.win .dyn-popup-title { color: #ffffff; }
-        .result-popup-bg.loss .dyn-popup-title { color: #f1f5f9; }
+        .result-popup-bg.loss .dyn-popup-title { color: #ffffff; }
 
-        /* Lottery Results row positioning */
+        /* Lottery Results row positioning - aligned under the header ribbon */
         .dyn-lottery-row {
             position: absolute;
-            top: 135px;
+            top: 185px;
             width: 100%;
             display: flex;
             align-items: center;
@@ -895,20 +895,20 @@
         /* Receipt Slip Text Positioning over the white paper slot */
         .dyn-receipt-area {
             position: absolute;
-            top: 215px;
+            top: 255px;
             left: 50%;
             transform: translateX(-50%);
-            width: 230px;
+            width: 220px;
             text-align: center;
         }
         .dyn-receipt-title {
-            font-size: 10px;
+            font-size: 11px;
             color: #64748b;
             font-weight: bold;
             text-transform: uppercase;
         }
         .dyn-receipt-val {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 900;
             margin: 2px 0 4px 0;
         }
@@ -923,7 +923,7 @@
         /* Auto Close text positioning */
         .dyn-autoclose {
             position: absolute;
-            bottom: 30px;
+            bottom: 40px;
             width: 100%;
             font-size: 11px;
             color: #fff;
@@ -1292,7 +1292,6 @@
                 
                 for (let i = 0; i < data.length; i += 4) {
                     const r = data[i], g = data[i+1], b = data[i+2];
-                    // If pixel matches the background color, make it transparent
                     if (Math.abs(r - rT) < threshold && Math.abs(g - gT) < threshold && Math.abs(b - bT) < threshold) {
                         data[i+3] = 0; 
                     }
