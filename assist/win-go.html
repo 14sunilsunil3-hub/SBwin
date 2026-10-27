@@ -376,6 +376,12 @@
             overflow: hidden;
             box-shadow: inset 0 -6px 8px rgba(0,0,0,0.25), 0 4px 6px rgba(0,0,0,0.1);
             cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .ball.flashing {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #34d399, inset 0 0 10px #fff;
+            border: 2px solid #34d399;
         }
         .ball::before {
             content: '';
@@ -753,14 +759,6 @@
         .bet-modal.theme-violet #modalTitle, .bet-modal.theme-violet #totalBetCalc { color: #a855f7; }
         .bet-modal.theme-violet .confirm-btn { background: linear-gradient(135deg, #7c3aed, #a855f7); }
 
-        .bet-modal.theme-big { border-top-color: #fbbf24; }
-        .bet-modal.theme-big #modalTitle, .bet-modal.theme-big #totalBetCalc { color: #fbbf24; }
-        .bet-modal.theme-big .confirm-btn { background: linear-gradient(135deg, #d97706, #fbbf24); color: #1e1b4b; }
-
-        .bet-modal.theme-small { border-top-color: #3b82f6; }
-        .bet-modal.theme-small #modalTitle, .bet-modal.theme-small #totalBetCalc { color: #3b82f6; }
-        .bet-modal.theme-small .confirm-btn { background: linear-gradient(135deg, #2563eb, #3b82f6); }
-
         .chip-selector, .multiplier-selector {
             display: flex;
             gap: 6px;
@@ -1015,21 +1013,20 @@
             </div>
 
             <div class="balls-container">
-                <div class="ball split-0" onclick="openBetModal('number', '0')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>0</span></div>
-                <div class="ball green" onclick="openBetModal('number', '1')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>1</span></div>
-                <div class="ball red" onclick="openBetModal('number', '2')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>2</span></div>
-                <div class="ball green" onclick="openBetModal('number', '3')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>3</span></div>
-                <div class="ball red" onclick="openBetModal('number', '4')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>4</span></div>
-                <div class="ball split-5" onclick="openBetModal('number', '5')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>5</span></div>
-                <div class="ball red" onclick="openBetModal('number', '6')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>6</span></div>
-                <div class="ball green" onclick="openBetModal('number', '7')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>7</span></div>
-                <div class="ball red" onclick="openBetModal('number', '8')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>8</span></div>
-                <div class="ball green" onclick="openBetModal('number', '9')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>9</span></div>
+                <div class="ball split-0" id="ball-0" onclick="openBetModal('number', '0')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>0</span></div>
+                <div class="ball green" id="ball-1" onclick="openBetModal('number', '1')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>1</span></div>
+                <div class="ball red" id="ball-2" onclick="openBetModal('number', '2')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>2</span></div>
+                <div class="ball green" id="ball-3" onclick="openBetModal('number', '3')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>3</span></div>
+                <div class="ball red" id="ball-4" onclick="openBetModal('number', '4')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>4</span></div>
+                <div class="ball split-5" id="ball-5" onclick="openBetModal('number', '5')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>5</span></div>
+                <div class="ball red" id="ball-6" onclick="openBetModal('number', '6')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>6</span></div>
+                <div class="ball green" id="ball-7" onclick="openBetModal('number', '7')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>7</span></div>
+                <div class="ball red" id="ball-8" onclick="openBetModal('number', '8')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>8</span></div>
+                <div class="ball green" id="ball-9" onclick="openBetModal('number', '9')"><div class="side-glow-left"></div><div class="side-glow-right"></div><div class="bottom-glow"></div><span>9</span></div>
             </div>
 
-            <!-- Multiplier & Random Bar -->
             <div class="multiplier-bar">
-                <button class="m-btn" onclick="triggerRandomBet()">Random</button>
+                <button class="m-btn" id="randomBtn" onclick="triggerRandomNumber()">Random</button>
                 <button class="m-btn active" onclick="selectBarMultiplier(1, this)">X1</button>
                 <button class="m-btn" onclick="selectBarMultiplier(5, this)">X5</button>
                 <button class="m-btn" onclick="selectBarMultiplier(10, this)">X10</button>
@@ -1114,7 +1111,8 @@
         let baseAmount = 1;
         let multiplier = 1;
         let quantity = 1;
-        let selectedBarMultiplier = 1; // Bar theke select kora multiplier
+        let selectedBarMultiplier = 1; // Bar se selected multiplier track karne ke liye
+        let isRandomSelecting = false;
 
         let currentHistoryTab = 'history';
         let currentPage = 1;
@@ -1136,6 +1134,53 @@
             } catch(e) {}
         }
         fetchUserData();
+
+        function selectBarMultiplier(m, el) {
+            selectedBarMultiplier = m;
+            document.querySelectorAll('.multiplier-bar .m-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            showToast(`Multiplier set to X${m}`);
+        }
+
+        function triggerRandomNumber() {
+            if (timeLeft <= 5) {
+                showToast('Betting closed for this round!');
+                return;
+            }
+            if (isRandomSelecting) return;
+            isRandomSelecting = true;
+
+            showToast('Choosing random number...');
+            
+            let counter = 0;
+            const flashInterval = setInterval(() => {
+                // Remove flashing from all balls
+                for (let i = 0; i <= 9; i++) {
+                    let ball = document.getElementById(`ball-${i}`);
+                    if (ball) ball.classList.remove('flashing');
+                }
+                // Random ball flash
+                let randomFlashNum = Math.floor(Math.random() * 10);
+                let activeBall = document.getElementById(`ball-${randomFlashNum}`);
+                if (activeBall) activeBall.classList.add('flashing');
+
+                counter += 200;
+                if (counter >= 5000) { // 5 seconds duration
+                    clearInterval(flashInterval);
+                    for (let i = 0; i <= 9; i++) {
+                        let ball = document.getElementById(`ball-${i}`);
+                        if (ball) ball.classList.remove('flashing');
+                    }
+
+                    // Final random number selection (0 to 9)
+                    let finalNum = Math.floor(Math.random() * 10);
+                    isRandomSelecting = false;
+
+                    // Open bet modal with selected number and bar multiplier quantity
+                    openBetModal('number', finalNum.toString());
+                }
+            }, 200);
+        }
 
         function switchTimer(type) {
             currentTimerType = type;
@@ -1180,37 +1225,6 @@
             }
         }
 
-        // Multiplier bar theke select korar function
-        function selectBarMultiplier(m, el) {
-            selectedBarMultiplier = m;
-            quantity = m;
-            multiplier = m;
-            document.querySelectorAll('.multiplier-bar .m-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            showToast(`Multiplier set to X${m}`);
-        }
-
-        // Random button click handler (3 second delay / simulation effect)
-        function triggerRandomBet() {
-            if (timeLeft <= 5) {
-                showToast('Betting closed for this round!');
-                return;
-            }
-            showToast('Choosing random option...');
-            
-            setTimeout(() => {
-                const options = ['green', 'red', 'violet', 'big', 'small', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                const randomChoice = options[Math.floor(Math.random() * options.length)];
-                
-                let bType = 'number';
-                if (['green', 'red', 'violet'].includes(randomChoice)) bType = 'color';
-                else if (['big', 'small'].includes(randomChoice)) bType = 'size';
-
-                openBetModal(bType, randomChoice);
-                showToast(`Randomly picked: ${randomChoice.toUpperCase()}`);
-            }, 1000);
-        }
-
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
                 serverCountdownData[type] = data.countdown;
@@ -1248,7 +1262,7 @@
             activeBetType = type;
             activeBetValue = val;
 
-            // Bar theke selected quantity/multiplier automatic set hobe
+            // Bar se selected multiplier/quantity yahan automatically set hoga
             multiplier = selectedBarMultiplier;
             quantity = selectedBarMultiplier;
             document.getElementById('betQty').value = quantity;
@@ -1267,7 +1281,7 @@
             modal.classList.add('active');
             document.getElementById('betModalOverlay').style.display = 'block';
 
-            // Modal er nijer multiplier button gulo sync kore dewa
+            // Modal ke multiplier buttons ko bhi sync karein
             document.querySelectorAll('.mult-btn').forEach(b => {
                 if (b.innerText === `X${selectedBarMultiplier}`) {
                     b.classList.add('active');
@@ -1285,9 +1299,12 @@
             document.getElementById('betModalOverlay').style.display = 'none';
 
             baseAmount = 1;
-            multiplier = selectedBarMultiplier;
-            quantity = selectedBarMultiplier;
-            document.getElementById('betQty').value = quantity;
+            multiplier = 1;
+            quantity = 1;
+            document.getElementById('betQty').value = 1;
+
+            document.querySelectorAll('.chip-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+            document.querySelectorAll('.mult-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
             calcTotal();
         }
 
@@ -1300,24 +1317,13 @@
 
         function selectMult(m, el) {
             multiplier = m;
-            quantity = m;
-            selectedBarMultiplier = m; // Bar er satheo sync hobe
             document.querySelectorAll('.mult-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-            
-            // Bar er button gulo update kore dewa
-            document.querySelectorAll('.multiplier-bar .m-btn').forEach(b => {
-                if (b.innerText === `X${m}`) b.classList.add('active');
-                else b.classList.remove('active');
-            });
-
-            document.getElementById('betQty').value = quantity;
             calcTotal();
         }
 
         function changeQty(val) {
             quantity = Math.max(1, quantity + val);
-            multiplier = quantity;
             document.getElementById('betQty').value = quantity;
             calcTotal();
         }
@@ -1326,7 +1332,6 @@
             let val = parseInt(el.value);
             if (isNaN(val) || val < 1) quantity = 1;
             else quantity = val;
-            multiplier = quantity;
             calcTotal();
         }
 
