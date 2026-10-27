@@ -815,16 +815,16 @@
             font-weight: bold;
         }
 
-        /* Result Popup Styles fixed */
+        /* Result Popup Styles fixed with reduced darkness and precise text alignment */
         .result-popup-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.45); /* Reduced darkness */
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 30000;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(2px);
         }
         .result-popup-bg {
             width: 330px;
@@ -841,7 +841,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Dynamic Overlays positioned precisely over PNG template slots */
+        /* Dynamic Overlays positioned precisely over PNG template slots matching 3rd/4th image */
         .overlay-content {
             position: absolute;
             inset: 0;
@@ -854,9 +854,9 @@
         /* Popup Title Header (CONGRATULATIONS / SORRY) */
         .dyn-popup-title {
             position: absolute;
-            top: 132px;
+            top: 105px;
             width: 100%;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -867,13 +867,13 @@
         /* Lottery Results row positioning */
         .dyn-lottery-row {
             position: absolute;
-            top: 185px;
+            top: 165px;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            font-size: 11px;
+            gap: 8px;
+            font-size: 12px;
             font-weight: bold;
             color: #fff;
         }
@@ -894,20 +894,20 @@
         /* Receipt Slip Text Positioning over the white paper slot */
         .dyn-receipt-area {
             position: absolute;
-            top: 255px;
+            top: 245px;
             left: 50%;
             transform: translateX(-50%);
-            width: 220px;
+            width: 240px;
             text-align: center;
         }
         .dyn-receipt-title {
-            font-size: 11px;
+            font-size: 12px;
             color: #64748b;
             font-weight: bold;
             text-transform: uppercase;
         }
         .dyn-receipt-val {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 900;
             margin: 2px 0 4px 0;
         }
@@ -922,9 +922,9 @@
         /* Auto Close text positioning */
         .dyn-autoclose {
             position: absolute;
-            bottom: 40px;
+            bottom: 30px;
             width: 100%;
-            font-size: 11px;
+            font-size: 12px;
             color: #fff;
             font-weight: bold;
         }
