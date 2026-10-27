@@ -996,7 +996,7 @@
             <div class="timer-right">
                 <p style="font-size: 11px; color: #a7f3d0; font-weight: bold;">Time remaining</p>
                 <div class="time-box" id="countdownBox">
-                    <div>0</div><div>0</div><span>:</span><div>2</div><div>9</div>
+                    <div>2</div><div>9</div><span>:</span><div>0</div><div>0</div>
                 </div>
                 <div class="period-id-left" id="periodId">---</div>
             </div>
@@ -1079,7 +1079,6 @@
                     <div class="stat-row"><span class="stat-header">Max consecutive</span><span>2</span><span>2</span><span>1</span><span>2</span><span>3</span><span>3</span><span>2</span><span>1</span><span>2</span><span>2</span></div>
                 </div>
 
-                , grid-wrapper>
                 <div class="grid-wrapper">
                     <canvas id="chartCanvas"></canvas>
                     <div id="chartRowsContainer"></div>
@@ -1109,7 +1108,6 @@
         let serverCountdownData = { '30s': 29, '60s': 59, '3m': 179, '5m': 299 };
         let serverPeriodData = { '30s': '---', '60s': '---', '3m': '---', '5m': '---' };
         
-        let clientTimerInterval = null;
         let activeBetType = '';
         let activeBetValue = '';
         let baseAmount = 1;
@@ -1148,7 +1146,6 @@
             else if (type === '5m') modeTitleText = 'WinGo 5Min';
             document.getElementById('modeTitleDisplay').innerText = modeTitleText;
 
-            // FIX: Turant server ke live countdown aur period par switch karo bina mismatch ke
             if (serverCountdownData[type] !== undefined) {
                 timeLeft = serverCountdownData[type];
                 updateDisplayTime(timeLeft);
@@ -1180,23 +1177,6 @@
             }
         }
 
-        function startClientCountdown() {
-            if (clientTimerInterval) clearInterval(clientTimerInterval);
-            clientTimerInterval = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    serverCountdownData[currentTimerType] = timeLeft;
-                    updateDisplayTime(timeLeft);
-                    
-                    if (timeLeft === 1) {
-                        loadHistoryData();
-                        fetchUserData();
-                    }
-                }
-            }, 1000);
-        }
-        startClientCountdown();
-
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (data) => {
                 serverCountdownData[type] = data.countdown;
@@ -1214,9 +1194,7 @@
                         }
                     }
 
-                    if (Math.abs(timeLeft - data.countdown) >= 1 || data.countdown === 0) {
-                        timeLeft = data.countdown;
-                    }
+                    timeLeft = data.countdown;
                     updateDisplayTime(timeLeft);
                 }
             });
