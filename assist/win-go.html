@@ -1195,12 +1195,20 @@
                 const centerX = canvas.width / 2;
                 const isWin = data.status === 'win';
 
-                // 1. Lottery Results Row Text (Upar shift kar diya)
+                // 1. Title Heading updated to 74px as requested
+                ctx.font = '900 74px "Segoe UI", sans-serif';
+                ctx.fillStyle = '#FFFFFF';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+                ctx.shadowBlur = 6;
+                ctx.fillText(isWin ? 'Congratulations' : 'Sorry', centerX, 225);
+
+                // 2. Lottery Results Row Text (Proportionally scaled)
                 ctx.shadowBlur = 0;
-                ctx.font = '700 26px "Segoe UI", sans-serif';
+                ctx.font = '700 28px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'left';
-                ctx.fillText('Lottery results', 45, 235);
+                ctx.fillText('Lottery results', 45, 300);
 
                 // Color badge
                 let colorText = data.color.charAt(0).toUpperCase() + data.color.slice(1);
@@ -1208,48 +1216,41 @@
                 ctx.fillStyle = badgeColor;
                 if (ctx.roundRect) {
                     ctx.beginPath();
-                    ctx.roundRect(240, 205, 110, 42, 8);
+                    ctx.roundRect(240, 268, 110, 42, 8);
                     ctx.fill();
                 } else {
-                    ctx.fillRect(240, 205, 110, 42);
+                    ctx.fillRect(240, 268, 110, 42);
                 }
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 22px "Segoe UI", sans-serif';
+                ctx.font = 'bold 24px "Segoe UI", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(colorText, 295, 233);
+                ctx.fillText(colorText, 295, 298);
 
                 // Number circle
                 ctx.fillStyle = '#FFFFFF';
                 ctx.beginPath();
-                ctx.arc(385, 226, 21, 0, Math.PI * 2);
+                ctx.arc(385, 289, 21, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.fillStyle = '#1e1b4b';
-                ctx.font = '900 22px "Segoe UI", sans-serif';
-                ctx.fillText(data.number, 385, 234);
+                ctx.font = '900 24px "Segoe UI", sans-serif';
+                ctx.fillText(data.number, 385, 297);
 
                 // Size badge (Big / Small)
                 let sizeText = data.size.toUpperCase();
                 ctx.fillStyle = sizeText === 'BIG' ? '#d97706' : '#2563eb';
                 if (ctx.roundRect) {
                     ctx.beginPath();
-                    ctx.roundRect(425, 205, 100, 42, 8);
+                    ctx.roundRect(425, 268, 100, 42, 8);
                     ctx.fill();
                 } else {
-                    ctx.fillRect(425, 205, 100, 42);
+                    ctx.fillRect(425, 268, 100, 42);
                 }
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 22px "Segoe UI", sans-serif';
-                ctx.fillText(sizeText, 475, 233);
+                ctx.font = 'bold 24px "Segoe UI", sans-serif';
+                ctx.fillText(sizeText, 475, 298);
 
-                // 2. Title Heading (Congratulations / Sorry) - Ab exact wahan set kiya hai jahan pehle 'Lose / ₹1.00' tha (74px font size)
-                ctx.font = '900 74px "Segoe UI", sans-serif';
-                ctx.fillStyle = '#FFFFFF';
+                // 3. Receipt Area (Bonus / Amount / Period - Proportioned)
                 ctx.textAlign = 'center';
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-                ctx.shadowBlur = 6;
-                ctx.fillText(isWin ? 'Congratulations' : 'Sorry', centerX, 315);
-
-                // 3. Receipt Area (Bonus / Lose Title & Amount Value) - Isko uske niche shift kiya hai
                 ctx.font = 'bold 26px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#ff4757';
                 ctx.fillText(isWin ? 'Bonus' : 'Lose', centerX, 375);
@@ -1258,13 +1259,13 @@
                 ctx.font = '900 52px "Segoe UI", sans-serif';
                 ctx.fillStyle = isWin ? '#ff4757' : '#555555';
                 let amtStr = isWin ? `₹${data.payout.toFixed(2)}` : `₹${data.amount.toFixed(2)}`;
-                ctx.fillText(amtStr, centerX, 430);
+                ctx.fillText(amtStr, centerX, 425);
 
                 // Period Details
                 ctx.font = '600 22px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#666666';
-                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 465);
-                ctx.fillText(data.period, centerX, 490);
+                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 460);
+                ctx.fillText(data.period, centerX, 485);
 
                 const resultUrl = canvas.toDataURL('image/png');
                 processedImages[cacheKey] = resultUrl;
@@ -1744,41 +1745,38 @@
 
         async function checkUserRoundResult(period) {
             if (!userId) return;
-            let res = await fetch(`/api/user-round-result?userId=${userId}&period=${period}&timerType=${currentTimerType}`).text();
-            try {
-                let data = JSON.parse(res);
-                if (data.success && data.hasBet) {
-                    let betData = data.betData;
-                    const overlay = document.getElementById('resultPopupOverlay');
-                    const popupBg = document.getElementById('resultPopupBg');
-                    
-                    let rawImgPath = betData.status === 'win' ? '../assets/win-bg.png' : '../assets/loss-bg.png';
-                    if (betData.status === 'win') {
-                        popupBg.className = 'result-popup-bg win';
-                    } else {
-                        popupBg.className = 'result-popup-bg loss';
-                    }
-
-                    prepareTransparentImage(rawImgPath, betData, (transparentUrl) => {
-                        popupBg.style.backgroundImage = `url('${transparentUrl}')`;
-                        overlay.style.display = 'flex';
-                    });
-
-                    let secLeft = 3;
-                    document.getElementById('dynAutoCloseText').innerHTML = `<i class="fa-regular fa-circle-check" style="color: #34d399;"></i> ${secLeft} seconds auto close`;
-                    if (resultAutoCloseTimer) clearInterval(resultAutoCloseTimer);
-                    
-                    resultAutoCloseTimer = setInterval(() => {
-                        secLeft--;
-                        if (secLeft > 0) {
-                            document.getElementById('dynAutoCloseText').innerHTML = `<i class="fa-regular fa-circle-check" style="color: #34d399;"></i> ${secLeft} seconds auto close`;
-                        } else {
-                            clearInterval(resultAutoCloseTimer);
-                            closeResultPopup();
-                        }
-                    }, 1000);
+            let res = await fetch(`/api/user-round-result?userId=${userId}&period=${period}&timerType=${currentTimerType}`).then(r => r.json());
+            if (res.success && res.hasBet) {
+                let data = res.betData;
+                const overlay = document.getElementById('resultPopupOverlay');
+                const popupBg = document.getElementById('resultPopupBg');
+                
+                let rawImgPath = data.status === 'win' ? '../assets/win-bg.png' : '../assets/loss-bg.png';
+                if (data.status === 'win') {
+                    popupBg.className = 'result-popup-bg win';
+                } else {
+                    popupBg.className = 'result-popup-bg loss';
                 }
-            } catch(e) {}
+
+                prepareTransparentImage(rawImgPath, data, (transparentUrl) => {
+                    popupBg.style.backgroundImage = `url('${transparentUrl}')`;
+                    overlay.style.display = 'flex';
+                });
+
+                let secLeft = 3;
+                document.getElementById('dynAutoCloseText').innerHTML = `<i class="fa-regular fa-circle-check" style="color: #34d399;"></i> ${secLeft} seconds auto close`;
+                if (resultAutoCloseTimer) clearInterval(resultAutoCloseTimer);
+                
+                resultAutoCloseTimer = setInterval(() => {
+                    secLeft--;
+                    if (secLeft > 0) {
+                        document.getElementById('dynAutoCloseText').innerHTML = `<i class="fa-regular fa-circle-check" style="color: #34d399;"></i> ${secLeft} seconds auto close`;
+                    } else {
+                        clearInterval(resultAutoCloseTimer);
+                        closeResultPopup();
+                    }
+                }, 1000);
+            }
         }
 
         function closeResultPopup() {
