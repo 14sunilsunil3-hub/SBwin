@@ -1241,30 +1241,30 @@
                 ctx.font = 'bold 22px "Segoe UI", sans-serif';
                 ctx.fillText(sizeText, 475, 233);
 
-                // 2. Title Heading (Congratulations / Sorry) - Yahan Y-axis ko 365px kar diya hai taaki niche ribbon mein theek se set ho jaye
-                ctx.font = '900 74px "Segoe UI", sans-serif';
+                // 2. Title Heading (Congratulations / Sorry) - Font size 94px and shifted 1 line down (Y: 385px)
+                ctx.font = '900 94px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'center';
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
                 ctx.shadowBlur = 6;
-                ctx.fillText(isWin ? 'Congratulations' : 'Sorry', centerX, 365);
+                ctx.fillText(isWin ? 'Congratulations' : 'Sorry', centerX, 385);
 
-                // 3. Receipt Area (Bonus / Lose Title & Amount Value) - Isko bhi aur niche shift kiya hai
+                // 3. Receipt Area (Bonus / Lose Title & Amount Value) - Shifted further down accordingly
                 ctx.font = 'bold 26px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#ff4757';
-                ctx.fillText(isWin ? 'Bonus' : 'Lose', centerX, 420);
+                ctx.fillText(isWin ? 'Bonus' : 'Lose', centerX, 435);
 
                 // Amount Value
                 ctx.font = '900 52px "Segoe UI", sans-serif';
                 ctx.fillStyle = isWin ? '#ff4757' : '#555555';
                 let amtStr = isWin ? `₹${data.payout.toFixed(2)}` : `₹${data.amount.toFixed(2)}`;
-                ctx.fillText(amtStr, centerX, 470);
+                ctx.fillText(amtStr, centerX, 485);
 
                 // Period Details
                 ctx.font = '600 22px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#666666';
-                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 510);
-                ctx.fillText(data.period, centerX, 535);
+                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 520);
+                ctx.fillText(data.period, centerX, 545);
 
                 const resultUrl = canvas.toDataURL('image/png');
                 processedImages[cacheKey] = resultUrl;
