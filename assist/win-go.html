@@ -1241,30 +1241,30 @@
                 ctx.font = 'bold 22px "Segoe UI", sans-serif';
                 ctx.fillText(sizeText, 475, 233);
 
-                // 2. Title Heading (Congratulations / Sorry) - Font size 74px and shifted 1 line down (Y: 410px)
+                // 2. Title Heading (Congratulations / Sorry) - Font size 74px and shifted one more line down (Y: 410px)
                 ctx.font = '900 74px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'center';
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
                 ctx.shadowBlur = 6;
-                ctx.fillText(isWin ? 'Congratulations' : 'Sorry', centerX, 385);
+                ctx.fillText(isWin ? 'Congratulations' : 'Sorry', centerX, 410);
 
                 // 3. Receipt Area (Bonus / Lose Title & Amount Value) - Shifted further down accordingly
                 ctx.font = 'bold 26px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#ff4757';
-                ctx.fillText(isWin ? 'Bonus' : 'Lose', centerX, 435);
+                ctx.fillText(isWin ? 'Bonus' : 'Lose', centerX, 460);
 
                 // Amount Value
                 ctx.font = '900 52px "Segoe UI", sans-serif';
                 ctx.fillStyle = isWin ? '#ff4757' : '#555555';
                 let amtStr = isWin ? `₹${data.payout.toFixed(2)}` : `₹${data.amount.toFixed(2)}`;
-                ctx.fillText(amtStr, centerX, 485);
+                ctx.fillText(amtStr, centerX, 510);
 
                 // Period Details
                 ctx.font = '600 22px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#666666';
-                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 520);
-                ctx.fillText(data.period, centerX, 545);
+                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 545);
+                ctx.fillText(data.period, centerX, 570);
 
                 const resultUrl = canvas.toDataURL('image/png');
                 processedImages[cacheKey] = resultUrl;
