@@ -1195,20 +1195,20 @@
                 const centerX = canvas.width / 2;
                 const isWin = data.status === 'win';
 
-                // 1. Congratulations Title (Green marked area inside card, larger font size)
-                ctx.font = '800 28px "Segoe UI", sans-serif';
+                // 1. Title Heading (64px Exact Request)
+                ctx.font = '900 64px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'center';
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-                ctx.shadowBlur = 4;
+                ctx.shadowBlur = 6;
                 ctx.fillText(isWin ? 'Congratulations' : 'Sorry', centerX, 225);
 
-                // 2. Lottery Results Row Text Position (Smaller font size below title)
+                // 2. Lottery Results Row Text (Proportionally scaled)
                 ctx.shadowBlur = 0;
-                ctx.font = '600 13px "Segoe UI", sans-serif';
+                ctx.font = '700 28px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'left';
-                ctx.fillText('Lottery results', 45, 285);
+                ctx.fillText('Lottery results', 45, 300);
 
                 // Color badge
                 let colorText = data.color.charAt(0).toUpperCase() + data.color.slice(1);
@@ -1216,56 +1216,56 @@
                 ctx.fillStyle = badgeColor;
                 if (ctx.roundRect) {
                     ctx.beginPath();
-                    ctx.roundRect(165, 268, 55, 22, 4);
+                    ctx.roundRect(240, 268, 110, 42, 8);
                     ctx.fill();
                 } else {
-                    ctx.fillRect(165, 268, 55, 22);
+                    ctx.fillRect(240, 268, 110, 42);
                 }
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 11px "Segoe UI", sans-serif';
+                ctx.font = 'bold 24px "Segoe UI", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(colorText, 192, 284);
+                ctx.fillText(colorText, 295, 298);
 
                 // Number circle
                 ctx.fillStyle = '#FFFFFF';
                 ctx.beginPath();
-                ctx.arc(245, 279, 11, 0, Math.PI * 2);
+                ctx.arc(385, 289, 21, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.fillStyle = '#1e1b4b';
-                ctx.font = '800 11px "Segoe UI", sans-serif';
-                ctx.fillText(data.number, 245, 283);
+                ctx.font = '900 24px "Segoe UI", sans-serif';
+                ctx.fillText(data.number, 385, 297);
 
                 // Size badge (Big / Small)
                 let sizeText = data.size.toUpperCase();
                 ctx.fillStyle = sizeText === 'BIG' ? '#d97706' : '#2563eb';
                 if (ctx.roundRect) {
                     ctx.beginPath();
-                    ctx.roundRect(268, 268, 48, 22, 4);
+                    ctx.roundRect(425, 268, 100, 42, 8);
                     ctx.fill();
                 } else {
-                    ctx.fillRect(268, 268, 48, 22);
+                    ctx.fillRect(425, 268, 100, 42);
                 }
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 11px "Segoe UI", sans-serif';
-                ctx.fillText(sizeText, 292, 284);
+                ctx.font = 'bold 24px "Segoe UI", sans-serif';
+                ctx.fillText(sizeText, 475, 298);
 
-                // 3. Receipt Area (Bonus / Lose Title)
+                // 3. Receipt Area (Bonus / Amount / Period - Proportioned)
                 ctx.textAlign = 'center';
-                ctx.font = 'bold 12px "Segoe UI", sans-serif';
+                ctx.font = 'bold 26px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#ff4757';
-                ctx.fillText(isWin ? 'Bonus' : 'Lose', centerX, 360);
+                ctx.fillText(isWin ? 'Bonus' : 'Lose', centerX, 375);
 
                 // Amount Value
-                ctx.font = '900 24px "Segoe UI", sans-serif';
+                ctx.font = '900 52px "Segoe UI", sans-serif';
                 ctx.fillStyle = isWin ? '#ff4757' : '#555555';
                 let amtStr = isWin ? `₹${data.payout.toFixed(2)}` : `₹${data.amount.toFixed(2)}`;
-                ctx.fillText(amtStr, centerX, 392);
+                ctx.fillText(amtStr, centerX, 425);
 
-                // Period Text
-                ctx.font = '500 11px "Segoe UI", sans-serif';
+                // Period Details
+                ctx.font = '600 22px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#666666';
-                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 415);
-                ctx.fillText(data.period, centerX, 430);
+                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 460);
+                ctx.fillText(data.period, centerX, 485);
 
                 const resultUrl = canvas.toDataURL('image/png');
                 processedImages[cacheKey] = resultUrl;
