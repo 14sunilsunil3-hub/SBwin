@@ -1208,7 +1208,7 @@
                 ctx.font = '700 22px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'left';
-                ctx.fillText('Lottery results', 115, 505);
+                ctx.fillText('Lottery results', 110, 570);
 
                 // Color badge
                 let colorText = data.color.charAt(0).toUpperCase() + data.color.slice(1);
@@ -1224,7 +1224,7 @@
                 ctx.fillStyle = '#FFFFFF';
                 ctx.font = 'bold 18px "Segoe UI", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(colorText, 325, 502);
+                ctx.fillText(colorText, 640, 570);
 
                 // Number circle
                 ctx.fillStyle = '#FFFFFF';
@@ -1233,7 +1233,7 @@
                 ctx.fill();
                 ctx.fillStyle = '#1e1b4b';
                 ctx.font = '900 18px "Segoe UI", sans-serif';
-                ctx.fillText(data.number, 395, 503);
+                ctx.fillText(data.number, 645, 570);
 
                 // Size badge (Big / Small)
                 let sizeText = data.size.toUpperCase();
@@ -1246,7 +1246,7 @@
                     ctx.fillRect(425, 478, 80, 36);
                 }
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 38px "Segoe UI", sans-serif';
+                ctx.font = 'bold 35px "Segoe UI", sans-serif';
                 ctx.fillText(sizeText, 655, 570);
 
                 // 3. Paper Sheet Area (Bonus/Lose title, Amount, and Period)
