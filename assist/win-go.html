@@ -1250,21 +1250,21 @@
                 ctx.fillText(sizeText, 465, 502);
 
                 // 3. Paper Sheet Area (Bonus/Lose title, Amount, and Period)
-                ctx.font = 'bold 35px "Segoe UI", sans-serif';
+                ctx.font = 'bold 40px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#ff4757';
                 ctx.textAlign = 'center';
                 ctx.fillText(isWin ? 'Bonus' : 'Lose', centerX, 720);
 
                 // Amount Value on Paper Sheet
-                ctx.font = '900 55px "Segoe UI", sans-serif';
+                ctx.font = '900 60px "Segoe UI", sans-serif';
                 ctx.fillStyle = isWin ? '#ff4757' : '#555555';
                 let amtStr = isWin ? `₹${data.payout.toFixed(2)}` : `₹${data.amount.toFixed(2)}`;
-                ctx.fillText(amtStr, centerX, 770);
+                ctx.fillText(amtStr, centerX, 800);
 
                 // Period Details on Paper Sheet (Fixed period value mapping properly)
                 ctx.font = '600 36px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#555555';
-                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 850);
+                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 845);
                 let displayPeriod = data.period || document.getElementById('periodId').innerText;
                 ctx.fillText(displayPeriod, centerX, 878);
 
