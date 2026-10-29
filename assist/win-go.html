@@ -1253,19 +1253,19 @@
                 ctx.font = 'bold 22px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#ff4757';
                 ctx.textAlign = 'center';
-                ctx.fillText(isWin ? 'Bonus' : 'Lose', centerX, 600);
+                ctx.fillText(isWin ? 'Bonus' : 'Lose', centerX, 650);
 
                 // Amount Value on Paper Sheet
                 ctx.font = '900 44px "Segoe UI", sans-serif';
                 ctx.fillStyle = isWin ? '#ff4757' : '#555555';
                 let amtStr = isWin ? `₹${data.payout.toFixed(2)}` : `₹${data.amount.toFixed(2)}`;
-                ctx.fillText(amtStr, centerX, 645);
+                ctx.fillText(amtStr, centerX, 700);
 
                 // Period Details on Paper Sheet
                 ctx.font = '600 18px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#555555';
-                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 680);
-                ctx.fillText(data.period, centerX, 705);
+                ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 720);
+                ctx.fillText(data.period, centerX, 745);
 
                 const resultUrl = canvas.toDataURL('image/png');
                 processedImages[cacheKey] = resultUrl;
