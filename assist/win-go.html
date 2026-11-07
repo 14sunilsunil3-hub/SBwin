@@ -1203,51 +1203,62 @@
                 ctx.shadowBlur = 6;
                 ctx.fillText(isWin ? 'Congratulations' : 'Sorry', centerX, 435);
 
-                // 2. Lottery Results & Betting Result (Color, Number, Size)
+                // 2. Lottery Results Row (Single-line perfect horizontal alignment)
                 ctx.shadowBlur = 0;
-                ctx.font = '700 25px "Segoe UI", sans-serif';
+                
+                // Common Y-center baseline for the Lottery Row
+                const rowCenterY = 570;
+
+                // "Lottery results" Text
+                ctx.font = '700 24px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'left';
-                ctx.fillText('Lottery results', 510, 570);
+                ctx.fillText('Lottery results', 105, rowCenterY);
 
-                // Color badge
-                let colorText = data.color.charAt(0).toUpperCase() + data.color.slice(1);
-                let badgeColor = data.color.toLowerCase() === 'green' ? '#10b981' : (data.color.toLowerCase() === 'red' ? '#ef4444' : '#8b5cf6');
+                // Data values setup
+                let colorText = (data.color || 'Green').charAt(0).toUpperCase() + (data.color || 'Green').slice(1);
+                let badgeColor = (data.color || '').toLowerCase() === 'green' ? '#10b981' : ((data.color || '').toLowerCase() === 'red' ? '#ef4444' : '#8b5cf6');
+                let numberText = data.number !== undefined ? String(data.number) : '0';
+                let sizeText = (data.size || (parseInt(numberText) >= 5 ? 'BIG' : 'SMALL')).toUpperCase();
+
+                // Dynamic Badges Positioning
+                // Color Badge
                 ctx.fillStyle = badgeColor;
                 if (ctx.roundRect) {
                     ctx.beginPath();
-                    ctx.roundRect(280, 478, 90, 36, 6);
+                    ctx.roundRect(275, rowCenterY - 22, 110, 38, 8);
                     ctx.fill();
                 } else {
-                    ctx.fillRect(280, 478, 90, 36);
+                    ctx.fillRect(275, rowCenterY - 22, 110, 38);
                 }
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 25px "Segoe UI", sans-serif';
+                ctx.font = 'bold 22px "Segoe UI", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(colorText, 605, 570);
+                ctx.fillText(colorText, 330, rowCenterY + 5);
 
-                // Number circle
+                // Number Circle
                 ctx.fillStyle = '#FFFFFF';
                 ctx.beginPath();
-                ctx.arc(395, 496, 17, 0, Math.PI * 2);
+                ctx.arc(415, rowCenterY - 3, 20, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.fillStyle = '#1e1b4b';
-                ctx.font = '900 25px "Segoe UI", sans-serif';
-                ctx.fillText(data.number, 590, 570);
+                ctx.font = '900 22px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(numberText, 415, rowCenterY + 5);
 
-                // Size badge (Big / Small)
-                let sizeText = data.size.toUpperCase();
+                // Size Badge (Big / Small)
                 ctx.fillStyle = sizeText === 'BIG' ? '#d97706' : '#2563eb';
                 if (ctx.roundRect) {
                     ctx.beginPath();
-                    ctx.roundRect(425, 478, 80, 36, 6);
+                    ctx.roundRect(450, rowCenterY - 22, 100, 38, 8);
                     ctx.fill();
                 } else {
-                    ctx.fillRect(425, 478, 80, 36);
+                    ctx.fillRect(450, rowCenterY - 22, 100, 38);
                 }
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 25px "Segoe UI", sans-serif';
-                ctx.fillText(sizeText, 655, 570);
+                ctx.font = 'bold 22px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(sizeText, 500, rowCenterY + 5);
 
                 // 3. Paper Sheet Area (Bonus/Lose title, Amount, and Period)
                 ctx.font = 'bold 40px "Segoe UI", sans-serif';
@@ -1258,15 +1269,15 @@
                 // Amount Value on Paper Sheet
                 ctx.font = '900 60px "Segoe UI", sans-serif';
                 ctx.fillStyle = isWin ? '#ff4757' : '#555555';
-                let amtStr = isWin ? `₹${data.payout.toFixed(2)}` : `₹${data.amount.toFixed(2)}`;
+                let amtStr = isWin ? `₹${(data.payout || 0).toFixed(2)}` : `₹${(data.amount || 0).toFixed(2)}`;
                 ctx.fillText(amtStr, centerX, 800);
 
-                // Period Details on Paper Sheet (Fixed period value mapping properly)
-                ctx.font = '600 36px "Segoe UI", sans-serif';
+                // Period Details on Paper Sheet
+                ctx.font = '600 34px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#555555';
                 ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 845);
                 let displayPeriod = data.period || document.getElementById('periodId').innerText;
-                ctx.fillText(displayPeriod, centerX, 878);
+                ctx.fillText(displayPeriod, centerX, 880);
 
                 const resultUrl = canvas.toDataURL('image/png');
                 processedImages[cacheKey] = resultUrl;
