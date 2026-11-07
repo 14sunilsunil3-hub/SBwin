@@ -1227,7 +1227,7 @@
                 ctx.fillStyle = badgeColor;
                 if (ctx.roundRect) {
                     ctx.beginPath();
-                    ctx.roundRect(255, rowCenterY - 22, 105, 38, 8);
+                    ctx.roundRect(305, rowCenterY - 22, 105, 38, 8);
                     ctx.fill();
                 } else {
                     ctx.fillRect(255, rowCenterY - 22, 105, 38);
@@ -1235,31 +1235,31 @@
                 ctx.fillStyle = '#FFFFFF';
                 ctx.font = 'bold 20px "Segoe UI", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(colorText, 307, rowCenterY + 5);
+                ctx.fillText(colorText, 357, rowCenterY + 5);
 
                 // 2. Number Circle (Second)
                 ctx.fillStyle = '#FFFFFF';
                 ctx.beginPath();
-                ctx.arc(395, rowCenterY - 3, 20, 0, Math.PI * 2);
+                ctx.arc(445, rowCenterY - 3, 20, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.fillStyle = '#1e1b4b';
                 ctx.font = '900 22px "Segoe UI", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(numberText, 395, rowCenterY + 5);
+                ctx.fillText(numberText, 445, rowCenterY + 5);
 
                 // 3. Size Badge (Third)
                 ctx.fillStyle = sizeText === 'BIG' ? '#d97706' : '#2563eb';
                 if (ctx.roundRect) {
                     ctx.beginPath();
-                    ctx.roundRect(435, rowCenterY - 22, 100, 38, 8);
+                    ctx.roundRect(480, rowCenterY - 22, 100, 38, 8);
                     ctx.fill();
                 } else {
-                    ctx.fillRect(435, rowCenterY - 22, 100, 38);
+                    ctx.fillRect(480, rowCenterY - 22, 100, 38);
                 }
                 ctx.fillStyle = '#FFFFFF';
                 ctx.font = 'bold 22px "Segoe UI", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(sizeText, 485, rowCenterY + 5);
+                ctx.fillText(sizeText, 530, rowCenterY + 5);
 
                 // 3. Paper Sheet Area (Bonus/Lose title, Amount, and Period)
                 ctx.font = 'bold 40px "Segoe UI", sans-serif';
