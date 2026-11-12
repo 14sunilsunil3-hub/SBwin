@@ -315,7 +315,7 @@
       </div>
     </section>
 
-    <!-- PAGE 5: ACCOUNT / PROFILE PAGE (Updated) -->
+    <!-- PAGE 5: ACCOUNT / PROFILE PAGE (Updated with in-out paths) -->
     <section id="page-account" class="page-view hidden space-y-0 p-0">
       
       <!-- Top Green Profile Header -->
@@ -353,11 +353,11 @@
               </div>
           </div>
           <div class="wallet-action-btns" style="display: flex; gap: 14px;">
-              <a href="deposit.html?from=account" class="w-action-btn" style="display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none;">
+              <a href="in-out/deposit.html?from=account" class="w-action-btn" style="display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none;">
                   <div class="w-icon-box deposit-icon" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.3);"><i class="fa-solid fa-wallet"></i></div>
                   <span style="font-size: 12px; font-weight: 600; color: #cbd5e1;">Deposit</span>
               </a>
-              <a href="withdraw.html?from=account" class="w-action-btn" style="display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none;">
+              <a href="in-out/withdraw.html?from=account" class="w-action-btn" style="display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none;">
                   <div class="w-icon-box withdraw-icon" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.3);"><i class="fa-solid fa-clone"></i></div>
                   <span style="font-size: 12px; font-weight: 600; color: #cbd5e1;">Withdraw</span>
               </a>
@@ -383,7 +383,7 @@
           </a>
 
           <!-- Deposit History Button -->
-          <a href="deposit-history.html" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <a href="in-out/deposit-history.html" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
               <div class="menu-item-left" style="display: flex; align-items: center; gap: 14px;">
                   <div class="menu-icon-box" style="color: #34d399; font-size: 18px; width: 24px; text-align: center;"><i class="fa-solid fa-wallet"></i></div>
                   <div class="menu-item-title" style="font-size: 14px; font-weight: 600; color: #fff;">Deposit History</div>
@@ -392,7 +392,7 @@
           </a>
 
           <!-- Withdraw History Button -->
-          <a href="withdraw-history.html" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <a href="in-out/withdraw-history.html" class="menu-item" style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #7c3aed; border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
               <div class="menu-item-left" style="display: flex; align-items: center; gap: 14px;">
                   <div class="menu-icon-box" style="color: #34d399; font-size: 18px; width: 24px; text-align: center;"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
                   <div class="menu-item-title" style="font-size: 14px; font-weight: 600; color: #fff;">Withdraw History</div>
@@ -460,7 +460,7 @@
 
   </main>
 
-  <!-- Bottom Navigation Bar (Untouched & Intact) -->
+  <!-- Bottom Navigation Bar -->
   <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-md w-full bg-gray-900/90 backdrop-blur-md border-t border-emerald-500/30 z-40 px-2 py-1.5 shadow-lg">
     <div class="grid grid-cols-5 items-center text-center relative">
       
@@ -504,19 +504,16 @@
     const socket = io();
     let userId = localStorage.getItem('rewards_userId');
 
-    // Handle hash on load to automatically open Account page if redirected with #account
     window.addEventListener('DOMContentLoaded', () => {
         if (window.location.hash === '#account') {
             switchTab('account');
         }
     });
 
-    // Register active user session via socket to prevent offline reset if online at 12 AM
     if (userId) {
         socket.emit('registerUserSession', userId);
     }
 
-    // Session validation on page load (checks if user logged in after 12 AM midnight reset)
     async function validateUserSession() {
         if (!userId) {
             window.location.href = 'auth.html';
@@ -542,7 +539,6 @@
 
     validateUserSession();
 
-    // 10-Second Background Inactivity Check
     let backgroundTimer = null;
     document.addEventListener('visibilitychange', () => {
         let currentPath = window.location.pathname;
@@ -552,7 +548,7 @@
             if (!isExemptPage) {
                 backgroundTimer = setTimeout(() => {
                     window.location.href = 'index.html';
-                }, 10000); // 10 seconds
+                }, 10000);
             }
         } else {
             if (backgroundTimer) {
