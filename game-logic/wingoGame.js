@@ -84,7 +84,47 @@ async function processBetsForPeriod(period, timerType, outcome, Bet, User) {
     }
 }
 
-function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserModel) {
+function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserModel, app) {
+    // Admin Live Bets API Route (0.3s polling support)
+    if (app) {
+        app.get('/api/admin/live-bets', async (req, res) => {
+            try {
+                const { period, timerType } = req.query;
+                const bets = await BetModel.find({ period, timerType, status: 'pending' });
+
+                let totals = {
+                    'Red': 0, 'Violet': 0, 'Green': 0,
+                    '0': 0, '1': 0, '2': 0, '3': 0, '4': 0,
+                    '5': 0, '6': 0, '7': 0, '8': 0, '9': 0,
+                    'Big': 0, 'Small': 0
+                };
+
+                bets.forEach(bet => {
+                    let val = String(bet.betValue);
+                    if (totals[val] !== undefined) {
+                        totals[val] += bet.amount;
+                    }
+                });
+
+                res.json({ success: true, totals });
+            } catch (err) {
+                res.status(500).json({ success: false, message: 'Server error' });
+            }
+        });
+
+        app.post('/api/admin/set-override', async (req, res) => {
+            try {
+                const { period, timerType, number } = req.body;
+                await ManualOverrideModel.deleteMany({ period }); // Clean old overrides for period
+                const newOverride = new ManualOverrideModel({ period, timerType, number, used: false });
+                await newOverride.save();
+                res.json({ success: true, message: 'Override set successfully' });
+            } catch (err) {
+                res.status(500).json({ success: false, message: 'Failed to set override' });
+            }
+        });
+    }
+
     function startTimerLoop(timerType, intervalSeconds) {
         const state = gameStates[timerType];
         const intervalMs = intervalSeconds * 1000;
