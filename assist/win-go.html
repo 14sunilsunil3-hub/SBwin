@@ -749,6 +749,298 @@
         }
         .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
+        /* ==========================================================
+           FLOATING DRAGGABLE BALLS POPUP STYLES
+           ========================================================== */
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 16px;
+        }
+        .popup-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .popup-modal {
+            background: linear-gradient(180deg, #1e1b4b 0%, #131130 100%);
+            border: 1px solid rgba(124, 58, 237, 0.5);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 330px;
+            padding: 18px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(124, 58, 237, 0.25);
+            position: relative;
+            cursor: default;
+            touch-action: none;
+        }
+
+        .popup-drag-handle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 38px;
+            cursor: move;
+            z-index: 5;
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 10;
+        }
+        .total-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: #38bdf8;
+            background: rgba(14, 165, 233, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+        .close-btn {
+            background: rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            color: #a7f3d0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .close-btn:hover {
+            background: #7c3aed;
+            color: #fff;
+        }
+
+        .timer-tabs-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 10;
+        }
+        .timer-tab {
+            background: rgba(30, 27, 75, 0.9);
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            color: #a7f3d0;
+            padding: 7px 2px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .timer-tab.active {
+            background: #7c3aed;
+            color: #fff;
+            border-color: #38bdf8;
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+        }
+
+        .bet-item-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .bet-sum-tag {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-top: 3px;
+            letter-spacing: 0.3px;
+            transition: color 0.2s;
+        }
+        .bet-sum-tag.has-bet {
+            color: #38bdf8;
+        }
+
+        .color-buttons-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 10;
+        }
+        .color-btn {
+            width: 100%;
+            border: none;
+            color: #fff;
+            padding: 9px 6px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        .color-btn:active { transform: scale(0.96); }
+        .btn-red-clr {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+        }
+        .btn-violet-clr {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            box-shadow: 0 4px 10px rgba(168, 85, 247, 0.3);
+        }
+        .btn-green-clr {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .balls-container-popup {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            padding: 10px 8px;
+            border-radius: 16px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px 4px;
+            justify-items: center;
+            position: relative;
+            z-index: 10;
+        }
+        .ball-popup {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: inset 0 -4px 5px rgba(0,0,0,0.25), 0 3px 5px rgba(0,0,0,0.3);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .ball-popup:active {
+            transform: scale(0.9);
+        }
+        .ball-popup.selected, .size-btn.selected, .color-btn.selected {
+            outline: 2px solid #38bdf8;
+            transform: scale(1.05);
+        }
+        .ball-popup::before {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .ball-popup::after {
+            content: '';
+            position: absolute;
+            top: 1.5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 3.5px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            z-index: 3;
+        }
+        .ball-popup span {
+            position: relative;
+            z-index: 2;
+        }
+        .ball-popup.red { background: radial-gradient(circle, rgba(255,107,107,0.3) 30%, #e60012 80%); }
+        .ball-popup.red::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(255,107,107,0.3) 100%); }
+        .ball-popup.red span { color: #e60012; }
+
+        .ball-popup.green { background: radial-gradient(circle, rgba(92,214,133,0.3) 30%, #00b050 80%); }
+        .ball-popup.green::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(92,214,133,0.3) 100%); }
+        .ball-popup.green span { color: #00b050; }
+
+        .ball-popup.split-0 { background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 45%, #b366ff 55%, #7a00cc 100%); }
+        .ball-popup.split-0::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(179,102,255,0.3) 100%); }
+        .ball-popup.split-0 span { background: linear-gradient(135deg, #cc0000, #800080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .ball-popup.split-5 { background: linear-gradient(135deg, #00b050 0%, #008033 45%, #b366ff 55%, #7a00cc 100%); }
+        .ball-popup.split-5::before { background: radial-gradient(circle, rgba(255,255,255,0.85) 40%, rgba(179,102,255,0.3) 100%); }
+        .ball-popup.split-5 span { background: linear-gradient(135deg, #008033, #800080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .size-buttons-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+            position: relative;
+            z-index: 10;
+        }
+        .size-btn {
+            width: 100%;
+            border: none;
+            color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        .size-btn:active { transform: scale(0.96); }
+        .btn-big {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+        }
+        .btn-small {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        .popup-footer {
+            margin-top: 14px;
+            position: relative;
+            z-index: 10;
+        }
+        .confirm-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
+            border: none;
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.45);
+            transition: transform 0.15s ease;
+        }
+        .confirm-btn:active {
+            transform: scale(0.98);
+        }
+        /* ========================================================== */
+
         .bet-modal-overlay {
             position: fixed;
             inset: 0;
@@ -950,9 +1242,109 @@
 </head>
 <body>
 
-    <!-- Floating Admin Button with Protector Icon (Hidden on scroll, shows 3s after scroll stops) -->
+    <!-- Floating Admin Button with Protector Icon -->
     <div id="floatingAdminBtn" onclick="openAdminPanel()" title="Admin Control">
         <i class="fa-solid fa-shield-halved"></i>
+    </div>
+
+    <!-- DRAGGABLE NUMBER BALLS POPUP -->
+    <div class="popup-overlay hidden" id="ballsPopup" onclick="closeOnOutsideClick(event)">
+        <div class="popup-modal" id="draggableModal">
+            <!-- Top Drag Handle Area -->
+            <div class="popup-drag-handle" id="dragHandle"></div>
+
+            <div class="popup-header">
+                <span class="total-badge" id="totalBetHeader">Total: ₹0</span>
+                <button class="close-btn" onclick="closeBallsPopup()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Timer Tabs Row (30sec, 1min, 3min, 5min) -->
+            <div class="timer-tabs-row">
+                <div class="timer-tab active" onclick="switchPopupTimer('30sec', this)">30Sec</div>
+                <div class="timer-tab" onclick="switchPopupTimer('1min', this)">1Min</div>
+                <div class="timer-tab" onclick="switchPopupTimer('3min', this)">3Min</div>
+                <div class="timer-tab" onclick="switchPopupTimer('5min', this)">5Min</div>
+            </div>
+
+            <!-- Red, Violet, Green Color Buttons + Bet Sum Below Each -->
+            <div class="color-buttons-row">
+                <div class="bet-item-wrap">
+                    <button type="button" class="color-btn btn-red-clr selected" data-key="Red" onclick="selectPopupOption(this, 'Red')">Red</button>
+                    <span class="bet-sum-tag" id="sum-Red">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <button type="button" class="color-btn btn-violet-clr" data-key="Violet" onclick="selectPopupOption(this, 'Violet')">Violet</button>
+                    <span class="bet-sum-tag" id="sum-Violet">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <button type="button" class="color-btn btn-green-clr" data-key="Green" onclick="selectPopupOption(this, 'Green')">Green</button>
+                    <span class="bet-sum-tag" id="sum-Green">₹0</span>
+                </div>
+            </div>
+
+            <!-- Balls Container + Bet Sum Below Each Ball -->
+            <div class="balls-container-popup">
+                <div class="bet-item-wrap">
+                    <div class="ball-popup split-0" data-key="0" onclick="selectPopupOption(this, '0')"><span>0</span></div>
+                    <span class="bet-sum-tag" id="sum-0">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <div class="ball-popup green" data-key="1" onclick="selectPopupOption(this, '1')"><span>1</span></div>
+                    <span class="bet-sum-tag" id="sum-1">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <div class="ball-popup red" data-key="2" onclick="selectPopupOption(this, '2')"><span>2</span></div>
+                    <span class="bet-sum-tag" id="sum-2">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <div class="ball-popup green" data-key="3" onclick="selectPopupOption(this, '3')"><span>3</span></div>
+                    <span class="bet-sum-tag" id="sum-3">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <div class="ball-popup red" data-key="4" onclick="selectPopupOption(this, '4')"><span>4</span></div>
+                    <span class="bet-sum-tag" id="sum-4">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <div class="ball-popup split-5" data-key="5" onclick="selectPopupOption(this, '5')"><span>5</span></div>
+                    <span class="bet-sum-tag" id="sum-5">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <div class="ball-popup red" data-key="6" onclick="selectPopupOption(this, '6')"><span>6</span></div>
+                    <span class="bet-sum-tag" id="sum-6">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <div class="ball-popup green" data-key="7" onclick="selectPopupOption(this, '7')"><span>7</span></div>
+                    <span class="bet-sum-tag" id="sum-7">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <div class="ball-popup red" data-key="8" onclick="selectPopupOption(this, '8')"><span>8</span></div>
+                    <span class="bet-sum-tag" id="sum-8">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <div class="ball-popup green" data-key="9" onclick="selectPopupOption(this, '9')"><span>9</span></div>
+                    <span class="bet-sum-tag" id="sum-9">₹0</span>
+                </div>
+            </div>
+
+            <!-- Big & Small Buttons + Bet Sum Below Each -->
+            <div class="size-buttons-row">
+                <div class="bet-item-wrap">
+                    <button type="button" class="size-btn btn-big" data-key="Big" onclick="selectPopupOption(this, 'Big')">Big</button>
+                    <span class="bet-sum-tag" id="sum-Big">₹0</span>
+                </div>
+                <div class="bet-item-wrap">
+                    <button type="button" class="size-btn btn-small" data-key="Small" onclick="selectPopupOption(this, 'Small')">Small</button>
+                    <span class="bet-sum-tag" id="sum-Small">₹0</span>
+                </div>
+            </div>
+
+            <!-- Sky Color Confirm Button -->
+            <div class="popup-footer">
+                <button class="confirm-btn" onclick="confirmPopupBets()">Confirm</button>
+            </div>
+        </div>
     </div>
 
     <div id="fullPageLoader">
@@ -1141,7 +1533,7 @@
                         <div class="num-circle">9</div>
                     </div>
                     <div class="stat-row"><span class="stat-header">Missing</span><span>3</span><span>4</span><span>7</span><span>6</span><span>2</span><span>1</span><span>22</span><span>0</span><span>15</span><span>23</span></div>
-                    <div class="stat-row"><span class="stat-header">Avg missing</span><span>8</span><span>5</span><span>11</span><span>8</span><span>4</span><span>4</span><span>9</span><span>13</span><span>13</span><span>19</span></div>
+                    <div class="stat-row"><span class="stat-header">Avg missing</span><span>8</span><span>5</span><span>11</span><span>6</span><span>2</span><span>1</span><span>9</span><span>13</span><span>13</span><span>19</span></div>
                     <div class="stat-row"><span class="stat-header">Frequency</span><span>10</span><span>15</span><span>7</span><span>10</span><span>16</span><span>17</span><span>9</span><span>6</span><span>6</span><span>4</span></div>
                     <div class="stat-row"><span class="stat-header">Max consecutive</span><span>2</span><span>2</span><span>1</span><span>2</span><span>3</span><span>3</span><span>2</span><span>1</span><span>2</span><span>2</span></div>
                 </div>
@@ -1197,15 +1589,9 @@
         const adminBtn = document.getElementById('floatingAdminBtn');
 
         window.addEventListener('scroll', () => {
-            // Jaise hi scroll shuru ho, button ko turant hide kar do
             adminBtn.classList.remove('show');
-            
-            // Purana timer clear karo
             clearTimeout(scrollTimeout);
-
-            // Scroll rukne ke baad 3 second (3000ms) ka timer lagao
             scrollTimeout = setTimeout(() => {
-                // Check karo ki user admin hai ya nahi, tabhi show karo
                 if (loggedInMobile === '8093361993' || localStorage.getItem('is_admin') === 'true' || window.isAdminUser === true) {
                     adminBtn.classList.add('show');
                 }
@@ -1236,8 +1622,112 @@
             } catch(e) {}
         }
 
+        // Updated Admin Button Action: Opens the floating draggable balls popup instead of redirecting directly
         function openAdminPanel() {
-            window.location.href = '../admin.html';
+            document.getElementById('ballsPopup').classList.remove('hidden');
+        }
+
+        function closeBallsPopup() {
+            document.getElementById('ballsPopup').classList.add('hidden');
+        }
+
+        function closeOnOutsideClick(event) {
+            if (event.target.id === 'ballsPopup') {
+                closeBallsPopup();
+            }
+        }
+
+        // Draggable Modal Implementation (Touch & Mouse Support)
+        const modal = document.getElementById('draggableModal');
+        const dragHandle = document.getElementById('dragHandle');
+        let isDragging = false;
+        let startX, startY, initialX = 0, initialY = 0;
+
+        dragHandle.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+
+        dragHandle.addEventListener('touchstart', dragStart, { passive: false });
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('touchend', dragEnd);
+
+        function dragStart(e) {
+            isDragging = true;
+            let clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            let clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            startX = clientX - initialX;
+            startY = clientY - initialY;
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+            initialX = clientX - startX;
+            initialY = clientY - startY;
+            modal.style.transform = `translate3d(${initialX}px, ${initialY}px, 0)`;
+        }
+
+        function dragEnd() {
+            isDragging = false;
+        }
+
+        // Popup Multiple Timers & Bet Management Logic
+        let currentPopupTimer = '30sec';
+        let popupSelectedKey = 'Red';
+        const popupTimerData = {
+            '30sec': createEmptyState(),
+            '1min': createEmptyState(),
+            '3min': createEmptyState(),
+            '5min': createEmptyState()
+        };
+
+        function createEmptyState() {
+            return {
+                'Red': 0, 'Violet': 0, 'Green': 0,
+                '0': 0, '1': 0, '2': 0, '3': 0, '4': 0,
+                '5': 0, '6': 0, '7': 0, '8': 0, '9': 0,
+                'Big': 0, 'Small': 0
+            };
+        }
+
+        function switchPopupTimer(timerName, tabElement) {
+            document.querySelectorAll('.timer-tab').forEach(t => t.classList.remove('active'));
+            tabElement.classList.add('active');
+            currentPopupTimer = timerName;
+            refreshPopupUIValues();
+        }
+
+        function selectPopupOption(element, key) {
+            document.querySelectorAll('.ball-popup, .size-btn, .color-btn').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            popupSelectedKey = key;
+        }
+
+        function refreshPopupUIValues() {
+            let activeSums = popupTimerData[currentPopupTimer];
+            let total = 0;
+
+            for (let k in activeSums) {
+                let val = activeSums[k];
+                total += val;
+                let tag = document.getElementById('sum-' + k);
+                if (tag) {
+                    tag.textContent = '₹' + val;
+                    if (val > 0) {
+                        tag.classList.add('has-bet');
+                    } else {
+                        tag.classList.remove('has-bet');
+                    }
+                }
+            }
+            document.getElementById('totalBetHeader').textContent = 'Total: ₹' + total;
+        }
+
+        function confirmPopupBets() {
+            showToast(`Confirmed for ${currentPopupTimer}`);
+            closeBallsPopup();
         }
 
         function prepareTransparentImage(imageSrc, data, callback) {
@@ -1499,18 +1989,18 @@
             quantity = selectedBarMultiplier;
             document.getElementById('betQty').value = quantity;
 
-            const modal = document.getElementById('betModal');
-            modal.className = 'bet-modal';
+            const modalBox = document.getElementById('betModal');
+            modalBox.className = 'bet-modal';
 
             let v = String(val).toLowerCase();
-            if (['green', '1', '3', '7', '9'].includes(v)) modal.classList.add('theme-green');
-            else if (['red', '2', '4', '6', '8'].includes(v)) modal.classList.add('theme-red');
-            else if (['violet', '0', '5'].includes(v)) modal.classList.add('theme-violet');
-            else if (v === 'big') modal.classList.add('theme-big');
-            else if (v === 'small') modal.classList.add('theme-small');
+            if (['green', '1', '3', '7', '9'].includes(v)) modalBox.classList.add('theme-green');
+            else if (['red', '2', '4', '6', '8'].includes(v)) modalBox.classList.add('theme-red');
+            else if (['violet', '0', '5'].includes(v)) modalBox.classList.add('theme-violet');
+            else if (v === 'big') modalBox.classList.add('theme-big');
+            else if (v === 'small') modalBox.classList.add('theme-small');
 
             document.getElementById('modalTitle').innerText = `Select ${val.toUpperCase()}`;
-            modal.classList.add('active');
+            modalBox.classList.add('active');
             document.getElementById('betModalOverlay').style.display = 'block';
 
             document.querySelectorAll('.mult-btn').forEach(b => {
@@ -1525,8 +2015,8 @@
         }
 
         function closeBetModal() {
-            const modal = document.getElementById('betModal');
-            modal.classList.remove('active');
+            const modalBox = document.getElementById('betModal');
+            modalBox.classList.remove('active');
             document.getElementById('betModalOverlay').style.display = 'none';
 
             baseAmount = 1;
