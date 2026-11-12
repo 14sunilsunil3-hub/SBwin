@@ -33,6 +33,30 @@
             overflow-x: hidden;
         }
 
+        /* Floating Admin Button Style */
+        #floatingAdminBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #7c3aed, #10b981);
+            color: white;
+            border-radius: 50%;
+            display: none; /* Default hidden, shown only for admin */
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 99999;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
+            border: 2px solid #34d399;
+            transition: transform 0.2s ease;
+        }
+        #floatingAdminBtn:active {
+            transform: scale(0.92);
+        }
+
         .header {
             position: fixed;
             top: 0;
@@ -923,6 +947,11 @@
 </head>
 <body>
 
+    <!-- Floating Admin Button with Protector Icon (No text) -->
+    <div id="floatingAdminBtn" onclick="openAdminPanel()" title="Admin Control">
+        <i class="fa-solid fa-shield-halved"></i>
+    </div>
+
     <div id="fullPageLoader">
         <div class="spinner-theme"></div>
         <div style="margin-top: 18px; font-weight: 800; font-size: 16px; color: #34d399; letter-spacing: 1px;">
@@ -1160,6 +1189,27 @@
 
         const processedImages = {};
 
+        // Check and Display Floating Admin Button only if User is Admin
+        async function checkAdminAccess() {
+            if (!userId && !loggedInMobile) return;
+            try {
+                let url = userId ? `/api/user/${userId}` : `/api/user/mobile/${loggedInMobile}`;
+                let res = await fetch(url).then(r => r.json());
+                if (res.success && res.user) {
+                    // Check admin flag from database or local storage override
+                    let isAdmin = res.user.isAdmin || res.user.role === 'admin' || localStorage.getItem('is_admin') === 'true';
+                    if (isAdmin) {
+                        document.getElementById('floatingAdminBtn').style.display = 'flex';
+                    }
+                }
+            } catch(e) {}
+        }
+
+        function openAdminPanel() {
+            // Admin action / redirect to admin dashboard
+            window.location.href = '../admin.html';
+        }
+
         function prepareTransparentImage(imageSrc, data, callback) {
             const cacheKey = imageSrc + '_' + data.status + '_' + (data.payout || data.amount) + '_' + data.period + '_' + data.number;
             if (processedImages[cacheKey]) {
@@ -1195,7 +1245,6 @@
                 const centerX = canvas.width / 2;
                 const isWin = data.status === 'win';
 
-                // 1. Title Heading (Congratulations / Sorry) at Ribbon Center (Font size 70px)
                 ctx.font = '900 70px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'center';
@@ -1203,27 +1252,19 @@
                 ctx.shadowBlur = 6;
                 ctx.fillText(isWin ? 'Congratulations' : 'Sorry', centerX, 435);
 
-                // 2. Lottery Results Row (Single-line horizontal alignment shifted right with sequence: Color -> Number -> Size)
                 ctx.shadowBlur = 0;
-                
-                // Common Y-center baseline for the Lottery Row
                 const rowCenterY = 570;
 
-                // "Lottery results" Text
                 ctx.font = '700 30px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'left';
                 ctx.fillText('Lottery results', 75, rowCenterY);
 
-                // Data values setup
                 let colorText = (data.color || 'Green').charAt(0).toUpperCase() + (data.color || 'Green').slice(1);
                 let badgeColor = (data.color || '').toLowerCase() === 'green' ? '#10b981' : ((data.color || '').toLowerCase() === 'red' ? '#ef4444' : '#8b5cf6');
                 let numberText = data.number !== undefined ? String(data.number) : '0';
                 let sizeText = (data.size || (parseInt(numberText) >= 5 ? 'BIG' : 'SMALL')).toUpperCase();
 
-                // Sequence layout from left to right: Color Badge -> Number Circle -> Size Badge
-                
-                // 1. Color Badge (First)
                 ctx.fillStyle = badgeColor;
                 if (ctx.roundRect) {
                     ctx.beginPath();
@@ -1237,7 +1278,6 @@
                 ctx.textAlign = 'center';
                 ctx.fillText(colorText, 457, rowCenterY + 5);
 
-                // 2. Number Circle (Second)
                 ctx.fillStyle = '#FFFFFF';
                 ctx.beginPath();
                 ctx.arc(545, rowCenterY - 3, 20, 0, Math.PI * 2);
@@ -1247,7 +1287,6 @@
                 ctx.textAlign = 'center';
                 ctx.fillText(numberText, 545, rowCenterY + 5);
 
-                // 3. Size Badge (Third)
                 ctx.fillStyle = sizeText === 'BIG' ? '#d97706' : '#2563eb';
                 if (ctx.roundRect) {
                     ctx.beginPath();
@@ -1261,19 +1300,16 @@
                 ctx.textAlign = 'center';
                 ctx.fillText(sizeText, 630, rowCenterY + 5);
 
-                // 3. Paper Sheet Area (Bonus/Lose title, Amount, and Period)
                 ctx.font = 'bold 40px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#ff4757';
                 ctx.textAlign = 'center';
                 ctx.fillText(isWin ? 'Bonus' : 'Lose', centerX, 720);
 
-                // Amount Value on Paper Sheet
                 ctx.font = '900 60px "Segoe UI", sans-serif';
                 ctx.fillStyle = isWin ? '#ff4757' : '#555555';
                 let amtStr = isWin ? `₹${(data.payout || 0).toFixed(2)}` : `₹${(data.amount || 0).toFixed(2)}`;
                 ctx.fillText(amtStr, centerX, 800);
 
-                // Period Details on Paper Sheet
                 ctx.font = '600 34px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#555555';
                 ctx.fillText(`Period ${document.getElementById('modeTitleDisplay').innerText}`, centerX, 845);
@@ -1296,6 +1332,7 @@
                     userId = u._id;
                     let totalBal = (u.balance || 0) + (u.winningsBalance || 0);
                     document.getElementById('userWallet').innerText = `₹${totalBal.toFixed(2)}`;
+                    checkAdminAccess();
                 }
             } catch(e) {}
         }
