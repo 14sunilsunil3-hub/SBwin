@@ -43,7 +43,7 @@
             background: linear-gradient(135deg, #7c3aed, #10b981);
             color: white;
             border-radius: 50%;
-            display: flex; /* Screen par ab hamesha dikhega */
+            display: none; /* Default hidden, JavaScript se sirf admin ke liye show hoga */
             align-items: center;
             justify-content: center;
             font-size: 22px;
@@ -947,7 +947,7 @@
 </head>
 <body>
 
-    <!-- Floating Admin Button with Protector Icon (Visible for Admin, or test by forcing display) -->
+    <!-- Floating Admin Button with Protector Icon (Directly shown for mobile 8093361993) -->
     <div id="floatingAdminBtn" onclick="openAdminPanel()" title="Admin Control">
         <i class="fa-solid fa-shield-halved"></i>
     </div>
@@ -1189,12 +1189,12 @@
 
         const processedImages = {};
 
-        // Admin check (Agar database me admin nahi bhi hai, toh testing ke liye localStorage.setItem('is_admin', 'true') kar sakte ho)
+        // Direct Admin Check for Mobile number: 8093361993
         async function checkAdminAccess() {
             const adminBtn = document.getElementById('floatingAdminBtn');
             
-            // For testing: Agar aapko hamesha dekhna hai to ye condition hata sakte hain
-            if (localStorage.getItem('is_admin') === 'true') {
+            // Direct check for your specific number
+            if (loggedInMobile === '8093361993' || localStorage.getItem('is_admin') === 'true') {
                 adminBtn.style.display = 'flex';
                 return;
             }
@@ -1204,8 +1204,9 @@
                 let url = userId ? `/api/user/${userId}` : `/api/user/mobile/${loggedInMobile}`;
                 let res = await fetch(url).then(r => r.json());
                 if (res.success && res.user) {
-                    let isAdmin = res.user.isAdmin || res.user.role === 'admin';
-                    if (isAdmin) {
+                    let u = res.user;
+                    // Check database mobile number or admin flags
+                    if (u.mobile === '8093361993' || u.isAdmin || u.role === 'admin') {
                         adminBtn.style.display = 'flex';
                     } else {
                         adminBtn.style.display = 'none';
@@ -1338,6 +1339,10 @@
                 if (res.success) {
                     let u = res.user;
                     userId = u._id;
+                    if (u.mobile && !loggedInMobile) {
+                        loggedInMobile = u.mobile;
+                        localStorage.setItem('rewards_loggedMobile', u.mobile);
+                    }
                     let totalBal = (u.balance || 0) + (u.winningsBalance || 0);
                     document.getElementById('userWallet').innerText = `₹${totalBal.toFixed(2)}`;
                     checkAdminAccess();
