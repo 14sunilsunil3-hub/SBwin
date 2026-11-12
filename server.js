@@ -533,12 +533,28 @@ app.post('/api/bet', async (req, res) => {
     }
 });
 
-// Routing for /games/ folder and other static pages
+// Smart Routing for Root, Games, and In-Out Folders
 app.get('*', (req, res) => {
-  if (req.path.startsWith('/games/')) {
-    res.sendFile(path.join(__dirname, req.path));
+  const reqPath = req.path;
+  
+  if (reqPath.startsWith('/games/')) {
+    res.sendFile(path.join(__dirname, reqPath));
+  } else if (reqPath.startsWith('/in-out/')) {
+    res.sendFile(path.join(__dirname, reqPath));
   } else {
-    res.sendFile(path.join(__dirname, req.path.substring(1) || 'index.html'));
+    const cleanPath = reqPath.substring(1) || 'index.html';
+    const rootFile = path.join(__dirname, cleanPath);
+    
+    res.sendFile(rootFile, (err) => {
+      if (err) {
+        const inOutFile = path.join(__dirname, 'in-out', cleanPath);
+        res.sendFile(inOutFile, (err2) => {
+          if (err2) {
+            res.sendFile(path.join(__dirname, 'index.html'));
+          }
+        });
+      }
+    });
   }
 });
 
