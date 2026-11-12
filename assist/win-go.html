@@ -33,7 +33,7 @@
             overflow-x: hidden;
         }
 
-        /* Floating Admin Button Style */
+        /* Floating Admin Button Style (Protector Icon, No Text) */
         #floatingAdminBtn {
             position: fixed;
             bottom: 30px;
@@ -43,7 +43,7 @@
             background: linear-gradient(135deg, #7c3aed, #10b981);
             color: white;
             border-radius: 50%;
-            display: none; /* Default hidden, shown only for admin */
+            display: flex; /* Screen par ab hamesha dikhega */
             align-items: center;
             justify-content: center;
             font-size: 22px;
@@ -947,7 +947,7 @@
 </head>
 <body>
 
-    <!-- Floating Admin Button with Protector Icon (No text) -->
+    <!-- Floating Admin Button with Protector Icon (Visible for Admin, or test by forcing display) -->
     <div id="floatingAdminBtn" onclick="openAdminPanel()" title="Admin Control">
         <i class="fa-solid fa-shield-halved"></i>
     </div>
@@ -1189,24 +1189,32 @@
 
         const processedImages = {};
 
-        // Check and Display Floating Admin Button only if User is Admin
+        // Admin check (Agar database me admin nahi bhi hai, toh testing ke liye localStorage.setItem('is_admin', 'true') kar sakte ho)
         async function checkAdminAccess() {
+            const adminBtn = document.getElementById('floatingAdminBtn');
+            
+            // For testing: Agar aapko hamesha dekhna hai to ye condition hata sakte hain
+            if (localStorage.getItem('is_admin') === 'true') {
+                adminBtn.style.display = 'flex';
+                return;
+            }
+
             if (!userId && !loggedInMobile) return;
             try {
                 let url = userId ? `/api/user/${userId}` : `/api/user/mobile/${loggedInMobile}`;
                 let res = await fetch(url).then(r => r.json());
                 if (res.success && res.user) {
-                    // Check admin flag from database or local storage override
-                    let isAdmin = res.user.isAdmin || res.user.role === 'admin' || localStorage.getItem('is_admin') === 'true';
+                    let isAdmin = res.user.isAdmin || res.user.role === 'admin';
                     if (isAdmin) {
-                        document.getElementById('floatingAdminBtn').style.display = 'flex';
+                        adminBtn.style.display = 'flex';
+                    } else {
+                        adminBtn.style.display = 'none';
                     }
                 }
             } catch(e) {}
         }
 
         function openAdminPanel() {
-            // Admin action / redirect to admin dashboard
             window.location.href = '../admin.html';
         }
 
