@@ -750,12 +750,12 @@
         .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         /* ==========================================================
-           FLOATING DRAGGABLE BALLS POPUP STYLES (NO BLUR, FREE DRAG)
+           FLOATING DRAGGABLE BALLS POPUP STYLES
            ========================================================== */
         .popup-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.4); /* backdrop-filter blur removed */
+            background: rgba(15, 23, 42, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -802,7 +802,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 10;
+        }
+        .popup-period-display {
+            font-size: 11px;
+            font-weight: 700;
+            color: #a7f3d0;
+            background: rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            text-align: center;
             position: relative;
             z-index: 10;
         }
@@ -1262,6 +1277,9 @@
                 </button>
             </div>
 
+            <!-- Period Display Above Total Bet -->
+            <div class="popup-period-display" id="popupPeriodDisplay">Period: ---</div>
+
             <!-- Timer Tabs Row (30sec, 1min, 3min, 5min) -->
             <div class="timer-tabs-row">
                 <div class="timer-tab active" onclick="switchPopupTimer('30sec', this)">30Sec</div>
@@ -1625,6 +1643,7 @@
         }
 
         function openAdminPanel() {
+            updatePopupPeriodDisplay();
             document.getElementById('ballsPopup').classList.remove('hidden');
         }
 
@@ -1699,6 +1718,14 @@
             tabElement.classList.add('active');
             currentPopupTimer = timerName;
             refreshPopupUIValues();
+            updatePopupPeriodDisplay();
+        }
+
+        function updatePopupPeriodDisplay() {
+            let keyMap = { '30sec': '30s', '1min': '60s', '3min': '3m', '5min': '5m' };
+            let activeKey = keyMap[currentPopupTimer] || '30s';
+            let currentPeriod = serverPeriodData[activeKey] || document.getElementById('periodId').innerText;
+            document.getElementById('popupPeriodDisplay').innerText = `Period: ${currentPeriod}`;
         }
 
         function selectPopupOption(element, key) {
@@ -1970,6 +1997,9 @@
                     timeLeft = data.countdown;
                     updateDisplayTime(timeLeft);
                 }
+                
+                // Update popup period display live if open
+                updatePopupPeriodDisplay();
             });
 
             socket.on(`gameResult_${type}`, (resultData) => {
