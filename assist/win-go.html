@@ -37,7 +37,7 @@
         #floatingAdminBtn {
             position: fixed;
             bottom: 30px;
-            right: -70px; /* Default hidden (shifted outside right screen) */
+            right: -70px;
             width: 52px;
             height: 52px;
             background: linear-gradient(135deg, #7c3aed, #10b981);
@@ -54,7 +54,7 @@
             transition: right 0.4s ease, transform 0.2s ease;
         }
         #floatingAdminBtn.show {
-            right: 20px; /* Slide in when visible */
+            right: 20px;
         }
         #floatingAdminBtn:active {
             transform: scale(0.92);
@@ -750,14 +750,12 @@
         .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         /* ==========================================================
-           FLOATING DRAGGABLE BALLS POPUP STYLES
+           FLOATING DRAGGABLE BALLS POPUP STYLES (NO BLUR, FREE DRAG)
            ========================================================== */
         .popup-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.4); /* backdrop-filter blur removed */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -784,6 +782,7 @@
             position: relative;
             cursor: default;
             touch-action: none;
+            user-select: none;
         }
 
         .popup-drag-handle {
@@ -792,8 +791,11 @@
             left: 0;
             right: 0;
             height: 38px;
-            cursor: move;
+            cursor: grab;
             z-index: 5;
+        }
+        .popup-drag-handle:active {
+            cursor: grabbing;
         }
 
         .popup-header {
@@ -1622,7 +1624,6 @@
             } catch(e) {}
         }
 
-        // Updated Admin Button Action: Opens the floating draggable balls popup instead of redirecting directly
         function openAdminPanel() {
             document.getElementById('ballsPopup').classList.remove('hidden');
         }
@@ -1637,11 +1638,12 @@
             }
         }
 
-        // Draggable Modal Implementation (Touch & Mouse Support)
+        // Fixed Smooth Continuous Draggable Modal Implementation
         const modal = document.getElementById('draggableModal');
         const dragHandle = document.getElementById('dragHandle');
         let isDragging = false;
-        let startX, startY, initialX = 0, initialY = 0;
+        let startX, startY;
+        let posX = 0, posY = 0;
 
         dragHandle.addEventListener('mousedown', dragStart);
         document.addEventListener('mousemove', drag);
@@ -1655,8 +1657,8 @@
             isDragging = true;
             let clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
             let clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-            startX = clientX - initialX;
-            startY = clientY - initialY;
+            startX = clientX - posX;
+            startY = clientY - posY;
         }
 
         function drag(e) {
@@ -1664,9 +1666,9 @@
             e.preventDefault();
             let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
             let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-            initialX = clientX - startX;
-            initialY = clientY - startY;
-            modal.style.transform = `translate3d(${initialX}px, ${initialY}px, 0)`;
+            posX = clientX - startX;
+            posY = clientY - startY;
+            modal.style.transform = `translate3d(${posX}px, ${posY}px, 0)`;
         }
 
         function dragEnd() {
