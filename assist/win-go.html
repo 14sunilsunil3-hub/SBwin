@@ -33,17 +33,17 @@
             overflow-x: hidden;
         }
 
-        /* Floating Admin Button Style (Protector Icon, No Text) */
+        /* Floating Admin Button Style with Scroll Hide/Show Effect */
         #floatingAdminBtn {
             position: fixed;
             bottom: 30px;
-            right: 20px;
+            right: -70px; /* Default hidden (shifted outside right screen) */
             width: 52px;
             height: 52px;
             background: linear-gradient(135deg, #7c3aed, #10b981);
             color: white;
             border-radius: 50%;
-            display: none; /* Default hidden, JavaScript se sirf admin ke liye show hoga */
+            display: flex;
             align-items: center;
             justify-content: center;
             font-size: 22px;
@@ -51,7 +51,10 @@
             z-index: 99999;
             box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
             border: 2px solid #34d399;
-            transition: transform 0.2s ease;
+            transition: right 0.4s ease, transform 0.2s ease;
+        }
+        #floatingAdminBtn.show {
+            right: 20px; /* Slide in when visible */
         }
         #floatingAdminBtn:active {
             transform: scale(0.92);
@@ -947,7 +950,7 @@
 </head>
 <body>
 
-    <!-- Floating Admin Button with Protector Icon (Directly shown for mobile 8093361993) -->
+    <!-- Floating Admin Button with Protector Icon (Hidden on scroll, shows 3s after scroll stops) -->
     <div id="floatingAdminBtn" onclick="openAdminPanel()" title="Admin Control">
         <i class="fa-solid fa-shield-halved"></i>
     </div>
@@ -1189,13 +1192,31 @@
 
         const processedImages = {};
 
+        // Scroll Hide & 3s Show Logic for Admin Button
+        let scrollTimeout;
+        const adminBtn = document.getElementById('floatingAdminBtn');
+
+        window.addEventListener('scroll', () => {
+            // Jaise hi scroll shuru ho, button ko turant hide kar do
+            adminBtn.classList.remove('show');
+            
+            // Purana timer clear karo
+            clearTimeout(scrollTimeout);
+
+            // Scroll rukne ke baad 3 second (3000ms) ka timer lagao
+            scrollTimeout = setTimeout(() => {
+                // Check karo ki user admin hai ya nahi, tabhi show karo
+                if (loggedInMobile === '8093361993' || localStorage.getItem('is_admin') === 'true' || window.isAdminUser === true) {
+                    adminBtn.classList.add('show');
+                }
+            }, 3000);
+        });
+
         // Direct Admin Check for Mobile number: 8093361993
         async function checkAdminAccess() {
-            const adminBtn = document.getElementById('floatingAdminBtn');
-            
-            // Direct check for your specific number
             if (loggedInMobile === '8093361993' || localStorage.getItem('is_admin') === 'true') {
-                adminBtn.style.display = 'flex';
+                window.isAdminUser = true;
+                adminBtn.classList.add('show');
                 return;
             }
 
@@ -1205,11 +1226,11 @@
                 let res = await fetch(url).then(r => r.json());
                 if (res.success && res.user) {
                     let u = res.user;
-                    // Check database mobile number or admin flags
                     if (u.mobile === '8093361993' || u.isAdmin || u.role === 'admin') {
-                        adminBtn.style.display = 'flex';
+                        window.isAdminUser = true;
+                        adminBtn.classList.add('show');
                     } else {
-                        adminBtn.style.display = 'none';
+                        adminBtn.classList.remove('show');
                     }
                 }
             } catch(e) {}
