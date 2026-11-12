@@ -1604,7 +1604,7 @@
 
         const processedImages = {};
 
-        // Scroll Hide & 3s Show Logic for Admin Button
+        // Scroll Hide & 1s Show Logic for Admin Button (Updated to 1000ms / 1s)
         let scrollTimeout;
         const adminBtn = document.getElementById('floatingAdminBtn');
 
@@ -1615,7 +1615,7 @@
                 if (loggedInMobile === '8093361993' || localStorage.getItem('is_admin') === 'true' || window.isAdminUser === true) {
                     adminBtn.classList.add('show');
                 }
-            }, 3000);
+            }, 1000);
         });
 
         // Direct Admin Check for Mobile number: 8093361993
@@ -1998,7 +1998,6 @@
                     updateDisplayTime(timeLeft);
                 }
                 
-                // Update popup period display live if open
                 updatePopupPeriodDisplay();
             });
 
