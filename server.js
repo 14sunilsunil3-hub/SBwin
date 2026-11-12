@@ -4,8 +4,9 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const dns = require('dns');
-const crypto = require('crypto');
 const path = require('path');
+
+const { initWinGoGame, gameStates } = require('./game-logic/wingoGame');
 
 try {
     dns.setServers(['8.8.8.8', '1.1.1.1']);
@@ -134,33 +135,6 @@ async function setupAdminAccount() {
         console.error("Admin setup error:", err.message);
     }
 }
-
-function getPeriodCodeForTime(timerType, timestamp = Date.now()) {
-    const now = new Date(timestamp);
-    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const elapsedSeconds = Math.floor((now.getTime() - startOfDay) / 1000);
-
-    let intervalSeconds = 30;
-    let gamePrefix = '1';
-    if (timerType === '60s' || timerType === '1m') { intervalSeconds = 60; gamePrefix = '2'; }
-    else if (timerType === '3m') { intervalSeconds = 180; gamePrefix = '3'; }
-    else if (timerType === '5m') { intervalSeconds = 300; gamePrefix = '5'; }
-
-    const periodNumber = Math.floor(elapsedSeconds / intervalSeconds) + 1;
-
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-
-    return `${year}${month}${day}${gamePrefix}${String(periodNumber).padStart(5, '0')}`;
-}
-
-const gameStates = {
-    '30s': { countdown: 29, isBettingOpen: true, period: '', startTime: 0 },
-    '60s': { countdown: 59, isBettingOpen: true, period: '', startTime: 0 },
-    '3m':  { countdown: 179, isBettingOpen: true, period: '', startTime: 0 },
-    '5m':  { countdown: 299, isBettingOpen: true, period: '', startTime: 0 }
-};
 
 const activeOnlineSocketUsers = new Set();
 
@@ -559,117 +533,9 @@ app.post('/api/bet', async (req, res) => {
     }
 });
 
-async function getGameOutcome(period, timerType) {
-    const override = await ManualOverride.findOne({ period, used: false });
-    let randomNum;
-
-    if (override) {
-        randomNum = override.number;
-        override.used = true;
-        await override.save();
-    } else {
-        const seed = period + "_" + timerType + "_yarwin_sync";
-        const hash = crypto.createHash('sha256').update(seed).digest('hex');
-        randomNum = parseInt(hash.substring(0, 8), 16) % 10;
-    }
-
-    let color = 'green';
-    if ([2, 4, 6, 8].includes(randomNum)) color = 'red';
-    else if ([0, 5].includes(randomNum)) color = 'violet';
-    const size = randomNum >= 5 ? 'big' : 'small';
-
-    return { number: randomNum, color, size };
-}
-
-async function processBetsForPeriod(period, timerType, outcome) {
-    try {
-        const pendingBets = await Bet.find({ period, timerType, status: 'pending' });
-
-        for (const bet of pendingBets) {
-            let isWin = false;
-            let multiplier = 0;
-
-            if (bet.betType === 'size' && bet.betValue === outcome.size) {
-                isWin = true;
-                multiplier = 1.982;
-            } else if (bet.betType === 'color' && bet.betValue === outcome.color) {
-                isWin = true;
-                multiplier = (outcome.color === 'violet' ? 3.98 : 1.43);
-            } else if (bet.betType === 'number' && Number(bet.betValue) === outcome.number) {
-                isWin = true;
-                multiplier = 8.96;
-            }
-
-            if (isWin) {
-                const winnings = bet.amount * multiplier;
-                bet.status = 'win';
-                bet.payout = winnings;
-                await bet.save();
-                await User.findByIdAndUpdate(bet.userId, { $inc: { winningsBalance: winnings } });
-            } else {
-                bet.status = 'loss';
-                await bet.save();
-            }
-        }
-    } catch (err) {
-        console.error(`Error processing bets:`, err);
-    }
-}
-
-function startTimerLoop(timerType, intervalSeconds) {
-    const state = gameStates[timerType];
-    const intervalMs = intervalSeconds * 1000;
-    
-    const updateState = async () => {
-        const now = Date.now();
-        const startOfDay = new Date(new Date(now).setHours(0,0,0,0)).getTime();
-        const elapsedMs = now - startOfDay;
-        const currentIntervalIndex = Math.floor(elapsedMs / intervalMs);
-        
-        const currentIntervalStart = startOfDay + (currentIntervalIndex * intervalMs);
-        const nextIntervalStart = currentIntervalStart + intervalMs;
-        const timeLeftMs = nextIntervalStart - now;
-        
-        let countdown = Math.floor(timeLeftMs / 1000);
-        if (countdown < 0) countdown = 0;
-        if (countdown >= intervalSeconds) countdown = intervalSeconds - 1;
-
-        const newPeriod = getPeriodCodeForTime(timerType, currentIntervalStart);
-
-        if (state.period && state.period !== newPeriod) {
-            const oldPeriod = state.period;
-            const outcome = await getGameOutcome(oldPeriod, timerType);
-
-            const existingResult = await GameResult.findOne({ period: oldPeriod });
-            if (!existingResult) {
-                const gameResult = new GameResult({
-                    timerType, period: oldPeriod, number: outcome.number, color: outcome.color, size: outcome.size
-                });
-                await gameResult.save();
-            }
-
-            await processBetsForPeriod(oldPeriod, timerType, outcome);
-
-            io.emit(`gameResult_${timerType}`, {
-                period: oldPeriod, number: outcome.number, color: outcome.color, size: outcome.size
-            });
-        }
-
-        state.period = newPeriod;
-        state.countdown = countdown;
-        state.isBettingOpen = countdown > 5;
-
-        io.emit(`timerTick_${timerType}`, { 
-            countdown: state.countdown, isBettingOpen: state.isBettingOpen, period: state.period 
-        });
-    };
-
-    updateState();
-    setInterval(updateState, 1000);
-}
-
+// Routing for /games/ folder and other static pages
 app.get('*', (req, res) => {
-  if (req.path.startsWith('/assist/')) {
+  if (req.path.startsWith('/games/')) {
     res.sendFile(path.join(__dirname, req.path));
   } else {
     res.sendFile(path.join(__dirname, req.path.substring(1) || 'index.html'));
@@ -681,10 +547,8 @@ mongoose.connect(MONGO_URI).then(async () => {
     await setupAdminAccount();
     startMidnightResetChecker();
 
-    ['30s', '60s', '3m', '5m'].forEach(type => {
-        let interval = type === '30s' ? 30 : (type === '60s' ? 60 : (type === '3m' ? 180 : 300));
-        startTimerLoop(type, interval);
-    });
+    // Initialize WinGo Game Timers & Logic from game-logic/wingoGame.js
+    initWinGoGame(io, GameResult, Bet, ManualOverride, User);
 
 }).catch(err => {
     console.error("MongoDB connection error:", err);
