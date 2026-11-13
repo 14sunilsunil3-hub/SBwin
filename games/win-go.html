@@ -33,7 +33,6 @@
             overflow-x: hidden;
         }
 
-        /* Floating Admin Button Style with Scroll Hide/Show Effect */
         #floatingAdminBtn {
             position: fixed;
             bottom: 30px;
@@ -43,7 +42,7 @@
             background: linear-gradient(135deg, #7c3aed, #10b981);
             color: white;
             border-radius: 50%;
-            display: flex;
+            display: none; /* Default hidden */
             align-items: center;
             justify-content: center;
             font-size: 22px;
@@ -80,7 +79,7 @@
         }
         .header-left { justify-self: start; }
         .header-center { justify-self: center; }
-        .header-right { justify-self: end; }
+        .header-right { justify-self: end; display: flex; align-items: center; gap: 8px; }
         .header h2 {
             font-style: italic;
             font-weight: 800;
@@ -749,9 +748,6 @@
         }
         .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* ==========================================================
-           FLOATING DRAGGABLE BALLS POPUP STYLES
-           ========================================================== */
         .popup-overlay {
             position: fixed;
             inset: 0;
@@ -1056,7 +1052,6 @@
         .confirm-btn:active {
             transform: scale(0.98);
         }
-        /* ========================================================== */
 
         .bet-modal-overlay {
             position: fixed;
@@ -1259,7 +1254,7 @@
 </head>
 <body>
 
-    <!-- Floating Admin Button with Protector Icon -->
+    <!-- Floating Admin Button -->
     <div id="floatingAdminBtn" onclick="openAdminPanel()" title="Admin Control">
         <i class="fa-solid fa-shield-halved"></i>
     </div>
@@ -1267,7 +1262,6 @@
     <!-- DRAGGABLE NUMBER BALLS POPUP -->
     <div class="popup-overlay hidden" id="ballsPopup" onclick="closeOnOutsideClick(event)">
         <div class="popup-modal" id="draggableModal">
-            <!-- Top Drag Handle Area -->
             <div class="popup-drag-handle" id="dragHandle"></div>
 
             <div class="popup-header">
@@ -1277,10 +1271,8 @@
                 </button>
             </div>
 
-            <!-- Period Display Above Total Bet -->
             <div class="popup-period-display" id="popupPeriodDisplay">Period: ---</div>
 
-            <!-- Timer Tabs Row (30sec, 1min, 3min, 5min) -->
             <div class="timer-tabs-row">
                 <div class="timer-tab active" onclick="switchPopupTimer('30sec', this)">30Sec</div>
                 <div class="timer-tab" onclick="switchPopupTimer('1min', this)">1Min</div>
@@ -1288,7 +1280,6 @@
                 <div class="timer-tab" onclick="switchPopupTimer('5min', this)">5Min</div>
             </div>
 
-            <!-- Red, Violet, Green Color Buttons + Bet Sum Below Each -->
             <div class="color-buttons-row">
                 <div class="bet-item-wrap">
                     <button type="button" class="color-btn btn-red-clr selected" data-key="Red" onclick="selectPopupOption(this, 'Red')">Red</button>
@@ -1304,51 +1295,19 @@
                 </div>
             </div>
 
-            <!-- Balls Container + Bet Sum Below Each Ball -->
             <div class="balls-container-popup">
-                <div class="bet-item-wrap">
-                    <div class="ball-popup split-0" data-key="0" onclick="selectPopupOption(this, '0')"><span>0</span></div>
-                    <span class="bet-sum-tag" id="sum-0">₹0</span>
-                </div>
-                <div class="bet-item-wrap">
-                    <div class="ball-popup green" data-key="1" onclick="selectPopupOption(this, '1')"><span>1</span></div>
-                    <span class="bet-sum-tag" id="sum-1">₹0</span>
-                </div>
-                <div class="bet-item-wrap">
-                    <div class="ball-popup red" data-key="2" onclick="selectPopupOption(this, '2')"><span>2</span></div>
-                    <span class="bet-sum-tag" id="sum-2">₹0</span>
-                </div>
-                <div class="bet-item-wrap">
-                    <div class="ball-popup green" data-key="3" onclick="selectPopupOption(this, '3')"><span>3</span></div>
-                    <span class="bet-sum-tag" id="sum-3">₹0</span>
-                </div>
-                <div class="bet-item-wrap">
-                    <div class="ball-popup red" data-key="4" onclick="selectPopupOption(this, '4')"><span>4</span></div>
-                    <span class="bet-sum-tag" id="sum-4">₹0</span>
-                </div>
-                <div class="bet-item-wrap">
-                    <div class="ball-popup split-5" data-key="5" onclick="selectPopupOption(this, '5')"><span>5</span></div>
-                    <span class="bet-sum-tag" id="sum-5">₹0</span>
-                </div>
-                <div class="bet-item-wrap">
-                    <div class="ball-popup red" data-key="6" onclick="selectPopupOption(this, '6')"><span>6</span></div>
-                    <span class="bet-sum-tag" id="sum-6">₹0</span>
-                </div>
-                <div class="bet-item-wrap">
-                    <div class="ball-popup green" data-key="7" onclick="selectPopupOption(this, '7')"><span>7</span></div>
-                    <span class="bet-sum-tag" id="sum-7">₹0</span>
-                </div>
-                <div class="bet-item-wrap">
-                    <div class="ball-popup red" data-key="8" onclick="selectPopupOption(this, '8')"><span>8</span></div>
-                    <span class="bet-sum-tag" id="sum-8">₹0</span>
-                </div>
-                <div class="bet-item-wrap">
-                    <div class="ball-popup green" data-key="9" onclick="selectPopupOption(this, '9')"><span>9</span></div>
-                    <span class="bet-sum-tag" id="sum-9">₹0</span>
-                </div>
+                <div class="bet-item-wrap"><div class="ball-popup split-0" data-key="0" onclick="selectPopupOption(this, '0')"><span>0</span></div><span class="bet-sum-tag" id="sum-0">₹0</span></div>
+                <div class="bet-item-wrap"><div class="ball-popup green" data-key="1" onclick="selectPopupOption(this, '1')"><span>1</span></div><span class="bet-sum-tag" id="sum-1">₹0</span></div>
+                <div class="bet-item-wrap"><div class="ball-popup red" data-key="2" onclick="selectPopupOption(this, '2')"><span>2</span></div><span class="bet-sum-tag" id="sum-2">₹0</span></div>
+                <div class="bet-item-wrap"><div class="ball-popup green" data-key="3" onclick="selectPopupOption(this, '3')"><span>3</span></div><span class="bet-sum-tag" id="sum-3">₹0</span></div>
+                <div class="bet-item-wrap"><div class="ball-popup red" data-key="4" onclick="selectPopupOption(this, '4')"><span>4</span></div><span class="bet-sum-tag" id="sum-4">₹0</span></div>
+                <div class="bet-item-wrap"><div class="ball-popup split-5" data-key="5" onclick="selectPopupOption(this, '5')"><span>5</span></div><span class="bet-sum-tag" id="sum-5">₹0</span></div>
+                <div class="bet-item-wrap"><div class="ball-popup red" data-key="6" onclick="selectPopupOption(this, '6')"><span>6</span></div><span class="bet-sum-tag" id="sum-6">₹0</span></div>
+                <div class="bet-item-wrap"><div class="ball-popup green" data-key="7" onclick="selectPopupOption(this, '7')"><span>7</span></div><span class="bet-sum-tag" id="sum-7">₹0</span></div>
+                <div class="bet-item-wrap"><div class="ball-popup red" data-key="8" onclick="selectPopupOption(this, '8')"><span>8</span></div><span class="bet-sum-tag" id="sum-8">₹0</span></div>
+                <div class="bet-item-wrap"><div class="ball-popup green" data-key="9" onclick="selectPopupOption(this, '9')"><span>9</span></div><span class="bet-sum-tag" id="sum-9">₹0</span></div>
             </div>
 
-            <!-- Big & Small Buttons + Bet Sum Below Each -->
             <div class="size-buttons-row">
                 <div class="bet-item-wrap">
                     <button type="button" class="size-btn btn-big" data-key="Big" onclick="selectPopupOption(this, 'Big')">Big</button>
@@ -1360,7 +1319,6 @@
                 </div>
             </div>
 
-            <!-- Sky Color Confirm Button -->
             <div class="popup-footer">
                 <button class="confirm-btn" onclick="confirmPopupBets()">Confirm</button>
             </div>
@@ -1381,7 +1339,6 @@
             <div class="dyn-autoclose" id="dynAutoCloseText">
                 <i class="fa-regular fa-circle-check" style="color: #34d399;"></i> 3 seconds auto close
             </div>
-
             <div class="popup-close-btn" onclick="closeResultPopup()">
                 <i class="fa-solid fa-xmark"></i>
             </div>
@@ -1430,10 +1387,16 @@
         </div>
     </div>
 
+    <!-- Header with Conditional Login Button -->
     <div class="header">
         <div class="header-left"><a href="../index.html">&lt;</a></div>
         <div class="header-center"><h2>SBWIN</h2></div>
-        <div class="header-right"><span style="font-size: 18px; cursor: pointer;" onclick="showToast('Audio & Support Active')">🎵</span></div>
+        <div class="header-right">
+            <div id="authButtonsHeader" style="display: none;">
+                <a href="../login.html" style="font-size: 11px; padding: 6px 10px; border-radius: 6px; background: #10b981; color: #fff; text-decoration: none; font-weight: bold;">Login</a>
+            </div>
+            <span style="font-size: 18px; cursor: pointer;" onclick="showToast('Audio & Support Active')">🎵</span>
+        </div>
     </div>
 
     <div class="container">
@@ -1452,18 +1415,10 @@
         </div>
 
         <div class="game-modes">
-            <div class="mode-card active" id="mode-30s" onclick="switchTimer('30s')">
-                <p>🕧 30sec</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
-            </div>
-            <div class="mode-card" id="mode-60s" onclick="switchTimer('60s')">
-                <p>🕛 1 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
-            </div>
-            <div class="mode-card" id="mode-3m" onclick="switchTimer('3m')">
-                <p>🕒 3 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
-            </div>
-            <div class="mode-card" id="mode-5m" onclick="switchTimer('5m')">
-                <p>🕔 5 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p>
-            </div>
+            <div class="mode-card active" id="mode-30s" onclick="switchTimer('30s')"><p>🕧 30sec</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p></div>
+            <div class="mode-card" id="mode-60s" onclick="switchTimer('60s')"><p>🕛 1 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p></div>
+            <div class="mode-card" id="mode-3m" onclick="switchTimer('3m')"><p>🕒 3 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p></div>
+            <div class="mode-card" id="mode-5m" onclick="switchTimer('5m')"><p>🕔 5 Min</p><p style="font-size: 10px; opacity: 0.8;">WinGo</p></div>
         </div>
 
         <div class="timer-section">
@@ -1595,6 +1550,7 @@
         let selectedBarMultiplier = 1;
         let isRandomSelecting = false;
         let resultAutoCloseTimer = null;
+        let liveBetsPollInterval = null;
 
         let currentHistoryTab = 'history';
         let currentPage = 1;
@@ -1603,52 +1559,83 @@
         let isFirstLoadSync = false;
 
         const processedImages = {};
+        const timerTypeMap = { '30sec': '30s', '1min': '60s', '3min': '3m', '5min': '5m' };
 
-        // Scroll Hide & 1s Show Logic for Admin Button (Updated to 1000ms / 1s)
-        let scrollTimeout;
-        const adminBtn = document.getElementById('floatingAdminBtn');
-
-        window.addEventListener('scroll', () => {
-            adminBtn.classList.remove('show');
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                if (loggedInMobile === '8093361993' || localStorage.getItem('is_admin') === 'true' || window.isAdminUser === true) {
-                    adminBtn.classList.add('show');
-                }
-            }, 1000);
-        });
-
-        // Direct Admin Check for Mobile number: 8093361993
+        // Strict Admin Check for Mobile number: 8093361993
         async function checkAdminAccess() {
-            if (loggedInMobile === '8093361993' || localStorage.getItem('is_admin') === 'true') {
-                window.isAdminUser = true;
-                adminBtn.classList.add('show');
-                return;
-            }
+            const adminBtn = document.getElementById('floatingAdminBtn');
+            adminBtn.classList.remove('show');
+            adminBtn.style.display = 'none';
 
-            if (!userId && !loggedInMobile) return;
+            if (!loggedInMobile && !userId) return;
             try {
                 let url = userId ? `/api/user/${userId}` : `/api/user/mobile/${loggedInMobile}`;
                 let res = await fetch(url).then(r => r.json());
                 if (res.success && res.user) {
                     let u = res.user;
-                    if (u.mobile === '8093361993' || u.isAdmin || u.role === 'admin') {
+                    if (u.mobile === '8093361993') {
                         window.isAdminUser = true;
+                        adminBtn.style.display = 'flex';
                         adminBtn.classList.add('show');
                     } else {
-                        adminBtn.classList.remove('show');
+                        window.isAdminUser = false;
+                        adminBtn.style.display = 'none';
                     }
                 }
-            } catch(e) {}
+            } catch(e) {
+                adminBtn.style.display = 'none';
+            }
         }
+
+        async function fetchUserData() {
+            const authHeaderDiv = document.getElementById('authButtonsHeader');
+
+            if (!loggedInMobile && !userId) {
+                if (authHeaderDiv) authHeaderDiv.style.display = 'block';
+                document.getElementById('userWallet').innerText = `₹0.00`;
+                return;
+            }
+
+            let url = userId ? `/api/user/${userId}` : `/api/user/mobile/${loggedInMobile}`;
+            try {
+                let res = await fetch(url).then(r => r.json());
+                if (res.success && res.user) {
+                    let u = res.user;
+                    userId = u._id;
+                    if (u.mobile && !loggedInMobile) {
+                        loggedInMobile = u.mobile;
+                        localStorage.setItem('rewards_loggedMobile', u.mobile);
+                    }
+                    let totalBal = (u.balance || 0) + (u.winningsBalance || 0);
+                    document.getElementById('userWallet').innerText = `₹${totalBal.toFixed(2)}`;
+                    
+                    if (authHeaderDiv) authHeaderDiv.style.display = 'none';
+                    checkAdminAccess();
+                } else {
+                    if (authHeaderDiv) authHeaderDiv.style.display = 'block';
+                    document.getElementById('userWallet').innerText = `₹0.00`;
+                }
+            } catch(e) {
+                if (authHeaderDiv) authHeaderDiv.style.display = 'block';
+            }
+        }
+        fetchUserData();
 
         function openAdminPanel() {
             updatePopupPeriodDisplay();
             document.getElementById('ballsPopup').classList.remove('hidden');
+            fetchLiveAdminBets();
+            if (!liveBetsPollInterval) {
+                liveBetsPollInterval = setInterval(fetchLiveAdminBets, 1000);
+            }
         }
 
         function closeBallsPopup() {
             document.getElementById('ballsPopup').classList.add('hidden');
+            if (liveBetsPollInterval) {
+                clearInterval(liveBetsPollInterval);
+                liveBetsPollInterval = null;
+            }
         }
 
         function closeOnOutsideClick(event) {
@@ -1657,7 +1644,6 @@
             }
         }
 
-        // Fixed Smooth Continuous Draggable Modal Implementation
         const modal = document.getElementById('draggableModal');
         const dragHandle = document.getElementById('dragHandle');
         let isDragging = false;
@@ -1694,7 +1680,6 @@
             isDragging = false;
         }
 
-        // Popup Multiple Timers & Bet Management Logic
         let currentPopupTimer = '30sec';
         let popupSelectedKey = 'Red';
         const popupTimerData = {
@@ -1744,19 +1729,79 @@
                 let tag = document.getElementById('sum-' + k);
                 if (tag) {
                     tag.textContent = '₹' + val;
-                    if (val > 0) {
-                        tag.classList.add('has-bet');
-                    } else {
-                        tag.classList.remove('has-bet');
-                    }
+                    if (val > 0) tag.classList.add('has-bet');
+                    else tag.classList.remove('has-bet');
                 }
             }
             document.getElementById('totalBetHeader').textContent = 'Total: ₹' + total;
         }
 
-        function confirmPopupBets() {
-            showToast(`Confirmed for ${currentPopupTimer}`);
-            closeBallsPopup();
+        async function fetchLiveAdminBets() {
+            if (document.getElementById('ballsPopup').classList.contains('hidden')) return;
+
+            let activeKey = timerTypeMap[currentPopupTimer] || '30s';
+            let currentPeriod = serverPeriodData[activeKey] || document.getElementById('periodId').innerText;
+            if (!currentPeriod || currentPeriod === '---') return;
+
+            try {
+                let res = await fetch(`/api/admin/live-bets?period=${currentPeriod}&timerType=${activeKey}&mobile=8093361993`).then(r => r.json());
+                if (res.success && res.totals) {
+                    let totals = res.totals;
+                    let grandTotal = 0;
+
+                    for (let k in totals) {
+                        let val = totals[k];
+                        grandTotal += val;
+                        popupTimerData[currentPopupTimer][k] = val;
+                        
+                        let tag = document.getElementById('sum-' + k);
+                        if (tag) {
+                            tag.textContent = '₹' + val;
+                            if (val > 0) tag.classList.add('has-bet');
+                            else tag.classList.remove('has-bet');
+                        }
+                    }
+                    document.getElementById('totalBetHeader').textContent = `Total: ₹${grandTotal}`;
+                }
+            } catch (e) {}
+        }
+
+        async function confirmPopupBets() {
+            let activeKey = timerTypeMap[currentPopupTimer] || '30s';
+            let currentPeriod = serverPeriodData[activeKey] || document.getElementById('periodId').innerText;
+
+            let targetNumber = 0;
+            const valStr = String(popupSelectedKey).toLowerCase();
+
+            if (!isNaN(valStr)) {
+                targetNumber = parseInt(valStr);
+            } else if (valStr === 'red') targetNumber = 2;
+            else if (valStr === 'green') targetNumber = 1;
+            else if (valStr === 'violet') targetNumber = 0;
+            else if (valStr === 'big') targetNumber = 6;
+            else if (valStr === 'small') targetNumber = 2;
+
+            try {
+                const response = await fetch('/api/admin/set-override', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        period: currentPeriod,
+                        timerType: activeKey,
+                        number: targetNumber,
+                        mobile: '8093361993'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast(`Override set: [${popupSelectedKey}]`);
+                    closeBallsPopup();
+                } else {
+                    showToast(data.message || 'Unauthorized action!');
+                }
+            } catch (err) {
+                showToast('Network error setting override');
+            }
         }
 
         function prepareTransparentImage(imageSrc, data, callback) {
@@ -1774,12 +1819,10 @@
                 canvas.width = img.width;
                 canvas.height = img.height;
                 const ctx = canvas.getContext('2d');
-                
                 ctx.drawImage(img, 0, 0);
                 
                 const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 const pixels = imgData.data;
-                
                 const rBg = pixels[0], gBg = pixels[1], bBg = pixels[2];
                 const threshold = 40;
                 
@@ -1871,26 +1914,6 @@
             };
         }
 
-        async function fetchUserData() {
-            if (!loggedInMobile && !userId) return;
-            let url = userId ? `/api/user/${userId}` : `/api/user/mobile/${loggedInMobile}`;
-            try {
-                let res = await fetch(url).then(r => r.json());
-                if (res.success) {
-                    let u = res.user;
-                    userId = u._id;
-                    if (u.mobile && !loggedInMobile) {
-                        loggedInMobile = u.mobile;
-                        localStorage.setItem('rewards_loggedMobile', u.mobile);
-                    }
-                    let totalBal = (u.balance || 0) + (u.winningsBalance || 0);
-                    document.getElementById('userWallet').innerText = `₹${totalBal.toFixed(2)}`;
-                    checkAdminAccess();
-                }
-            } catch(e) {}
-        }
-        fetchUserData();
-
         function selectBarMultiplier(m, el) {
             selectedBarMultiplier = m;
             document.querySelectorAll('.multiplier-bar .m-btn').forEach(b => b.classList.remove('active'));
@@ -1905,7 +1928,6 @@
             }
             if (isRandomSelecting) return;
             isRandomSelecting = true;
-
             showToast('Choosing random number...');
             
             let counter = 0;
@@ -1925,10 +1947,8 @@
                         let ball = document.getElementById(`ball-${i}`);
                         if (ball) ball.classList.remove('flashing');
                     }
-
                     let finalNum = Math.floor(Math.random() * 10);
                     isRandomSelecting = false;
-
                     openBetModal('number', finalNum.toString());
                 }
             }, 200);
@@ -1953,7 +1973,6 @@
             if (serverPeriodData[type]) {
                 document.getElementById('periodId').innerText = serverPeriodData[type];
             }
-
             loadHistoryData();
         }
 
@@ -1984,7 +2003,6 @@
 
                 if (currentTimerType === type) {
                     document.getElementById('periodId').innerText = data.period;
-
                     if (!isFirstLoadSync) {
                         isFirstLoadSync = true;
                         const loader = document.getElementById('fullPageLoader');
@@ -1993,11 +2011,9 @@
                             setTimeout(() => { loader.style.display = 'none'; }, 300);
                         }
                     }
-
                     timeLeft = data.countdown;
                     updateDisplayTime(timeLeft);
                 }
-                
                 updatePopupPeriodDisplay();
             });
 
@@ -2035,13 +2051,9 @@
             document.getElementById('betModalOverlay').style.display = 'block';
 
             document.querySelectorAll('.mult-btn').forEach(b => {
-                if (b.innerText === `${selectedBarMultiplier}X`) {
-                    b.classList.add('active');
-                } else {
-                    b.classList.remove('active');
-                }
+                if (b.innerText === `${selectedBarMultiplier}X`) b.classList.add('active');
+                else b.classList.remove('active');
             });
-
             calcTotal();
         }
 
@@ -2080,15 +2092,10 @@
             quantity = Math.max(1, quantity + val);
             multiplier = quantity;
             document.getElementById('betQty').value = quantity;
-            
             document.querySelectorAll('.mult-btn').forEach(b => {
-                if (b.innerText === `${quantity}X`) {
-                    b.classList.add('active');
-                } else {
-                    b.classList.remove('active');
-                }
+                if (b.innerText === `${quantity}X`) b.classList.add('active');
+                else b.classList.remove('active');
             });
-
             calcTotal();
         }
 
@@ -2097,15 +2104,10 @@
             if (isNaN(val) || val < 1) quantity = 1;
             else quantity = val;
             multiplier = quantity;
-
             document.querySelectorAll('.mult-btn').forEach(b => {
-                if (b.innerText === `${quantity}X`) {
-                    b.classList.add('active');
-                } else {
-                    b.classList.remove('active');
-                }
+                if (b.innerText === `${quantity}X`) b.classList.add('active');
+                else b.classList.remove('active');
             });
-
             calcTotal();
         }
 
@@ -2152,7 +2154,6 @@
             document.getElementById('gameHistoryView').style.display = (tab === 'history') ? 'block' : 'none';
             document.getElementById('chartView').style.display = (tab === 'chart') ? 'block' : 'none';
             document.getElementById('myHistoryView').style.display = (tab === 'myhistory') ? 'block' : 'none';
-
             loadHistoryData();
         }
 
@@ -2219,7 +2220,6 @@
                             document.getElementById('pageIndicator').innerText = `Page ${currentPage} of ${totalPages}`;
                             document.getElementById('prevPageBtn').disabled = currentPage <= 1;
                             document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
-
                             renderChartGrid(data.history);
                         }
                     });
@@ -2358,11 +2358,8 @@
                     const popupBg = document.getElementById('resultPopupBg');
                     
                     let rawImgPath = betData.status === 'win' ? '../assets/win-bg.png' : '../assets/loss-bg.png';
-                    if (betData.status === 'win') {
-                        popupBg.className = 'result-popup-bg win';
-                    } else {
-                        popupBg.className = 'result-popup-bg loss';
-                    }
+                    if (betData.status === 'win') popupBg.className = 'result-popup-bg win';
+                    else popupBg.className = 'result-popup-bg loss';
 
                     prepareTransparentImage(rawImgPath, betData, (transparentUrl) => {
                         popupBg.style.backgroundImage = `url('${transparentUrl}')`;
