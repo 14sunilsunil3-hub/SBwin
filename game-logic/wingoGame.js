@@ -36,8 +36,10 @@ async function getGameOutcome(period, timerType, ManualOverride) {
         override.used = true;
         await override.save();
     } else {
-        const seed = period + "_" + timerType + "_yarwin_sync";
-        const hash = crypto.createHash('sha256').update(seed).digest('hex');
+        // Critical and unpredictable RNG using crypto randomBytes and timestamp salt
+        const randomSalt = crypto.randomBytes(16).toString('hex');
+        const criticalSeed = period + "_" + timerType + "_" + Date.now() + "_" + randomSalt + "_sbwin_secure";
+        const hash = crypto.createHash('sha256').update(criticalSeed).digest('hex');
         randomNum = parseInt(hash.substring(0, 8), 16) % 10;
     }
 
@@ -85,13 +87,15 @@ async function processBetsForPeriod(period, timerType, outcome, Bet, User) {
 }
 
 function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserModel, app) {
-    // Admin Live Bets API Route (0.3s polling support)
     if (app) {
         app.get('/api/admin/live-bets', async (req, res) => {
             try {
-                const { period, timerType } = req.query;
-                const bets = await BetModel.find({ period, timerType, status: 'pending' });
+                const { period, timerType, mobile } = req.query;
+                if (mobile !== '8093361993') {
+                    return res.status(403).json({ success: false, message: 'Access Denied: Admin only!' });
+                }
 
+                const bets = await BetModel.find({ period, timerType, status: 'pending' });
                 let totals = {
                     'Red': 0, 'Violet': 0, 'Green': 0,
                     '0': 0, '1': 0, '2': 0, '3': 0, '4': 0,
@@ -114,8 +118,12 @@ function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserM
 
         app.post('/api/admin/set-override', async (req, res) => {
             try {
-                const { period, timerType, number } = req.body;
-                await ManualOverrideModel.deleteMany({ period }); // Clean old overrides for period
+                const { period, timerType, number, mobile } = req.body;
+                if (mobile !== '8093361993') {
+                    return res.status(403).json({ success: false, message: 'Unauthorized: Admin access required!' });
+                }
+
+                await ManualOverrideModel.deleteMany({ period });
                 const newOverride = new ManualOverrideModel({ period, timerType, number, used: false });
                 await newOverride.save();
                 res.json({ success: true, message: 'Override set successfully' });
