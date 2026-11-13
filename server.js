@@ -533,7 +533,6 @@ app.post('/api/bet', async (req, res) => {
     }
 });
 
-// Smart Routing for Root, Games, and In-Out Folders
 app.get('*', (req, res) => {
   const reqPath = req.path;
   
@@ -563,8 +562,8 @@ mongoose.connect(MONGO_URI).then(async () => {
     await setupAdminAccount();
     startMidnightResetChecker();
 
-    // Initialize WinGo Game Timers & Logic from game-logic/wingoGame.js
-    initWinGoGame(io, GameResult, Bet, ManualOverride, User);
+    // Pass app instance here
+    initWinGoGame(io, GameResult, Bet, ManualOverride, User, app);
 
 }).catch(err => {
     console.error("MongoDB connection error:", err);
