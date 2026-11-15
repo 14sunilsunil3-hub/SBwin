@@ -160,6 +160,22 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'auth.html'));
 });
 
+// STRICT SERVER-SIDE ADMIN VERIFICATION ENDPOINT
+app.post('/api/admin/verify', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        if (!userId) return res.json({ success: true, isAdmin: false });
+
+        const user = await User.findById(userId);
+        if (!user) return res.json({ success: true, isAdmin: false });
+
+        const isAdmin = ADMIN_NUMBERS.includes(user.phone);
+        res.json({ success: true, isAdmin });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 app.post('/api/register', async (req, res) => {
     try {
         const { phone, password, refUid } = req.body;
@@ -217,225 +233,12 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-app.post('/api/check-session', async (req, res) => {
-    try {
-        const { userId } = req.body;
-        if (!userId) return res.json({ success: false, valid: false });
-
-        const user = await User.findById(userId);
-        if (!user || !user.lastLoginTime) {
-            return res.json({ success: true, valid: false, message: "Session expired." });
-        }
-
-        const now = new Date();
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-        const loginTimestamp = new Date(user.lastLoginTime).getTime();
-
-        if (loginTimestamp >= startOfToday) {
-            return res.json({ success: true, valid: true });
-        } else {
-            return res.json({ success: true, valid: false, message: "Please log in again." });
-        }
-    } catch (err) {
-        res.status(500).json({ success: false, valid: false, message: err.message });
-    }
-});
-
-app.post('/api/reset-password', async (req, res) => {
-    try {
-        const { phone, newPassword } = req.body;
-        const user = await User.findOne({ phone });
-        if (!user) return res.status(404).json({ success: false, message: "Phone number not registered!" });
-
-        user.password = newPassword;
-        user.lastLoginTime = null; 
-        await user.save();
-
-        res.json({ success: true, message: "Password reset successful!" });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
 app.get('/api/user/:userId', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
         const isAdmin = ADMIN_NUMBERS.includes(user.phone);
         res.json({ success: true, balance: user.balance, winningsBalance: user.winningsBalance, totalBetDone: user.totalBetDone || 0, isAdmin, user });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-app.get('/api/user/mobile/:mobile', async (req, res) => {
-    try {
-        const user = await User.findOne({ phone: req.params.mobile });
-        if (!user) return res.status(404).json({ success: false, message: "User not found" });
-        const isAdmin = ADMIN_NUMBERS.includes(user.phone);
-        res.json({ success: true, isAdmin, user });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-app.get('/api/user-deposits/:userId', async (req, res) => {
-    try {
-        const deposits = await Deposit.find({ userId: req.params.userId }).sort({ createdAt: -1 });
-        res.json({ success: true, deposits });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-app.post('/api/deposit', async (req, res) => {
-    try {
-        const { userId, amount, utr, orderNo } = req.body;
-        const finalOrderNo = orderNo || ('SBW' + Math.floor(100000 + Math.random() * 900000));
-        
-        const deposit = new Deposit({ userId, amount, utr, orderNo: finalOrderNo });
-        await deposit.save();
-        res.json({ success: true, message: "Deposit request submitted successfully!" });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-app.post('/api/withdraw', async (req, res) => {
-    try {
-        const { userId, amount, password, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile, type } = req.body;
-        const user = await User.findById(userId);
-        
-        if (!user) return res.status(404).json({ success: false, message: "User not found" });
-        
-        if (!password || user.password !== password) {
-            return res.status(400).json({ success: false, message: "Incorrect password!" });
-        }
-
-        const numAmount = Number(amount);
-        if (numAmount < 110 || numAmount > 1000000) {
-            return res.status(400).json({ success: false, message: "Amount must be between ₹110 and ₹1,000,000!" });
-        }
-
-        if ((user.totalBetDone || 0) < 110) {
-            return res.status(400).json({ success: false, message: "Place bets totaling at least ₹110 before withdrawing!" });
-        }
-
-        if (user.winningsBalance < numAmount) return res.status(400).json({ success: false, message: "Insufficient winnings balance!" });
-
-        user.winningsBalance -= numAmount;
-        await user.save();
-
-        const finalOrderNo = 'SBW_W' + Math.floor(100000 + Math.random() * 900000);
-        const withdrawal = new Withdrawal({ 
-            userId, amount: numAmount, accountHolderName, upiId, bankName, accountNumber, ifsc, mobile, 
-            type: type || (upiId ? 'UPI' : 'BANK CARD'), orderNo: finalOrderNo 
-        });
-        await withdrawal.save();
-
-        res.json({ success: true, message: "Withdrawal request submitted successfully!" });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-app.get('/api/admin/requests', async (req, res) => {
-    try {
-        const deposits = await Deposit.find().populate('userId', 'uid phone').sort({ createdAt: -1 });
-        const withdrawals = await Withdrawal.find().populate('userId', 'uid phone').sort({ createdAt: -1 });
-        res.json({ success: true, deposits, withdrawals });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-app.post('/api/admin/action', async (req, res) => {
-    try {
-        const { type, id, orderNo, action, reason } = req.body;
-        const act = String(action).toLowerCase().trim();
-
-        if (type === 'deposit') {
-            let query = orderNo ? { orderNo } : { _id: id };
-            const dep = await Deposit.findOne(query);
-            if (!dep) return res.status(404).json({ success: false, message: "Deposit not found" });
-
-            if ((act.includes('approve') || act.includes('complete') || act.includes('success')) && dep.status === 'pending') {
-                dep.status = 'approved';
-                await dep.save();
-                const user = await User.findById(dep.userId);
-                if (user) {
-                    user.balance = (user.balance || 0) + Number(dep.amount);
-                    await user.save();
-                }
-                io.emit('refreshBalance');
-            } else if (act.includes('reject') || act.includes('fail')) {
-                if (dep.status !== 'rejected') {
-                    dep.status = 'rejected';
-                    if (reason) dep.rejectReason = reason;
-                    await dep.save();
-                    io.emit('refreshBalance');
-                }
-            }
-        } else if (type === 'withdrawal') {
-            let query = orderNo ? { orderNo } : { _id: id };
-            const wit = await Withdrawal.findOne(query);
-            if (!wit) return res.status(404).json({ success: false, message: "Withdrawal not found" });
-            
-            if (act.includes('approve') || act.includes('complete') || act.includes('success')) {
-                wit.status = 'approved';
-                await wit.save();
-                io.emit('refreshBalance');
-            } else if (act.includes('reject') || act.includes('fail')) {
-                if (wit.status !== 'rejected') {
-                    wit.status = 'rejected';
-                    await wit.save();
-                    const user = await User.findById(wit.userId);
-                    if (user) {
-                        user.winningsBalance = (user.winningsBalance || 0) + Number(wit.amount);
-                        await user.save();
-                    }
-                    io.emit('refreshBalance');
-                }
-            }
-        }
-        res.json({ success: true, message: "Action executed successfully!" });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-app.post('/api/admin/set-result', async (req, res) => {
-    try {
-        const { period, number } = req.body;
-        await ManualOverride.findOneAndUpdate(
-            { period },
-            { number: Number(number), used: false },
-            { upsert: true, new: true }
-        );
-        res.json({ success: true, message: `Manual override set for period ${period}` });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-app.get('/api/admin/bets-summary/:period', async (req, res) => {
-    try {
-        const { period } = req.params;
-        const bets = await Bet.find({ period });
-        let totalAmount = 0;
-        let breakdown = { big: 0, small: 0, green: 0, red: 0, violet: 0 };
-
-        bets.forEach(b => {
-            totalAmount += b.amount;
-            if (b.betType === 'size' || b.betType === 'color') {
-                breakdown[b.betValue] = (breakdown[b.betValue] || 0) + b.amount;
-            } else if (b.betType === 'number') {
-                let key = 'num_' + b.betValue;
-                breakdown[key] = (breakdown[key] || 0) + b.amount;
-            }
-        });
-
-        res.json({ success: true, totalAmount, breakdown });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -468,31 +271,6 @@ app.get('/api/user-bets/:userId/:timerType', async (req, res) => {
         const bets = await Bet.find({ userId, timerType }).sort({ createdAt: -1 }).skip(skip).limit(limit);
 
         res.json({ success: true, bets, totalPages: Math.ceil(total / limit) });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-app.get('/api/user-round-result', async (req, res) => {
-    try {
-        const { userId, period, timerType } = req.query;
-        const bet = await Bet.findOne({ userId, period, timerType });
-        if (!bet) return res.json({ success: true, hasBet: false });
-
-        const gameRes = await GameResult.findOne({ period });
-        res.json({ 
-            success: true, 
-            hasBet: true, 
-            betData: {
-                status: bet.status,
-                amount: bet.amount,
-                payout: bet.payout,
-                betValue: bet.betValue,
-                number: gameRes ? gameRes.number : '?',
-                color: gameRes ? gameRes.color : '?',
-                size: gameRes ? gameRes.size : '?'
-            } 
-        });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -535,7 +313,6 @@ app.post('/api/bet', async (req, res) => {
 
 app.get('*', (req, res) => {
   const reqPath = req.path;
-  
   if (reqPath.startsWith('/games/')) {
     res.sendFile(path.join(__dirname, reqPath));
   } else if (reqPath.startsWith('/in-out/')) {
@@ -543,15 +320,9 @@ app.get('*', (req, res) => {
   } else {
     const cleanPath = reqPath.substring(1) || 'index.html';
     const rootFile = path.join(__dirname, cleanPath);
-    
     res.sendFile(rootFile, (err) => {
       if (err) {
-        const inOutFile = path.join(__dirname, 'in-out', cleanPath);
-        res.sendFile(inOutFile, (err2) => {
-          if (err2) {
-            res.sendFile(path.join(__dirname, 'index.html'));
-          }
-        });
+        res.sendFile(path.join(__dirname, 'index.html'));
       }
     });
   }
@@ -561,10 +332,7 @@ mongoose.connect(MONGO_URI).then(async () => {
     console.log("Connected to MongoDB successfully!");
     await setupAdminAccount();
     startMidnightResetChecker();
-
-    // Pass app instance here
     initWinGoGame(io, GameResult, Bet, ManualOverride, User, app);
-
 }).catch(err => {
     console.error("MongoDB connection error:", err);
 });
@@ -574,16 +342,12 @@ io.on('connection', (socket) => {
 
     socket.on('registerUserSession', (userId) => {
         currentConnectedUserId = userId;
-        if (userId) {
-            activeOnlineSocketUsers.add(userId);
-        }
+        if (userId) activeOnlineSocketUsers.add(userId);
     });
 
     socket.on('disconnect', () => {
         if (currentConnectedUserId) {
-            setTimeout(() => {
-                activeOnlineSocketUsers.delete(currentConnectedUserId);
-            }, 10000);
+            setTimeout(() => activeOnlineSocketUsers.delete(currentConnectedUserId), 10000);
         }
     });
 
