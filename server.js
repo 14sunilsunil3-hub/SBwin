@@ -160,19 +160,63 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'auth.html'));
 });
 
-// STRICT SERVER-SIDE ADMIN VERIFICATION ENDPOINT
+// ==========================================
+// SECURE SERVER-SIDE ADMIN APIs (Hidden from Frontend)
+// ==========================================
 app.post('/api/admin/verify', async (req, res) => {
     try {
         const { userId } = req.body;
         if (!userId) return res.json({ success: true, isAdmin: false });
-
         const user = await User.findById(userId);
         if (!user) return res.json({ success: true, isAdmin: false });
-
         const isAdmin = ADMIN_NUMBERS.includes(user.phone);
         res.json({ success: true, isAdmin });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+app.get('/api/admin/live-bets', async (req, res) => {
+    try {
+        const { period, timerType, userId } = req.query;
+        const user = await User.findById(userId);
+        if (!user || !ADMIN_NUMBERS.includes(user.phone)) {
+            return res.status(403).json({ success: false, message: 'Access Denied: Admin only!' });
+        }
+
+        const bets = await Bet.find({ period, timerType, status: 'pending' });
+        let totals = {
+            'Red': 0, 'Violet': 0, 'Green': 0,
+            '0': 0, '1': 0, '2': 0, '3': 0, '4': 0,
+            '5': 0, '6': 0, '7': 0, '8': 0, '9': 0,
+            'Big': 0, 'Small': 0
+        };
+
+        bets.forEach(bet => {
+            let val = String(bet.betValue);
+            if (totals[val] !== undefined) totals[val] += bet.amount;
+        });
+
+        res.json({ success: true, totals });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+app.post('/api/admin/set-override', async (req, res) => {
+    try {
+        const { period, timerType, number, userId } = req.body;
+        const user = await User.findById(userId);
+        if (!user || !ADMIN_NUMBERS.includes(user.phone)) {
+            return res.status(403).json({ success: false, message: 'Unauthorized: Admin access required!' });
+        }
+
+        await ManualOverride.deleteMany({ period });
+        const newOverride = new ManualOverride({ period, timerType, number, used: false });
+        await newOverride.save();
+        res.json({ success: true, message: 'Override set successfully' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to set override' });
     }
 });
 
@@ -332,7 +376,7 @@ mongoose.connect(MONGO_URI).then(async () => {
     console.log("Connected to MongoDB successfully!");
     await setupAdminAccount();
     startMidnightResetChecker();
-    initWinGoGame(io, GameResult, Bet, ManualOverride, User, app);
+    initWinGoGame(io, GameResult, Bet, ManualOverride, User);
 }).catch(err => {
     console.error("MongoDB connection error:", err);
 });
