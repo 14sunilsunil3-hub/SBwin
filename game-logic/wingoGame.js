@@ -36,7 +36,6 @@ async function getGameOutcome(period, timerType, ManualOverride) {
         override.used = true;
         await override.save();
     } else {
-        // Critical and unpredictable RNG using crypto randomBytes and timestamp salt
         const randomSalt = crypto.randomBytes(16).toString('hex');
         const criticalSeed = period + "_" + timerType + "_" + Date.now() + "_" + randomSalt + "_sbwin_secure";
         const hash = crypto.createHash('sha256').update(criticalSeed).digest('hex');
@@ -86,53 +85,7 @@ async function processBetsForPeriod(period, timerType, outcome, Bet, User) {
     }
 }
 
-function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserModel, app) {
-    if (app) {
-        app.get('/api/admin/live-bets', async (req, res) => {
-            try {
-                const { period, timerType, mobile } = req.query;
-                if (mobile !== '8093361993') {
-                    return res.status(403).json({ success: false, message: 'Access Denied: Admin only!' });
-                }
-
-                const bets = await BetModel.find({ period, timerType, status: 'pending' });
-                let totals = {
-                    'Red': 0, 'Violet': 0, 'Green': 0,
-                    '0': 0, '1': 0, '2': 0, '3': 0, '4': 0,
-                    '5': 0, '6': 0, '7': 0, '8': 0, '9': 0,
-                    'Big': 0, 'Small': 0
-                };
-
-                bets.forEach(bet => {
-                    let val = String(bet.betValue);
-                    if (totals[val] !== undefined) {
-                        totals[val] += bet.amount;
-                    }
-                });
-
-                res.json({ success: true, totals });
-            } catch (err) {
-                res.status(500).json({ success: false, message: 'Server error' });
-            }
-        });
-
-        app.post('/api/admin/set-override', async (req, res) => {
-            try {
-                const { period, timerType, number, mobile } = req.body;
-                if (mobile !== '8093361993') {
-                    return res.status(403).json({ success: false, message: 'Unauthorized: Admin access required!' });
-                }
-
-                await ManualOverrideModel.deleteMany({ period });
-                const newOverride = new ManualOverrideModel({ period, timerType, number, used: false });
-                await newOverride.save();
-                res.json({ success: true, message: 'Override set successfully' });
-            } catch (err) {
-                res.status(500).json({ success: false, message: 'Failed to set override' });
-            }
-        });
-    }
-
+function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserModel) {
     function startTimerLoop(timerType, intervalSeconds) {
         const state = gameStates[timerType];
         const intervalMs = intervalSeconds * 1000;
