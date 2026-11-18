@@ -161,7 +161,7 @@ app.get('/', (req, res) => {
 });
 
 // ==========================================
-// SECURE SERVER-SIDE ADMIN APIs (Hidden from Frontend)
+// SECURE SERVER-SIDE ADMIN APIs
 // ==========================================
 app.post('/api/admin/verify', async (req, res) => {
     try {
@@ -235,6 +235,42 @@ app.post('/api/admin/set-override', async (req, res) => {
     }
 });
 
+// ==========================================
+// DEPOSIT APIs
+// ==========================================
+app.post('/api/deposit', async (req, res) => {
+    try {
+        const { userId, amount, utr, orderNo } = req.body;
+        if (!userId || !amount || !utr) {
+            return res.status(400).json({ success: false, message: "All fields are required!" });
+        }
+        const newDeposit = new Deposit({
+            userId,
+            amount: Number(amount),
+            utr,
+            orderNo: orderNo || ('SBW' + Math.floor(100000 + Math.random() * 900000)),
+            status: 'pending'
+        });
+        await newDeposit.save();
+        res.json({ success: true, message: "Deposit request submitted successfully!" });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+app.get('/api/user-deposits/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const deposits = await Deposit.find({ userId }).sort({ createdAt: -1 }).limit(20);
+        res.json({ success: true, deposits });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ==========================================
+// USER & GAME APIs
+// ==========================================
 app.post('/api/register', async (req, res) => {
     try {
         const { phone, password, refUid } = req.body;
@@ -335,7 +371,6 @@ app.get('/api/user-bets/:userId/:timerType', async (req, res) => {
     }
 });
 
-// Round result check API for win/loss popups
 app.get('/api/user-round-result', async (req, res) => {
     try {
         const { userId, period, timerType } = req.query;
