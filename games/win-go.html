@@ -1623,6 +1623,11 @@
         fetchUserData();
 
         function openAdminPanel() {
+            // Admin panel can open even if betting is locked, as long as timer > 1 sec
+            if (timeLeft <= 1) {
+                showToast('Admin control locked for last 1 second!');
+                return;
+            }
             updatePopupPeriodDisplay();
             document.getElementById('ballsPopup').classList.remove('hidden');
             fetchLiveAdminBets();
@@ -1768,6 +1773,12 @@
         }
 
         async function confirmPopupBets() {
+            if (timeLeft <= 1) {
+                showToast('Too late! Last 1 second reached.');
+                closeBallsPopup();
+                return;
+            }
+
             let activeKey = timerTypeMap[currentPopupTimer] || '30s';
             let currentPeriod = serverPeriodData[activeKey] || document.getElementById('periodId').innerText;
 
@@ -1995,6 +2006,13 @@
             } else {
                 lockOverlay.style.display = 'none';
             }
+
+            // If time reaches <= 1 sec, automatically close admin popup if open
+            if (displaySec <= 1) {
+                if (!document.getElementById('ballsPopup').classList.contains('hidden')) {
+                    closeBallsPopup();
+                }
+            }
         }
 
         ['30s', '60s', '3m', '5m'].forEach(type => {
@@ -2118,6 +2136,10 @@
         }
 
         async function submitBet() {
+            if (timeLeft <= 5) {
+                showToast('Betting closed for this round!');
+                return;
+            }
             let finalAmount = baseAmount * multiplier;
             const period = document.getElementById('periodId').innerText;
             if (!userId) {
