@@ -159,14 +159,12 @@
         }
         .instructions-box li i { color: #34d399; margin-top: 3px; }
         
-        /* Compact Fixed Amount Grid */
         .amount-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             margin-bottom: 14px;
         }
-
         .amt-btn {
             background: rgba(30, 27, 75, 0.6);
             border: 1.5px solid #7c3aed;
@@ -282,7 +280,6 @@
             cursor: pointer;
             margin-top: 4px;
         }
-        
         .history-card-item {
             background: rgba(15, 23, 42, 0.9);
             border: 1.5px solid #7c3aed;
@@ -309,29 +306,16 @@
             font-size: 12px;
             font-weight: 700;
         }
-        .status-badge {
-            font-size: 14px;
-            font-weight: 700;
-        }
+        .status-badge { font-size: 14px; font-weight: 700; }
         .history-detail-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 13px;
         }
-        .history-label {
-            color: #94a3b8;
-            font-weight: 600;
-        }
-        .history-val {
-            color: #ffffff;
-            font-weight: 600;
-        }
-        .balance-val {
-            color: #fbbf24;
-            font-weight: 700;
-            font-size: 14px;
-        }
+        .history-label { color: #94a3b8; font-weight: 600; }
+        .history-val { color: #ffffff; font-weight: 600; }
+        .balance-val { color: #fbbf24; font-weight: 700; font-size: 14px; }
         .order-row-val {
             font-family: monospace;
             color: #cbd5e1;
@@ -339,15 +323,8 @@
             align-items: center;
             gap: 8px;
         }
-        .copy-icon-btn {
-            color: #a7f3d0;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .copy-icon-btn:hover {
-            color: #34d399;
-        }
-
+        .copy-icon-btn { color: #a7f3d0; cursor: pointer; font-size: 14px; }
+        .copy-icon-btn:hover { color: #34d399; }
         .hidden { display: none !important; }
         #toast {
             position: fixed;
@@ -376,7 +353,7 @@
         <i class="fa-solid fa-user-shield"></i>
     </button>
 
-    <!-- CANCEL TRANSACTION MODALS -->
+    <!-- CANCEL MODALS -->
     <div id="cancelWarningModal" class="custom-modal-overlay">
         <div class="custom-modal">
             <div style="font-size:18px; font-weight:bold; color:#34d399; text-align:center; margin-bottom:12px;">Cancel Transaction</div>
@@ -502,14 +479,13 @@
         let timeLeft = 600;
 
         window.onload = function() {
-            // Check if coming from index account tab or game pages
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('from') === 'account') {
                 sessionStorage.setItem('deposit_return_url', 'index.html#account');
             } else if (document.referrer && !document.referrer.includes('deposit.html')) {
                 let ref = document.referrer;
                 if (ref.includes('index.html') && !ref.includes('#')) {
-                    ref = 'index.html#account'; // default fallback for index to account tab if coming from mine
+                    ref = 'index.html#account';
                 }
                 sessionStorage.setItem('deposit_return_url', ref);
             }
@@ -542,7 +518,7 @@
         }
 
         function goToAdminPage() {
-            window.location.href = 'admin.html';
+            window.location.href = '../admin.html';
         }
 
         function handleAdminSecretTap() {
@@ -632,7 +608,6 @@
                     let walletBal = parseFloat(data.balance || 0);
                     let winningsBal = parseFloat(data.winningsBalance || 0);
                     let bonusBal = parseFloat(data.bonusBalance || data.rewardsBalance || 0);
-                    
                     let total = walletBal + winningsBal + bonusBal;
                     document.getElementById('userTotalBalance').textContent = total.toFixed(2);
                 }
