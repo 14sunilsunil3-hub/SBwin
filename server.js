@@ -193,8 +193,18 @@ app.get('/api/admin/live-bets', async (req, res) => {
         };
 
         bets.forEach(bet => {
-            let val = String(bet.betValue);
-            if (totals[val] !== undefined) totals[val] += bet.amount;
+            let val = String(bet.betValue).trim();
+            let lowerVal = val.toLowerCase();
+            
+            if (lowerVal === 'red') val = 'Red';
+            else if (lowerVal === 'green') val = 'Green';
+            else if (lowerVal === 'violet') val = 'Violet';
+            else if (lowerVal === 'big') val = 'Big';
+            else if (lowerVal === 'small') val = 'Small';
+
+            if (totals[val] !== undefined) {
+                totals[val] += bet.amount;
+            }
         });
 
         res.json({ success: true, totals });
