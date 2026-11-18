@@ -211,6 +211,12 @@ app.post('/api/admin/set-override', async (req, res) => {
             return res.status(403).json({ success: false, message: 'Unauthorized: Admin access required!' });
         }
 
+        // Allow admin override until last 1 second
+        const currentState = gameStates[timerType];
+        if (currentState && currentState.countdown <= 1) {
+            return res.status(400).json({ success: false, message: 'Too late! Last 1 second reached.' });
+        }
+
         await ManualOverride.deleteMany({ period });
         const newOverride = new ManualOverride({ period, timerType, number, used: false });
         await newOverride.save();
@@ -324,6 +330,7 @@ app.post('/api/bet', async (req, res) => {
     try {
         const { userId, timerType = '30s', period, betType, betValue, amount } = req.body;
         
+        // User betting closes at last 5 seconds
         if (!gameStates[timerType] || !gameStates[timerType].isBettingOpen || gameStates[timerType].countdown <= 5) {
             return res.status(400).json({ success: false, message: "Betting is closed for this period (Last 5s)!" });
         }
