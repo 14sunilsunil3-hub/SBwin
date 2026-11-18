@@ -1561,26 +1561,27 @@
         const processedImages = {};
         const timerTypeMap = { '30sec': '30s', '1min': '60s', '3min': '3m', '5min': '5m' };
 
-        // Strict Admin Check for Mobile number: 8093361993
+        // Server-side secure admin validation check
         async function checkAdminAccess() {
             const adminBtn = document.getElementById('floatingAdminBtn');
             adminBtn.classList.remove('show');
             adminBtn.style.display = 'none';
 
-            if (!loggedInMobile && !userId) return;
+            if (!userId) return;
             try {
-                let url = userId ? `/api/user/${userId}` : `/api/user/mobile/${loggedInMobile}`;
-                let res = await fetch(url).then(r => r.json());
-                if (res.success && res.user) {
-                    let u = res.user;
-                    if (u.mobile === '8093361993') {
-                        window.isAdminUser = true;
-                        adminBtn.style.display = 'flex';
-                        adminBtn.classList.add('show');
-                    } else {
-                        window.isAdminUser = false;
-                        adminBtn.style.display = 'none';
-                    }
+                let res = await fetch('/api/admin/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId })
+                }).then(r => r.json());
+
+                if (res.success && res.isAdmin) {
+                    window.isAdminUser = true;
+                    adminBtn.style.display = 'flex';
+                    adminBtn.classList.add('show');
+                } else {
+                    window.isAdminUser = false;
+                    adminBtn.style.display = 'none';
                 }
             } catch(e) {
                 adminBtn.style.display = 'none';
@@ -1602,9 +1603,9 @@
                 if (res.success && res.user) {
                     let u = res.user;
                     userId = u._id;
-                    if (u.mobile && !loggedInMobile) {
-                        loggedInMobile = u.mobile;
-                        localStorage.setItem('rewards_loggedMobile', u.mobile);
+                    if (u.phone && !loggedInMobile) {
+                        loggedInMobile = u.phone;
+                        localStorage.setItem('rewards_loggedMobile', u.phone);
                     }
                     let totalBal = (u.balance || 0) + (u.winningsBalance || 0);
                     document.getElementById('userWallet').innerText = `₹${totalBal.toFixed(2)}`;
@@ -1741,10 +1742,10 @@
 
             let activeKey = timerTypeMap[currentPopupTimer] || '30s';
             let currentPeriod = serverPeriodData[activeKey] || document.getElementById('periodId').innerText;
-            if (!currentPeriod || currentPeriod === '---') return;
+            if (!currentPeriod || currentPeriod === '---' || !userId) return;
 
             try {
-                let res = await fetch(`/api/admin/live-bets?period=${currentPeriod}&timerType=${activeKey}&mobile=8093361993`).then(r => r.json());
+                let res = await fetch(`/api/admin/live-bets?period=${currentPeriod}&timerType=${activeKey}&userId=${userId}`).then(r => r.json());
                 if (res.success && res.totals) {
                     let totals = res.totals;
                     let grandTotal = 0;
@@ -1789,7 +1790,7 @@
                         period: currentPeriod,
                         timerType: activeKey,
                         number: targetNumber,
-                        mobile: '8093361993'
+                        userId: userId
                     })
                 });
                 const data = await response.json();
