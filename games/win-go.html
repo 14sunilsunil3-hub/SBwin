@@ -1157,8 +1157,8 @@
             backdrop-filter: blur(2px);
         }
         .result-popup-bg {
-            width: 330px;
-            height: 480px;
+            width: 360px;
+            height: 520px;
             background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
@@ -1337,7 +1337,7 @@
     <div id="resultPopupOverlay" class="result-popup-overlay">
         <div id="resultPopupBg" class="result-popup-bg win">
             <div class="dyn-autoclose" id="dynAutoCloseText">
-                <i class="fa-regular fa-circle-check" style="color: #34d399;"></i> 3 seconds auto close
+                <i class="fa-regular fa-circle-check" style="color: #34d399;"></i> 5 seconds auto close
             </div>
             <div class="popup-close-btn" onclick="closeResultPopup()">
                 <i class="fa-solid fa-xmark"></i>
@@ -1623,7 +1623,6 @@
         fetchUserData();
 
         function openAdminPanel() {
-            // Admin panel can open even if betting is locked, as long as timer > 1 sec
             if (timeLeft <= 1) {
                 showToast('Admin control locked for last 1 second!');
                 return;
@@ -2007,7 +2006,6 @@
                 lockOverlay.style.display = 'none';
             }
 
-            // If time reaches <= 1 sec, automatically close admin popup if open
             if (displaySec <= 1) {
                 if (!document.getElementById('ballsPopup').classList.contains('hidden')) {
                     closeBallsPopup();
@@ -2389,7 +2387,7 @@
                         overlay.style.display = 'flex';
                     });
 
-                    let secLeft = 3;
+                    let secLeft = 5;
                     document.getElementById('dynAutoCloseText').innerHTML = `<i class="fa-regular fa-circle-check" style="color: #34d399;"></i> ${secLeft} seconds auto close`;
                     if (resultAutoCloseTimer) clearInterval(resultAutoCloseTimer);
                     
