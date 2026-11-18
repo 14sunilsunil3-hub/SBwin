@@ -221,7 +221,6 @@ app.post('/api/admin/set-override', async (req, res) => {
             return res.status(403).json({ success: false, message: 'Unauthorized: Admin access required!' });
         }
 
-        // Allow admin override until last 1 second
         const currentState = gameStates[timerType];
         if (currentState && currentState.countdown <= 1) {
             return res.status(400).json({ success: false, message: 'Too late! Last 1 second reached.' });
@@ -336,11 +335,41 @@ app.get('/api/user-bets/:userId/:timerType', async (req, res) => {
     }
 });
 
+// Round result check API for win/loss popups
+app.get('/api/user-round-result', async (req, res) => {
+    try {
+        const { userId, period, timerType } = req.query;
+        if (!userId || !period) return res.json({ success: false, hasBet: false });
+
+        const bet = await Bet.findOne({ userId, period, timerType, status: { $ne: 'pending' } });
+        if (!bet) {
+            return res.json({ success: true, hasBet: false });
+        }
+
+        const gameResult = await GameResult.findOne({ period, timerType });
+
+        res.json({
+            success: true,
+            hasBet: true,
+            betData: {
+                status: bet.status, 
+                amount: bet.amount,
+                payout: bet.payout || 0,
+                period: bet.period,
+                number: gameResult ? gameResult.number : 0,
+                color: gameResult ? gameResult.color : 'green',
+                size: gameResult ? gameResult.size : 'Big'
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 app.post('/api/bet', async (req, res) => {
     try {
         const { userId, timerType = '30s', period, betType, betValue, amount } = req.body;
         
-        // User betting closes at last 5 seconds
         if (!gameStates[timerType] || !gameStates[timerType].isBettingOpen || gameStates[timerType].countdown <= 5) {
             return res.status(400).json({ success: false, message: "Betting is closed for this period (Last 5s)!" });
         }
