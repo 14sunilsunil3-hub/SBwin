@@ -116,8 +116,8 @@ const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
-// Yahan apne team members ke UIDs daalo (e.g. ["123456", "789012"])
-const TEAM_UIDS = [];
+// Team members ke UIDs
+const TEAM_UIDS = ["702606"];
 
 function getUserAccessRole(user) {
     if (!user) return 'none';
