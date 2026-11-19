@@ -236,6 +236,94 @@ app.post('/api/admin/set-override', async (req, res) => {
 });
 
 // ==========================================
+// ADMIN REQUESTS & ACTION APIs
+// ==========================================
+app.get('/api/admin/requests', async (req, res) => {
+    try {
+        const deposits = await Deposit.find({})
+            .populate('userId', 'phone uid balance winningsBalance')
+            .sort({ createdAt: -1 });
+
+        const withdrawals = await Withdrawal.find({})
+            .populate('userId', 'phone uid balance winningsBalance')
+            .sort({ createdAt: -1 });
+
+        res.json({ success: true, deposits, withdrawals });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+app.post('/api/admin/action', async (req, res) => {
+    try {
+        const { type, id, action, reason } = req.body;
+
+        if (!['deposit', 'withdrawal'].includes(type) || !['approve', 'reject'].includes(action)) {
+            return res.status(400).json({ success: false, message: "Invalid type or action!" });
+        }
+
+        if (type === 'deposit') {
+            const deposit = await Deposit.findById(id);
+            if (!deposit) {
+                return res.status(404).json({ success: false, message: "Deposit request not found!" });
+            }
+            if (deposit.status !== 'pending') {
+                return res.status(400).json({ success: false, message: "Deposit already processed!" });
+            }
+
+            if (action === 'approve') {
+                deposit.status = 'approved';
+                await deposit.save();
+
+                const user = await User.findById(deposit.userId);
+                if (user) {
+                    user.balance = (Number(user.balance) || 0) + Number(deposit.amount);
+                    await user.save();
+                }
+                return res.json({ success: true, message: "Deposit approved and balance updated!" });
+            }
+
+            if (action === 'reject') {
+                deposit.status = 'rejected';
+                deposit.rejectReason = reason || 'Rejected by admin';
+                await deposit.save();
+                return res.json({ success: true, message: "Deposit rejected!" });
+            }
+        }
+
+        if (type === 'withdrawal') {
+            const withdrawal = await Withdrawal.findById(id);
+            if (!withdrawal) {
+                return res.status(404).json({ success: false, message: "Withdrawal request not found!" });
+            }
+            if (withdrawal.status !== 'pending') {
+                return res.status(400).json({ success: false, message: "Withdrawal already processed!" });
+            }
+
+            if (action === 'approve') {
+                withdrawal.status = 'approved';
+                await withdrawal.save();
+                return res.json({ success: true, message: "Withdrawal approved!" });
+            }
+
+            if (action === 'reject') {
+                withdrawal.status = 'rejected';
+                await withdrawal.save();
+
+                const user = await User.findById(withdrawal.userId);
+                if (user) {
+                    user.winningsBalance = (Number(user.winningsBalance) || 0) + Number(withdrawal.amount);
+                    await user.save();
+                }
+                return res.json({ success: true, message: "Withdrawal rejected and balance refunded!" });
+            }
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ==========================================
 // DEPOSIT APIs
 // ==========================================
 app.post('/api/deposit', async (req, res) => {
