@@ -6,7 +6,7 @@
 <title>Team RNG View</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
     body {
         min-height: 100vh;
         display: flex;
@@ -39,6 +39,7 @@
         border: 1px solid rgba(56, 189, 248, 0.35);
         padding: 3px 8px;
         border-radius: 20px;
+        letter-spacing: 0.3px;
     }
     .timer-tabs-row {
         display: grid;
@@ -56,38 +57,137 @@
         font-weight: 800;
         text-align: center;
         cursor: pointer;
+        transition: all 0.2s ease;
     }
     .timer-tab.active {
         background: #7c3aed;
         color: #fff;
         border-color: #38bdf8;
+        box-shadow: 0 0 8px rgba(124, 58, 237, 0.5);
     }
     .single-ball-box {
         background: rgba(15, 23, 42, 0.65);
         border: 1px solid rgba(124, 58, 237, 0.35);
-        padding: 14px;
+        padding: 14px 16px;
         border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 14px;
     }
+
+    /* Glossy 3D Ball Styles */
     .ball {
+        position: relative;
         width: 58px;
         height: 58px;
+        flex-shrink: 0;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 24px;
-        font-weight: 900;
-        flex-shrink: 0;
-        box-shadow: inset 0 -5px 7px rgba(0,0,0,0.35), 0 4px 10px rgba(0,0,0,0.4);
+        font-weight: bold;
+        overflow: hidden;
+        outline: none;
+        border: none;
+        box-shadow: inset 0 -5px 7px rgba(0,0,0,0.3), 0 4px 10px rgba(0,0,0,0.4);
+        transition: transform 0.2s ease;
     }
-    .ball.red { background: radial-gradient(circle, #ff8585 20%, #e60012 85%); color: #fff; }
-    .ball.green { background: radial-gradient(circle, #7ce8a2 20%, #00b050 85%); color: #fff; }
-    .ball.split-0 { background: linear-gradient(135deg, #ff4d4d 48%, #7a00cc 52%); color: #fff; }
-    .ball.split-5 { background: linear-gradient(135deg, #00b050 48%, #7a00cc 52%); color: #fff; }
+    .ball.pop-anim {
+        transform: scale(0.75);
+    }
+    .ball::before {
+        content: '';
+        position: absolute;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        z-index: 1;
+    }
+    .ball::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 15px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.65);
+        border-radius: 50%;
+        z-index: 3;
+    }
+    .side-glow-left, .side-glow-right, .bottom-glow {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        z-index: 3;
+    }
+    .side-glow-left {
+        top: 50%;
+        left: 2px;
+        transform: translateY(-50%);
+        width: 5px;
+        height: 13px;
+    }
+    .side-glow-right {
+        top: 50%;
+        right: 2px;
+        transform: translateY(-50%);
+        width: 5px;
+        height: 13px;
+    }
+    .bottom-glow {
+        bottom: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 11px;
+        height: 3.5px;
+    }
+    .ball span {
+        position: relative;
+        z-index: 2;
+    }
+
+    .ball.red {
+        background: radial-gradient(circle, rgba(255,107,107,0.3) 30%, #e60012 80%);
+    }
+    .ball.red::before {
+        background: radial-gradient(circle, rgba(255,255,255,0.88) 40%, rgba(255,107,107,0.3) 100%);
+    }
+    .ball.red span { color: #e60012; }
+
+    .ball.green {
+        background: radial-gradient(circle, rgba(92,214,133,0.3) 30%, #00b050 80%);
+    }
+    .ball.green::before {
+        background: radial-gradient(circle, rgba(255,255,255,0.88) 40%, rgba(92,214,133,0.3) 100%);
+    }
+    .ball.green span { color: #00b050; }
+
+    .ball.split-0 {
+        background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 45%, #b366ff 55%, #7a00cc 100%);
+    }
+    .ball.split-0::before {
+        background: radial-gradient(circle, rgba(255,255,255,0.88) 40%, rgba(179,102,255,0.3) 100%);
+    }
+    .ball.split-0 span {
+        background: linear-gradient(135deg, #cc0000, #800080);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .ball.split-5 {
+        background: linear-gradient(135deg, #00b050 0%, #008033 45%, #b366ff 55%, #7a00cc 100%);
+    }
+    .ball.split-5::before {
+        background: radial-gradient(circle, rgba(255,255,255,0.88) 40%, rgba(179,102,255,0.3) 100%);
+    }
+    .ball.split-5 span {
+        background: linear-gradient(135deg, #008033, #800080);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 
     .result-details-col { display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .status-pill {
@@ -97,14 +197,16 @@
         font-size: 12px;
         font-weight: 800;
         text-transform: uppercase;
+        letter-spacing: 0.6px;
         text-align: center;
         color: #fff;
+        transition: all 0.2s ease;
     }
-    .size-big { background: linear-gradient(135deg, #f97316, #ea580c); }
-    .size-small { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-    .clr-green { background: linear-gradient(135deg, #10b981, #059669); }
-    .clr-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
-    .clr-violet { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+    .size-big { background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 3px 10px rgba(249, 115, 22, 0.35); }
+    .size-small { background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 3px 10px rgba(59, 130, 246, 0.35); }
+    .clr-green { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35); }
+    .clr-red { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 3px 10px rgba(239, 68, 68, 0.35); }
+    .clr-violet { background: linear-gradient(135deg, #a855f7, #7c3aed); box-shadow: 0 3px 10px rgba(168, 85, 247, 0.35); }
 
     .refresh-btn {
         margin-top: 12px;
@@ -116,12 +218,17 @@
         border-radius: 10px;
         font-weight: 800;
         font-size: 13px;
+        letter-spacing: 0.5px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 6px;
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);
+        transition: transform 0.15s ease, opacity 0.2s ease;
     }
+    .refresh-btn:active { transform: scale(0.97); }
+    .refresh-btn.loading { opacity: 0.85; pointer-events: none; }
     .refresh-btn i.spin { animation: spinAnim 0.7s linear infinite; }
     @keyframes spinAnim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>
@@ -140,7 +247,12 @@
         </div>
 
         <div class="single-ball-box">
-            <div class="ball split-0" id="activeBall"><span id="activeBallNumber">-</span></div>
+            <div class="ball split-0" id="activeBall">
+                <div class="side-glow-left"></div>
+                <div class="side-glow-right"></div>
+                <div class="bottom-glow"></div>
+                <span id="activeBallNumber">-</span>
+            </div>
             <div class="result-details-col">
                 <div class="status-pill size-small" id="activeSizeBadge">---</div>
                 <div class="status-pill clr-violet" id="activeColorBadge">---</div>
@@ -185,20 +297,27 @@
             const cfg = ballConfig[num];
 
             const ballEl = document.getElementById('activeBall');
-            ballEl.className = 'ball ' + cfg.ballClass;
-            document.getElementById('activeBallNumber').textContent = num;
+            const numEl = document.getElementById('activeBallNumber');
+            ballEl.classList.add('pop-anim');
 
-            const sizeEl = document.getElementById('activeSizeBadge');
-            sizeEl.textContent = (data.size || cfg.size).toUpperCase();
-            sizeEl.className = 'status-pill ' + cfg.sizeClass;
+            setTimeout(() => {
+                ballEl.className = 'ball ' + cfg.ballClass;
+                numEl.textContent = num;
 
-            const colorEl = document.getElementById('activeColorBadge');
-            colorEl.textContent = (data.color || cfg.color).toUpperCase();
-            colorEl.className = 'status-pill ' + cfg.colorClass;
+                const sizeEl = document.getElementById('activeSizeBadge');
+                sizeEl.textContent = (data.size || cfg.size).toUpperCase();
+                sizeEl.className = 'status-pill ' + cfg.sizeClass;
+
+                const colorEl = document.getElementById('activeColorBadge');
+                colorEl.textContent = (data.color || cfg.color).toUpperCase();
+                colorEl.className = 'status-pill ' + cfg.colorClass;
+            }, 120);
         }
 
         async function loadRngResult() {
+            const btn = document.getElementById('refreshBtn');
             const icon = document.getElementById('refreshIcon');
+            btn.classList.add('loading');
             icon.classList.add('spin');
             try {
                 const res = await fetch(`/api/team/rng-result?userId=${encodeURIComponent(userId || '')}&timerType=${encodeURIComponent(currentTimerType)}`).then(r => r.json());
@@ -206,7 +325,10 @@
                     renderRngData(res);
                 }
             } catch (err) {}
-            setTimeout(() => icon.classList.remove('spin'), 300);
+            setTimeout(() => {
+                icon.classList.remove('spin');
+                btn.classList.remove('loading');
+            }, 300);
         }
 
         function switchTimer(type, el) {
