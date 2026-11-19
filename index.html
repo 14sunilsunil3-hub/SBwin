@@ -166,6 +166,29 @@
       </div>
   </div>
 
+  <!-- Auth Required Popup Modal -->
+  <div id="authRequiredModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm px-5">
+    <div class="w-full max-w-sm rounded-2xl bg-slate-900 border border-purple-500/40 p-6 text-center shadow-2xl space-y-4">
+      <div class="w-14 h-14 mx-auto rounded-full bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center text-emerald-400 text-2xl">
+        <i class="fa-solid fa-user-lock"></i>
+      </div>
+      <div class="space-y-1.5">
+        <h3 class="text-lg font-extrabold text-white">Login Required</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Account page access karne ke liye pehle login ya register karein.
+        </p>
+      </div>
+      <div class="flex flex-col gap-2.5 pt-1">
+        <button onclick="goToAuthPage('login')" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm shadow-lg transition active:scale-95">
+          Login / Register
+        </button>
+        <button onclick="closeAuthModal()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-4 max-w-xs w-full">
     <div class="bg-gray-900 border border-emerald-500/50 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
@@ -502,42 +525,89 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
-    let userId = localStorage.getItem('rewards_userId');
+    let userId = localStorage.getItem('rewards_userId') || localStorage.getItem('userId');
 
-    window.addEventListener('DOMContentLoaded', () => {
-        if (window.location.hash === '#account') {
-            switchTab('account');
+    function hideFullPageLoader() {
+        const loader = document.getElementById('fullPageLoader');
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => { loader.style.display = 'none'; }, 300);
         }
-    });
-
-    if (userId) {
-        socket.emit('registerUserSession', userId);
     }
 
-    async function validateUserSession() {
-        if (!userId) {
-            window.location.href = 'auth.html';
-            return;
+    function openAuthModal() {
+        const modal = document.getElementById('authRequiredModal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
+    }
+
+    function closeAuthModal() {
+        const modal = document.getElementById('authRequiredModal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    }
+
+    function goToAuthPage() {
+        window.location.href = 'auth.html';
+    }
+
+    async function checkLoginStatusWithServer() {
+        userId = localStorage.getItem('rewards_userId') || localStorage.getItem('userId');
+        if (!userId) {
+            return { loggedIn: false };
+        }
+
         try {
-            let res = await fetch('/api/check-session', {
+            const res = await fetch('/api/check-session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId })
             });
-            let data = await res.json();
-            if (data.success && !data.valid) {
-                localStorage.clear();
-                window.location.href = 'auth.html';
-            } else {
-                fetchUserData();
+
+            if (res.status === 401) {
+                localStorage.removeItem('rewards_userId');
+                localStorage.removeItem('userId');
+                return { loggedIn: false };
             }
-        } catch(e) {
-            fetchUserData();
+
+            const data = await res.json();
+            if (data && data.success && data.valid) {
+                return { loggedIn: true, user: data.user };
+            }
+
+            localStorage.removeItem('rewards_userId');
+            localStorage.removeItem('userId');
+            return { loggedIn: false };
+        } catch (err) {
+            return { loggedIn: false };
         }
     }
 
-    validateUserSession();
+    window.addEventListener('DOMContentLoaded', async () => {
+        if (userId) {
+            socket.emit('registerUserSession', userId);
+        }
+
+        if (window.location.hash === '#account') {
+            await switchTab('account');
+        }
+
+        hideFullPageLoader();
+    });
+
+    socket.on('forceLogout', () => {
+        localStorage.removeItem('rewards_userId');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('user');
+        if (!document.getElementById('page-account').classList.contains('hidden')) {
+            switchTab('home');
+        }
+        openAuthModal();
+    });
 
     let backgroundTimer = null;
     document.addEventListener('visibilitychange', () => {
@@ -555,14 +625,25 @@
                 clearTimeout(backgroundTimer);
                 backgroundTimer = null;
             }
+            if (userId) {
+                socket.emit('userHeartbeat', userId);
+            }
         }
     });
 
     async function fetchUserData() {
+        userId = localStorage.getItem('rewards_userId') || localStorage.getItem('userId');
+        if (!userId) return false;
+
         try {
             let res = await fetch(`/api/user/${userId}`);
+            if (res.status === 401) {
+                localStorage.removeItem('rewards_userId');
+                localStorage.removeItem('userId');
+                return false;
+            }
             let data = await res.json();
-            if(data.success) {
+            if (data.success) {
                 let walletBal = parseFloat(data.balance || 0);
                 let winningsBal = parseFloat(data.winningsBalance || 0);
                 let bonusBal = parseFloat(data.bonusBalance || data.rewardsBalance || 0);
@@ -576,15 +657,12 @@
                 if (data.user?.phone || data.user?.username || data.username) {
                     document.getElementById('profile-mobile').textContent = data.user?.phone || data.user?.username || data.username;
                 }
+                return true;
             }
-        } catch(e) {
+            return false;
+        } catch (e) {
             console.log("Error fetching user data");
-        } finally {
-            const loader = document.getElementById('fullPageLoader');
-            if (loader) {
-                loader.style.opacity = '0';
-                setTimeout(() => { loader.style.display = 'none'; }, 300);
-            }
+            return false;
         }
     }
 
@@ -615,7 +693,17 @@
         }, 800);
     }
 
-    function switchTab(tabName) {
+    async function switchTab(tabName) {
+      if (tabName === 'account') {
+        showToast('Checking login status...');
+        const sessionStatus = await checkLoginStatusWithServer();
+        if (!sessionStatus.loggedIn) {
+          openAuthModal();
+          return;
+        }
+        await fetchUserData();
+      }
+
       document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('text-emerald-400');
