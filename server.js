@@ -6,7 +6,7 @@ const cors = require('cors');
 const dns = require('dns');
 const path = require('path');
 
-const { initWinGoGame, gameStates } = require('./game-logic/wingoGame');
+const { initWinGoGame, gameStates, getRngOutcome } = require('./game-logic/wingoGame');
 
 try {
     dns.setServers(['8.8.8.8', '1.1.1.1']);
@@ -116,6 +116,16 @@ const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
+// Yahan apne team members ke UIDs daalo (e.g. ["123456", "789012"])
+const TEAM_UIDS = [];
+
+function getUserAccessRole(user) {
+    if (!user) return 'none';
+    if (ADMIN_NUMBERS.includes(user.phone)) return 'admin';
+    if (user.uid && TEAM_UIDS.includes(String(user.uid).trim())) return 'team';
+    return 'none';
+}
+
 async function setupAdminAccount() {
     try {
         const adminPhone = "8093361993";
@@ -161,18 +171,56 @@ app.get('/', (req, res) => {
 });
 
 // ==========================================
-// SECURE SERVER-SIDE ADMIN APIs
+// SECURE SERVER-SIDE ADMIN & TEAM APIs
 // ==========================================
 app.post('/api/admin/verify', async (req, res) => {
     try {
         const { userId } = req.body;
-        if (!userId) return res.json({ success: true, isAdmin: false });
+        if (!userId) return res.json({ success: true, isAdmin: false, isTeam: false, role: 'none' });
         const user = await User.findById(userId);
-        if (!user) return res.json({ success: true, isAdmin: false });
-        const isAdmin = ADMIN_NUMBERS.includes(user.phone);
-        res.json({ success: true, isAdmin });
+        if (!user) return res.json({ success: true, isAdmin: false, isTeam: false, role: 'none' });
+
+        const role = getUserAccessRole(user);
+        const isAdmin = role === 'admin';
+        const isTeam = role === 'team';
+        res.json({ success: true, isAdmin, isTeam, role, uid: user.uid });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// Team RNG View API: Only returns pure RNG result (never affected by ManualOverride)
+app.get('/api/team/rng-result', async (req, res) => {
+    try {
+        const { userId, timerType = '30s' } = req.query;
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Login required!' });
+        }
+
+        const user = await User.findById(userId);
+        const role = getUserAccessRole(user);
+        if (role !== 'team' && role !== 'admin') {
+            return res.status(403).json({ success: false, message: 'Access Denied: Team UID required!' });
+        }
+
+        const validTypes = ['30s', '60s', '3m', '5m'];
+        const activeType = validTypes.includes(timerType) ? timerType : '30s';
+        const state = gameStates[activeType] || { period: '', countdown: 0, isBettingOpen: true };
+        const period = state.period || '';
+        const rngOutcome = getRngOutcome(period, activeType);
+
+        res.json({
+            success: true,
+            source: 'rng',
+            timerType: activeType,
+            period,
+            countdown: state.countdown,
+            number: rngOutcome.number,
+            color: rngOutcome.color,
+            size: rngOutcome.size
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -180,7 +228,7 @@ app.get('/api/admin/live-bets', async (req, res) => {
     try {
         const { period, timerType, userId } = req.query;
         const user = await User.findById(userId);
-        if (!user || !ADMIN_NUMBERS.includes(user.phone)) {
+        if (!user || getUserAccessRole(user) !== 'admin') {
             return res.status(403).json({ success: false, message: 'Access Denied: Admin only!' });
         }
 
@@ -217,7 +265,7 @@ app.post('/api/admin/set-override', async (req, res) => {
     try {
         const { period, timerType, number, userId } = req.body;
         const user = await User.findById(userId);
-        if (!user || !ADMIN_NUMBERS.includes(user.phone)) {
+        if (!user || getUserAccessRole(user) !== 'admin') {
             return res.status(403).json({ success: false, message: 'Unauthorized: Admin access required!' });
         }
 
@@ -392,7 +440,9 @@ app.post('/api/login', async (req, res) => {
         user.lastLoginTime = new Date();
         await user.save();
 
-        const isAdmin = ADMIN_NUMBERS.includes(phone);
+        const role = getUserAccessRole(user);
+        const isAdmin = role === 'admin';
+        const isTeam = role === 'team';
 
         res.json({ 
             success: true, 
@@ -401,6 +451,8 @@ app.post('/api/login', async (req, res) => {
             balance: user.balance,
             winningsBalance: user.winningsBalance,
             isAdmin: isAdmin,
+            isTeam: isTeam,
+            role: role,
             user: { 
                 _id: user._id, 
                 uid: user.uid,
@@ -408,7 +460,9 @@ app.post('/api/login', async (req, res) => {
                 balance: user.balance, 
                 winningsBalance: user.winningsBalance,
                 totalBetDone: user.totalBetDone || 0,
-                isAdmin: isAdmin
+                isAdmin: isAdmin,
+                isTeam: isTeam,
+                role: role
             } 
         });
     } catch (err) {
@@ -420,8 +474,10 @@ app.get('/api/user/:userId', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
-        const isAdmin = ADMIN_NUMBERS.includes(user.phone);
-        res.json({ success: true, balance: user.balance, winningsBalance: user.winningsBalance, totalBetDone: user.totalBetDone || 0, isAdmin, user });
+        const role = getUserAccessRole(user);
+        const isAdmin = role === 'admin';
+        const isTeam = role === 'team';
+        res.json({ success: true, balance: user.balance, winningsBalance: user.winningsBalance, totalBetDone: user.totalBetDone || 0, isAdmin, isTeam, role, user });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
