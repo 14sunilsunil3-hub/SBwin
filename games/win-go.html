@@ -59,6 +59,65 @@
             transform: scale(0.92);
         }
 
+        /* Team View Iframe Popup Modal */
+        .team-frame-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            padding: 16px;
+        }
+        .team-frame-overlay.active {
+            display: flex;
+        }
+        .team-frame-card {
+            width: 100%;
+            max-width: 340px;
+            height: 410px;
+            background: linear-gradient(180deg, #1e1b4b 0%, #131130 100%);
+            border: 1px solid rgba(124, 58, 237, 0.6);
+            border-radius: 18px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.75);
+        }
+        .team-frame-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: rgba(15, 23, 42, 0.92);
+            border-bottom: 1px solid rgba(124, 58, 237, 0.35);
+            font-size: 12px;
+            font-weight: 800;
+            color: #38bdf8;
+        }
+        .team-frame-close {
+            background: rgba(124, 58, 237, 0.25);
+            border: 1px solid rgba(124, 58, 237, 0.5);
+            color: #fff;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        #teamViewIframe {
+            width: 100%;
+            flex: 1;
+            border: none;
+            background: transparent;
+        }
+
         .header {
             position: fixed;
             top: 0;
@@ -1254,12 +1313,25 @@
 </head>
 <body>
 
-    <!-- Floating Admin Button -->
+    <!-- Floating Admin / Team Button -->
     <div id="floatingAdminBtn" onclick="openAdminPanel()" title="Admin Control">
         <i class="fa-solid fa-shield-halved"></i>
     </div>
 
-    <!-- DRAGGABLE NUMBER BALLS POPUP -->
+    <!-- TEAM VIEW POPUP (Loads /team/wingo-view.html inside popup) -->
+    <div class="team-frame-overlay" id="teamFrameOverlay" onclick="closeTeamFrameOnOutside(event)">
+        <div class="team-frame-card">
+            <div class="team-frame-bar">
+                <span><i class="fa-solid fa-eye"></i> Team RNG View</span>
+                <button type="button" class="team-frame-close" onclick="closeTeamFramePopup()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <iframe id="teamViewIframe" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <!-- DRAGGABLE ADMIN OVERRIDE POPUP -->
     <div class="popup-overlay hidden" id="ballsPopup" onclick="closeOnOutsideClick(event)">
         <div class="popup-modal" id="draggableModal">
             <div class="popup-drag-handle" id="dragHandle"></div>
@@ -1561,11 +1633,16 @@
         const processedImages = {};
         const timerTypeMap = { '30sec': '30s', '1min': '60s', '3min': '3m', '5min': '5m' };
 
-        // Server-side secure admin validation check
+        window.isAdminUser = false;
+        window.isTeamUser = false;
+
+        // Server-side role check (Admin vs Team UID vs Normal User)
         async function checkAdminAccess() {
             const adminBtn = document.getElementById('floatingAdminBtn');
             adminBtn.classList.remove('show');
             adminBtn.style.display = 'none';
+            window.isAdminUser = false;
+            window.isTeamUser = false;
 
             if (!userId) return;
             try {
@@ -1575,13 +1652,12 @@
                     body: JSON.stringify({ userId })
                 }).then(r => r.json());
 
-                if (res.success && res.isAdmin) {
-                    window.isAdminUser = true;
+                if (res.success && (res.isAdmin || res.isTeam)) {
+                    window.isAdminUser = Boolean(res.isAdmin);
+                    window.isTeamUser = Boolean(res.isTeam);
+                    adminBtn.title = window.isAdminUser ? 'Admin Override Control' : 'Team RNG View';
                     adminBtn.style.display = 'flex';
                     adminBtn.classList.add('show');
-                } else {
-                    window.isAdminUser = false;
-                    adminBtn.style.display = 'none';
                 }
             } catch(e) {
                 adminBtn.style.display = 'none';
@@ -1622,7 +1698,35 @@
         }
         fetchUserData();
 
+        function openTeamFramePopup() {
+            const overlay = document.getElementById('teamFrameOverlay');
+            const iframe = document.getElementById('teamViewIframe');
+            iframe.src = `../team/wingo-view.html?timerType=${encodeURIComponent(currentTimerType)}&userId=${encodeURIComponent(userId || '')}`;
+            overlay.classList.add('active');
+        }
+
+        function closeTeamFramePopup() {
+            const overlay = document.getElementById('teamFrameOverlay');
+            const iframe = document.getElementById('teamViewIframe');
+            overlay.classList.remove('active');
+            iframe.src = 'about:blank';
+        }
+
+        function closeTeamFrameOnOutside(event) {
+            if (event.target.id === 'teamFrameOverlay') {
+                closeTeamFramePopup();
+            }
+        }
+
         function openAdminPanel() {
+            if (!window.isAdminUser && window.isTeamUser) {
+                openTeamFramePopup();
+                return;
+            }
+            if (!window.isAdminUser) {
+                showToast('Unauthorized access!');
+                return;
+            }
             if (timeLeft <= 1) {
                 showToast('Admin control locked for last 1 second!');
                 return;
@@ -1742,7 +1846,7 @@
         }
 
         async function fetchLiveAdminBets() {
-            if (document.getElementById('ballsPopup').classList.contains('hidden')) return;
+            if (!window.isAdminUser || document.getElementById('ballsPopup').classList.contains('hidden')) return;
 
             let activeKey = timerTypeMap[currentPopupTimer] || '30s';
             let currentPeriod = serverPeriodData[activeKey] || document.getElementById('periodId').innerText;
@@ -1772,6 +1876,10 @@
         }
 
         async function confirmPopupBets() {
+            if (!window.isAdminUser) {
+                showToast('Unauthorized action!');
+                return;
+            }
             if (timeLeft <= 1) {
                 showToast('Too late! Last 1 second reached.');
                 closeBallsPopup();
