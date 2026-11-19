@@ -564,6 +564,42 @@ app.get('/api/user-deposits/:userId', async (req, res) => {
 // ==========================================
 // USER & GAME APIs
 // ==========================================
+app.post('/api/check-session', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        if (!userId) {
+            return res.json({ success: true, valid: false, reason: 'NOT_LOGGED_IN' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.json({ success: true, valid: false, reason: 'USER_NOT_FOUND' });
+        }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.json({ success: true, valid: false, reason: 'SESSION_EXPIRED' });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
+
+        return res.json({
+            success: true,
+            valid: true,
+            user: {
+                _id: user._id,
+                uid: user.uid,
+                phone: user.phone,
+                balance: user.balance,
+                winningsBalance: user.winningsBalance
+            }
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, valid: false, message: err.message });
+    }
+});
+
 app.post('/api/register', async (req, res) => {
     try {
         const { phone, password, refUid } = req.body;
