@@ -40,6 +40,8 @@ app.get('/withdraw.html', (req, res) => {
 
 const MONGO_URI = "mongodb+srv://14sunilsunil3_db_user:W1LlrneQfi7toLpn@cluster1.pr9b0cx.mongodb.net/sbwin_db?retryWrites=true&w=majority";
 
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
 function generateUID() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
@@ -51,7 +53,9 @@ const userSchema = new mongoose.Schema({
     balance: { type: Number, default: 0 }, 
     winningsBalance: { type: Number, default: 0 }, 
     totalBetDone: { type: Number, default: 0 }, 
-    lastLoginTime: { type: Date, default: null }, 
+    lastLoginTime: { type: Date, default: null },
+    lastActiveAt: { type: Date, default: Date.now },
+    sessionExpired: { type: Boolean, default: false },
     referredBy: { type: String, default: null },
     createdAt: { type: Date, default: Date.now }
 });
@@ -137,7 +141,9 @@ async function setupAdminAccount() {
                 phone: adminPhone,
                 password: adminPassword,
                 balance: 100,
-                winningsBalance: 0
+                winningsBalance: 0,
+                lastActiveAt: new Date(),
+                sessionExpired: false
             });
             await adminUser.save();
         }
@@ -147,6 +153,62 @@ async function setupAdminAccount() {
 }
 
 const activeOnlineSocketUsers = new Set();
+const userSocketMap = new Map(); // userId -> Set of socket.ids
+
+async function isUserSessionValid(user) {
+    if (!user) return false;
+    if (user.sessionExpired) return false;
+
+    const uidStr = user._id.toString();
+    const isOnline = activeOnlineSocketUsers.has(uidStr);
+    const lastActiveMs = user.lastActiveAt ? new Date(user.lastActiveAt).getTime() : 0;
+
+    if (!isOnline && (!lastActiveMs || (Date.now() - lastActiveMs) >= ONE_HOUR_MS)) {
+        user.sessionExpired = true;
+        user.lastLoginTime = null;
+        await user.save();
+        return false;
+    }
+
+    return true;
+}
+
+function startInactivityLogoutChecker() {
+    setInterval(async () => {
+        try {
+            const cutoff = new Date(Date.now() - ONE_HOUR_MS);
+
+            const inactiveUsers = await User.find({
+                sessionExpired: { $ne: true },
+                $or: [
+                    { lastActiveAt: { $lte: cutoff } },
+                    { lastActiveAt: null }
+                ]
+            });
+
+            for (const u of inactiveUsers) {
+                const uidStr = u._id.toString();
+                if (!activeOnlineSocketUsers.has(uidStr)) {
+                    u.sessionExpired = true;
+                    u.lastLoginTime = null;
+                    await u.save();
+
+                    const sockets = userSocketMap.get(uidStr);
+                    if (sockets) {
+                        sockets.forEach((sockId) => {
+                            io.to(sockId).emit('forceLogout', {
+                                code: 'SESSION_EXPIRED',
+                                reason: 'Session expired due to 1 hour inactivity. Please login again.'
+                            });
+                        });
+                    }
+                }
+            }
+        } catch (err) {
+            console.error("Inactivity logout check error:", err.message);
+        }
+    }, 60 * 1000);
+}
 
 function startMidnightResetChecker() {
     setInterval(async () => {
@@ -180,6 +242,18 @@ app.post('/api/admin/verify', async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return res.json({ success: true, isAdmin: false, isTeam: false, role: 'none' });
 
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
+
         const role = getUserAccessRole(user);
         const isAdmin = role === 'admin';
         const isTeam = role === 'team';
@@ -198,6 +272,22 @@ app.get('/api/team/rng-result', async (req, res) => {
         }
 
         const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
+
         const role = getUserAccessRole(user);
         if (role !== 'team' && role !== 'admin') {
             return res.status(403).json({ success: false, message: 'Access Denied: Team UID required!' });
@@ -228,9 +318,25 @@ app.get('/api/admin/live-bets', async (req, res) => {
     try {
         const { period, timerType, userId } = req.query;
         const user = await User.findById(userId);
-        if (!user || getUserAccessRole(user) !== 'admin') {
+        if (!user) {
             return res.status(403).json({ success: false, message: 'Access Denied: Admin only!' });
         }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        if (getUserAccessRole(user) !== 'admin') {
+            return res.status(403).json({ success: false, message: 'Access Denied: Admin only!' });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
 
         const bets = await Bet.find({ period, timerType, status: 'pending' });
         let totals = {
@@ -265,9 +371,25 @@ app.post('/api/admin/set-override', async (req, res) => {
     try {
         const { period, timerType, number, userId } = req.body;
         const user = await User.findById(userId);
-        if (!user || getUserAccessRole(user) !== 'admin') {
+        if (!user) {
             return res.status(403).json({ success: false, message: 'Unauthorized: Admin access required!' });
         }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        if (getUserAccessRole(user) !== 'admin') {
+            return res.status(403).json({ success: false, message: 'Unauthorized: Admin access required!' });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
 
         const currentState = gameStates[timerType];
         if (currentState && currentState.countdown <= 1) {
@@ -380,6 +502,24 @@ app.post('/api/deposit', async (req, res) => {
         if (!userId || !amount || !utr) {
             return res.status(400).json({ success: false, message: "All fields are required!" });
         }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found!" });
+        }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
+
         const newDeposit = new Deposit({
             userId,
             amount: Number(amount),
@@ -397,6 +537,23 @@ app.post('/api/deposit', async (req, res) => {
 app.get('/api/user-deposits/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found!" });
+        }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
+
         const deposits = await Deposit.find({ userId }).sort({ createdAt: -1 }).limit(20);
         res.json({ success: true, deposits });
     } catch (err) {
@@ -415,12 +572,15 @@ app.post('/api/register', async (req, res) => {
         const existingUser = await User.findOne({ phone });
         if (existingUser) return res.status(400).json({ success: false, message: "This phone number is already registered!" });
 
+        const now = new Date();
         const newUser = new User({ 
             phone, 
             password, 
             balance: 0, 
             winningsBalance: 0,
-            lastLoginTime: new Date(), 
+            lastLoginTime: now,
+            lastActiveAt: now,
+            sessionExpired: false,
             referredBy: refUid || null 
         });
 
@@ -437,7 +597,10 @@ app.post('/api/login', async (req, res) => {
         const user = await User.findOne({ phone, password });
         if (!user) return res.status(400).json({ success: false, message: "Invalid phone number or password!" });
 
-        user.lastLoginTime = new Date();
+        const now = new Date();
+        user.lastLoginTime = now;
+        user.lastActiveAt = now;
+        user.sessionExpired = false;
         await user.save();
 
         const role = getUserAccessRole(user);
@@ -474,6 +637,19 @@ app.get('/api/user/:userId', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
+
         const role = getUserAccessRole(user);
         const isAdmin = role === 'admin';
         const isTeam = role === 'team';
@@ -502,6 +678,21 @@ app.get('/api/game-history/:timerType', async (req, res) => {
 app.get('/api/user-bets/:userId/:timerType', async (req, res) => {
     try {
         const { userId, timerType } = req.params;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
+
         const page = parseInt(req.query.page) || 1;
         const limit = 10;
         const skip = (page - 1) * limit;
@@ -519,6 +710,21 @@ app.get('/api/user-round-result', async (req, res) => {
     try {
         const { userId, period, timerType } = req.query;
         if (!userId || !period) return res.json({ success: false, hasBet: false });
+
+        const user = await User.findById(userId);
+        if (!user) return res.json({ success: false, hasBet: false });
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
 
         const bet = await Bet.findOne({ userId, period, timerType, status: { $ne: 'pending' } });
         if (!bet) {
@@ -554,8 +760,21 @@ app.post('/api/bet', async (req, res) => {
         }
 
         const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found!" });
+        }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
         const totalUserBal = (user.balance || 0) + (user.winningsBalance || 0);
-        if (!user || totalUserBal < Number(amount)) {
+        if (totalUserBal < Number(amount)) {
             return res.status(400).json({ success: false, message: "Insufficient balance!" });
         }
 
@@ -569,6 +788,7 @@ app.post('/api/bet', async (req, res) => {
         }
 
         user.totalBetDone = (user.totalBetDone || 0) + deductAmt;
+        user.lastActiveAt = new Date();
         await user.save();
 
         const newBet = new Bet({ userId, timerType, period, betType, betValue, amount: deductAmt });
@@ -600,6 +820,7 @@ app.get('*', (req, res) => {
 mongoose.connect(MONGO_URI).then(async () => {
     console.log("Connected to MongoDB successfully!");
     await setupAdminAccount();
+    startInactivityLogoutChecker();
     startMidnightResetChecker();
     initWinGoGame(io, GameResult, Bet, ManualOverride, User);
 }).catch(err => {
@@ -609,14 +830,60 @@ mongoose.connect(MONGO_URI).then(async () => {
 io.on('connection', (socket) => {
     let currentConnectedUserId = null;
 
-    socket.on('registerUserSession', (userId) => {
-        currentConnectedUserId = userId;
-        if (userId) activeOnlineSocketUsers.add(userId);
+    socket.on('registerUserSession', async (userId) => {
+        if (!userId) return;
+        currentConnectedUserId = String(userId);
+        activeOnlineSocketUsers.add(currentConnectedUserId);
+
+        if (!userSocketMap.has(currentConnectedUserId)) {
+            userSocketMap.set(currentConnectedUserId, new Set());
+        }
+        userSocketMap.get(currentConnectedUserId).add(socket.id);
+
+        try {
+            const user = await User.findById(currentConnectedUserId);
+            if (user) {
+                const validSession = await isUserSessionValid(user);
+                if (!validSession) {
+                    activeOnlineSocketUsers.delete(currentConnectedUserId);
+                    socket.emit('forceLogout', {
+                        code: 'SESSION_EXPIRED',
+                        reason: 'Session expired due to 1 hour inactivity. Please login again.'
+                    });
+                    return;
+                }
+                user.lastActiveAt = new Date();
+                await user.save();
+            }
+        } catch (err) {}
     });
 
-    socket.on('disconnect', () => {
+    socket.on('userHeartbeat', async (userId) => {
+        const uid = userId ? String(userId) : currentConnectedUserId;
+        if (!uid) return;
+        try {
+            await User.findByIdAndUpdate(uid, { lastActiveAt: new Date() });
+        } catch (err) {}
+    });
+
+    socket.on('disconnect', async () => {
         if (currentConnectedUserId) {
-            setTimeout(() => activeOnlineSocketUsers.delete(currentConnectedUserId), 10000);
+            const uid = currentConnectedUserId;
+            const sockSet = userSocketMap.get(uid);
+            if (sockSet) {
+                sockSet.delete(socket.id);
+                if (sockSet.size === 0) {
+                    userSocketMap.delete(uid);
+                    setTimeout(() => {
+                        if (!userSocketMap.has(uid)) {
+                            activeOnlineSocketUsers.delete(uid);
+                        }
+                    }, 10000);
+                }
+            }
+            try {
+                await User.findByIdAndUpdate(uid, { lastActiveAt: new Date() });
+            } catch (err) {}
         }
     });
 
