@@ -27,27 +27,36 @@ const gameStates = {
     '5m':  { countdown: 299, isBettingOpen: true, period: '', startTime: 0 }
 };
 
+function buildOutcomeFromNumber(randomNum) {
+    const num = ((Number(randomNum) % 10) + 10) % 10;
+    let color = 'green';
+    if ([2, 4, 6, 8].includes(num)) color = 'red';
+    else if ([0, 5].includes(num)) color = 'violet';
+    const size = num >= 5 ? 'big' : 'small';
+    return { number: num, color, size };
+}
+
+// Pure deterministic RNG per period & timerType (ManualOverride does NOT affect this)
+function getRngOutcome(period, timerType) {
+    const safePeriod = String(period || '');
+    const safeType = String(timerType || '30s');
+    const seed = `${safePeriod}_${safeType}_sbwin_pure_rng_v1`;
+    const hash = crypto.createHash('sha256').update(seed).digest('hex');
+    const randomNum = parseInt(hash.substring(0, 8), 16) % 10;
+    return buildOutcomeFromNumber(randomNum);
+}
+
 async function getGameOutcome(period, timerType, ManualOverride) {
     const override = await ManualOverride.findOne({ period, used: false });
-    let randomNum;
 
     if (override) {
-        randomNum = override.number;
+        const overrideNum = override.number;
         override.used = true;
         await override.save();
-    } else {
-        const randomSalt = crypto.randomBytes(16).toString('hex');
-        const criticalSeed = period + "_" + timerType + "_" + Date.now() + "_" + randomSalt + "_sbwin_secure";
-        const hash = crypto.createHash('sha256').update(criticalSeed).digest('hex');
-        randomNum = parseInt(hash.substring(0, 8), 16) % 10;
+        return buildOutcomeFromNumber(overrideNum);
     }
 
-    let color = 'green';
-    if ([2, 4, 6, 8].includes(randomNum)) color = 'red';
-    else if ([0, 5].includes(randomNum)) color = 'violet';
-    const size = randomNum >= 5 ? 'big' : 'small';
-
-    return { number: randomNum, color, size };
+    return getRngOutcome(period, timerType);
 }
 
 async function processBetsForPeriod(period, timerType, outcome, Bet, User) {
@@ -144,4 +153,4 @@ function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserM
     });
 }
 
-module.exports = { initWinGoGame, gameStates, getPeriodCodeForTime };
+module.exports = { initWinGoGame, gameStates, getPeriodCodeForTime, getRngOutcome };
