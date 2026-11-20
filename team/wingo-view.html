@@ -40,6 +40,7 @@
         padding: 3px 8px;
         border-radius: 20px;
         letter-spacing: 0.3px;
+        font-family: monospace;
     }
     .timer-tabs-row {
         display: grid;
@@ -311,6 +312,8 @@
                 const colorEl = document.getElementById('activeColorBadge');
                 colorEl.textContent = (data.color || cfg.color).toUpperCase();
                 colorEl.className = 'status-pill ' + cfg.colorClass;
+
+                ballEl.classList.remove('pop-anim');
             }, 120);
         }
 
