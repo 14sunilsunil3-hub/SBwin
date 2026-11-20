@@ -499,9 +499,9 @@
         <span class="text-[10px] mt-0.5">Activity</span>
       </button>
 
-      <!-- Center Featured Button -->
+      <!-- Center Featured Wheel Button -->
       <div class="flex justify-center -mt-6">
-        <button onclick="switchTab('invite')" class="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-400 via-teal-400 to-green-300 border-4 border-gray-900 flex flex-col items-center justify-center text-black font-black shadow-xl transform active:scale-90 transition-transform">
+        <button type="button" onclick="openWheelPage()" id="nav-wheel" class="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-400 via-teal-400 to-green-300 border-4 border-gray-900 flex flex-col items-center justify-center text-black font-black shadow-xl transform active:scale-90 transition-transform">
           <span class="text-[9px] uppercase leading-none font-extrabold text-white">GO</span>
           <span class="text-[8px] font-bold text-white">Get ₹500</span>
         </button>
@@ -553,6 +553,15 @@
 
     function goToAuthPage() {
         window.location.href = 'auth.html';
+    }
+
+    function openWheelPage() {
+        if (backgroundTimer) {
+            clearTimeout(backgroundTimer);
+            backgroundTimer = null;
+        }
+        showToast('Opening Invitation Wheel...');
+        window.location.href = 'navigation/wheel.html';
     }
 
     async function checkLoginStatusWithServer() {
@@ -612,7 +621,12 @@
     let backgroundTimer = null;
     document.addEventListener('visibilitychange', () => {
         let currentPath = window.location.pathname;
-        let isExemptPage = currentPath.includes('deposit.html') || currentPath.includes('withdraw.html') || currentPath.includes('deposit-history.html') || currentPath.includes('withdraw-history.html');
+        let isExemptPage =
+            currentPath.includes('deposit.html') ||
+            currentPath.includes('withdraw.html') ||
+            currentPath.includes('deposit-history.html') ||
+            currentPath.includes('withdraw-history.html') ||
+            currentPath.includes('wheel.html');
 
         if (document.hidden) {
             if (!isExemptPage) {
