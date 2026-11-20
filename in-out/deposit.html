@@ -160,19 +160,6 @@
             color: #ffffff;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
         }
-        .qr-bonus-tag {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: linear-gradient(135deg, #ff5f45, #e52e2d);
-            color: #ffffff;
-            font-size: 9px;
-            font-weight: 800;
-            line-height: 1;
-            padding: 3px 5px 5px 6px;
-            border-bottom-left-radius: 8px;
-            z-index: 2;
-        }
         .qr-method-icon-wrap {
             height: 32px;
             display: flex;
@@ -472,12 +459,11 @@
                 <div class="refresh-btn" onclick="refreshData()"><i class="fa-solid fa-rotate-right"></i></div>
             </div>
 
-            <!-- 4 QR CHANNEL BUTTONS (qr_2.html button icons, no QR image here) -->
+            <!-- 4 QR CHANNEL BUTTONS -->
             <div class="card">
                 <div class="title">Select QR Channel</div>
                 <div class="qr-method-grid" id="qrMethodGrid">
                     <button type="button" class="qr-method-btn active" data-method="UPI-QR" data-qr="../assets/upi-qr.png" onclick="selectQrMethod(this)">
-                        <span class="qr-bonus-tag">+3%</span>
                         <div class="qr-method-icon-wrap">
                             <svg viewBox="0 0 64 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <text x="4" y="24" class="upi-text" fill="#e2e8f0" font-size="18" font-weight="800" font-style="italic">UP</text>
@@ -489,7 +475,6 @@
                     </button>
 
                     <button type="button" class="qr-method-btn" data-method="UPI x QR" data-qr="../assets/upi-2-qr.png" onclick="selectQrMethod(this)">
-                        <span class="qr-bonus-tag">+3%</span>
                         <div class="qr-method-icon-wrap">
                             <svg viewBox="0 0 64 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <text x="4" y="16" class="upi-text" fill="#cbd5e1" font-size="13" font-weight="800" font-style="italic">UP</text>
@@ -504,7 +489,6 @@
                     </button>
 
                     <button type="button" class="qr-method-btn" data-method="E-Wallet" data-qr="../assets/e-wallet-qr.png" onclick="selectQrMethod(this)">
-                        <span class="qr-bonus-tag">+3%</span>
                         <div class="qr-method-icon-wrap">
                             <svg viewBox="0 0 44 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M14 10C14 8.34 15.34 7 17 7H27C28.66 7 30 8.34 30 10V12H14V10Z" fill="#60a5fa"/>
@@ -516,7 +500,6 @@
                     </button>
 
                     <button type="button" class="qr-method-btn" data-method="Paytm x QR" data-qr="../assets/paytm-qr.png" onclick="selectQrMethod(this)">
-                        <span class="qr-bonus-tag">+3%</span>
                         <div class="qr-method-icon-wrap">
                             <svg viewBox="0 0 68 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <text x="2" y="14" class="paytm-text" fill="#cbd5e1" font-size="11" font-weight="800">Paytm</text>
@@ -535,8 +518,7 @@
             <div class="card">
                 <div class="title">Select Deposit Amount</div>
                 <div class="amount-grid">
-                    <div class="amt-btn active" onclick="setAmount(100, this)">₹100</div>
-                    <div class="amt-btn" onclick="setAmount(200, this)">₹200</div>
+                    <div class="amt-btn active" onclick="setAmount(200, this)">₹200</div>
                     <div class="amt-btn" onclick="setAmount(300, this)">₹300</div>
                     <div class="amt-btn" onclick="setAmount(400, this)">₹400</div>
                     <div class="amt-btn" onclick="setAmount(500, this)">₹500</div>
