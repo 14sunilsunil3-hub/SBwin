@@ -693,6 +693,7 @@
         let activeView = 'main';
         let currentMethod = 'bank';
         let currentWinnings = 0;
+        let currentNeededBet = 0;
         let selectedBankName = '';
 
         let savedBankList = [];
@@ -716,14 +717,13 @@
         ];
 
         window.onload = async function() {
-            // Check if coming from index account tab or game pages
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('from') === 'account') {
-                sessionStorage.setItem('withdraw_return_url', 'index.html#account');
+                sessionStorage.setItem('withdraw_return_url', '/index.html#account');
             } else if (document.referrer && !document.referrer.includes('withdraw.html')) {
                 let ref = document.referrer;
                 if (ref.includes('index.html') && !ref.includes('#')) {
-                    ref = 'index.html#account';
+                    ref = '/index.html#account';
                 }
                 sessionStorage.setItem('withdraw_return_url', ref);
             }
@@ -735,8 +735,11 @@
             if (userId) {
                 loadSavedDetails();
                 await refreshData();
+            } else {
+                document.getElementById('userWithdrawalHistory').innerHTML =
+                    '<p style="font-size: 13px; color: #94a3b8; text-align: center; padding: 15px;">Please login to view withdrawal history.</p>';
             }
-            
+
             const loader = document.getElementById('fullPageLoader');
             if (loader) {
                 loader.style.opacity = '0';
@@ -767,7 +770,7 @@
         }
 
         function goToAdminPage() {
-            window.location.href = 'admin.html';
+            window.location.href = '/admin.html';
         }
 
         function handleAdminSecretTap() {
@@ -1036,7 +1039,7 @@
                 if (returnUrl) {
                     window.location.href = returnUrl;
                 } else {
-                    window.location.href = 'index.html#account';
+                    window.location.href = '/index.html#account';
                 }
             }
         }
@@ -1142,6 +1145,7 @@
         }
 
         async function fetchBalances() {
+            if (!userId) return;
             try {
                 let res = await fetch(`/api/user/${userId}`);
                 let data = await res.json();
@@ -1158,13 +1162,14 @@
                     
                     let totalBetDone = parseFloat(data.user?.totalBetDone || data.totalBetDone || 0);
                     let remainingBet = Math.max(0, 110 - totalBetDone);
+                    currentNeededBet = remainingBet;
                     document.getElementById('neededBetDisplay').textContent = `₹${remainingBet.toFixed(2)}`;
                 }
             } catch (e) {}
         }
 
         function parseWithdrawalStatus(rawStatus) {
-            if (!rawStatus) return { text: 'PENDING', color: '#fbbf24' };
+            if (!rawStatus) return { text: 'Pending', color: '#fbbf24' };
             let s = String(rawStatus).toLowerCase().trim();
             if (s === 'approved' || s === 'complete' || s === 'completed' || s === 'success' || s === 'successful') {
                 return { text: 'Completed', color: '#34d399' };
@@ -1176,25 +1181,30 @@
         }
 
         async function fetchUserWithdrawals() {
+            if (!userId) return;
             try {
-                let res = await fetch(`/api/admin/requests`);
+                let res = await fetch(`/api/user-withdrawals/${userId}`);
                 let data = await res.json();
                 let container = document.getElementById('userWithdrawalHistory');
-                if (data.success && data.withdrawals) {
-                    let myWithdrawals = data.withdrawals.filter(w => w.userId && (w.userId._id === userId || w.userId === userId));
+
+                if (data.success && Array.isArray(data.withdrawals)) {
+                    let myWithdrawals = data.withdrawals;
                     rawWithdrawalData = myWithdrawals;
-                    
-                    let startOfToday = new Date();
-                    startOfToday.setHours(0, 0, 0, 0);
-                    let todayCount = myWithdrawals.filter(w => new Date(w.createdAt) >= startOfToday && String(w.status).toLowerCase() !== 'rejected').length;
-                    let remainingTimes = Math.max(0, 3 - todayCount);
+
+                    let remainingTimes = (typeof data.remainingWithdrawals === 'number')
+                        ? data.remainingWithdrawals
+                        : (() => {
+                            let startOfToday = new Date();
+                            startOfToday.setHours(0, 0, 0, 0);
+                            let todayCount = myWithdrawals.filter(w => new Date(w.createdAt) >= startOfToday && String(w.status).toLowerCase() !== 'rejected').length;
+                            return Math.max(0, 3 - todayCount);
+                        })();
                     document.getElementById('remainingWithdrawCount').textContent = remainingTimes;
 
                     if (myWithdrawals.length > 0) {
                         container.innerHTML = '';
                         myWithdrawals.forEach((wit) => {
                             let statusObj = parseWithdrawalStatus(wit.status);
-                            
                             let orderNo = wit.orderNo || (wit._id ? ('WD' + wit._id.slice(-16).toLowerCase()) : 'WD20261008032456791095729a');
                             let wType = wit.type || (wit.upiId ? 'UPI' : 'BANK CARD');
                             let d = new Date(wit.createdAt || Date.now());
@@ -1208,7 +1218,7 @@
                                     </div>
                                     <div class="history-detail-row">
                                         <span class="history-label">Balance</span>
-                                        <span class="balance-val">₹${wit.amount}.00</span>
+                                        <span class="balance-val">₹${Number(wit.amount || 0).toFixed(2)}</span>
                                     </div>
                                     <div class="history-detail-row">
                                         <span class="history-label">Type</span>
@@ -1246,6 +1256,11 @@
         }
 
         function initiateWithdrawal() {
+            if (!userId) {
+                showToast('Please login first!');
+                return;
+            }
+
             let amount = document.getElementById('withdrawAmount').value;
             if (!amount || Number(amount) < 110 || Number(amount) > 1000000) {
                 showToast('Withdrawal amount must be between ₹110 and ₹1,000,000!');
@@ -1283,7 +1298,7 @@
             }
 
             let amount = document.getElementById('withdrawAmount').value;
-            let payload = { userId, amount, password: enterPassword };
+            let payload = { userId, amount: Number(amount), password: enterPassword };
 
             if (currentMethod === 'bank') {
                 let currentSelectedBank = savedBankList[selectedBankIndex] || savedBankList[0];
@@ -1304,7 +1319,7 @@
                     closePasswordModal();
                     showToast('Withdrawal request submitted!');
                     document.getElementById('withdrawAmount').value = '';
-                    refreshData();
+                    await refreshData();
                 } else {
                     showToast(data.message || 'Withdrawal failed.');
                 }
