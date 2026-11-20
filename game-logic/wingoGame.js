@@ -36,19 +36,19 @@ function buildOutcomeFromNumber(randomNum) {
     return { number: num, color, size };
 }
 
-// Option 3: HMAC-SHA256 RNG per period & timerType (ManualOverride does NOT affect this)
-function getRngOutcome(period, timerType) {
+// Option 4: Provably Fair style RNG using serverSeed + period + timerType
+function getProvablyFairOutcome(period, timerType, serverSeed = process.env.WINGO_SERVER_SEED || 'default_server_seed') {
     const safePeriod = String(period || '');
     const safeType = String(timerType || '30s');
-    const secretKey = process.env.RNG_SECRET || 'change_this_hmac_key';
-
-    const hmac = crypto
-        .createHmac('sha256', secretKey)
-        .update(`${safePeriod}:${safeType}`)
-        .digest('hex');
-
-    const randomNum = parseInt(hmac.slice(0, 8), 16) % 10;
+    const payload = `${serverSeed}:${safePeriod}:${safeType}`;
+    const hash = crypto.createHash('sha256').update(payload).digest('hex');
+    const randomNum = parseInt(hash.slice(0, 8), 16) % 10;
     return buildOutcomeFromNumber(randomNum);
+}
+
+// Keep getRngOutcome wired to Option 4 so existing callers work seamlessly
+function getRngOutcome(period, timerType) {
+    return getProvablyFairOutcome(period, timerType);
 }
 
 async function getGameOutcome(period, timerType, ManualOverride) {
@@ -158,4 +158,4 @@ function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserM
     });
 }
 
-module.exports = { initWinGoGame, gameStates, getPeriodCodeForTime, getRngOutcome };
+module.exports = { initWinGoGame, gameStates, getPeriodCodeForTime, getRngOutcome, getProvablyFairOutcome };
