@@ -36,13 +36,14 @@ function buildOutcomeFromNumber(randomNum) {
     return { number: num, color, size };
 }
 
-// Pure deterministic RNG per period & timerType (ManualOverride does NOT affect this)
+// Option 1: Deterministic RNG with Secret Salt + SHA-256 per period & timerType
 function getRngOutcome(period, timerType) {
     const safePeriod = String(period || '');
     const safeType = String(timerType || '30s');
-    const seed = `${safePeriod}_${safeType}_sbwin_pure_rng_v1`;
+    const secretSalt = process.env.RNG_SECRET || 'change_this_secret_key';
+    const seed = `${secretSalt}:${safePeriod}:${safeType}`;
     const hash = crypto.createHash('sha256').update(seed).digest('hex');
-    const randomNum = parseInt(hash.substring(0, 8), 16) % 10;
+    const randomNum = parseInt(hash.slice(0, 8), 16) % 10;
     return buildOutcomeFromNumber(randomNum);
 }
 
@@ -98,17 +99,17 @@ function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserM
     function startTimerLoop(timerType, intervalSeconds) {
         const state = gameStates[timerType];
         const intervalMs = intervalSeconds * 1000;
-        
+
         const updateState = async () => {
             const now = Date.now();
             const startOfDay = new Date(new Date(now).setHours(0,0,0,0)).getTime();
             const elapsedMs = now - startOfDay;
             const currentIntervalIndex = Math.floor(elapsedMs / intervalMs);
-            
+
             const currentIntervalStart = startOfDay + (currentIntervalIndex * intervalMs);
             const nextIntervalStart = currentIntervalStart + intervalMs;
             const timeLeftMs = nextIntervalStart - now;
-            
+
             let countdown = Math.floor(timeLeftMs / 1000);
             if (countdown < 0) countdown = 0;
             if (countdown >= intervalSeconds) countdown = intervalSeconds - 1;
@@ -138,8 +139,8 @@ function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserM
             state.countdown = countdown;
             state.isBettingOpen = countdown > 5;
 
-            io.emit(`timerTick_${timerType}`, { 
-                countdown: state.countdown, isBettingOpen: state.isBettingOpen, period: state.period 
+            io.emit(`timerTick_${timerType}`, {
+                countdown: state.countdown, isBettingOpen: state.isBettingOpen, period: state.period
             });
         };
 
