@@ -845,11 +845,23 @@ app.post('/api/bet', async (req, res) => {
 app.get('*', (req, res) => {
   const reqPath = req.path;
   if (reqPath.startsWith('/games/')) {
-    res.sendFile(path.join(__dirname, reqPath));
+    res.sendFile(path.join(__dirname, reqPath), (err) => {
+      if (err) {
+        res.sendFile(path.join(__dirname, 'index.html'));
+      }
+    });
   } else if (reqPath.startsWith('/in-out/')) {
-    res.sendFile(path.join(__dirname, reqPath));
+    res.sendFile(path.join(__dirname, reqPath), (err) => {
+      if (err) {
+        res.sendFile(path.join(__dirname, 'index.html'));
+      }
+    });
   } else if (reqPath.startsWith('/navigation/')) {
-    res.sendFile(path.join(__dirname, reqPath));
+    res.sendFile(path.join(__dirname, reqPath), (err) => {
+      if (err) {
+        res.sendFile(path.join(__dirname, 'index.html'));
+      }
+    });
   } else {
     const cleanPath = reqPath.substring(1) || 'index.html';
     const rootFile = path.join(__dirname, cleanPath);
