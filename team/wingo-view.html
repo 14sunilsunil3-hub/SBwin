@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Team RNG View</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
     body {
@@ -67,6 +66,7 @@
         box-shadow: 0 0 8px rgba(124, 58, 237, 0.5);
     }
     .single-ball-box {
+        position: relative;
         background: rgba(15, 23, 42, 0.65);
         border: 1px solid rgba(124, 58, 237, 0.35);
         padding: 14px 16px;
@@ -75,6 +75,96 @@
         align-items: center;
         justify-content: space-between;
         gap: 14px;
+        overflow: hidden;
+        min-height: 88px;
+    }
+
+    /* Compact Button-Size Scanning Overlay inside Result Area */
+    .scan-stage {
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(9, 13, 22, 0.86);
+        backdrop-filter: blur(2px);
+        z-index: 10;
+    }
+    .single-ball-box.is-scanning .scan-stage {
+        display: flex;
+    }
+    .single-ball-box.is-scanning .result-content {
+        opacity: 0.15;
+        filter: blur(1px);
+    }
+    .result-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        width: 100%;
+        transition: opacity 0.2s ease, filter 0.2s ease;
+    }
+
+    .scan-btn-card {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 148px;
+        height: 44px;
+        padding: 0 20px;
+        border-radius: 12px;
+        background: linear-gradient(145deg, #111827, #0b101b);
+        border: 1px solid rgba(56, 189, 248, 0.45);
+        box-shadow:
+            0 10px 24px rgba(0, 0, 0, 0.6),
+            inset 0 0 14px rgba(56, 189, 248, 0.12);
+        overflow: hidden;
+    }
+    .scan-beam {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -45%;
+        height: 45%;
+        background: linear-gradient(
+            to bottom,
+            rgba(56, 189, 248, 0) 0%,
+            rgba(56, 189, 248, 0.25) 60%,
+            rgba(224, 242, 254, 0.92) 100%
+        );
+        border-bottom: 2px solid #7dd3fc;
+        box-shadow: 0 2px 12px rgba(56, 189, 248, 0.85);
+        animation: scanSweep 1.25s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+        pointer-events: none;
+        z-index: 2;
+    }
+    @keyframes scanSweep {
+        0% {
+            top: -45%;
+            opacity: 0.25;
+        }
+        15% {
+            opacity: 1;
+        }
+        85% {
+            opacity: 1;
+        }
+        100% {
+            top: 115%;
+            opacity: 0.25;
+        }
+    }
+    .scanning-label {
+        position: relative;
+        z-index: 1;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #38bdf8;
+        text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
     }
 
     /* Glossy 3D Ball Styles */
@@ -208,30 +298,6 @@
     .clr-green { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35); }
     .clr-red { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 3px 10px rgba(239, 68, 68, 0.35); }
     .clr-violet { background: linear-gradient(135deg, #a855f7, #7c3aed); box-shadow: 0 3px 10px rgba(168, 85, 247, 0.35); }
-
-    .refresh-btn {
-        margin-top: 12px;
-        width: 100%;
-        background: linear-gradient(135deg, #38bdf8, #0284c7);
-        border: none;
-        color: #fff;
-        padding: 10px;
-        border-radius: 10px;
-        font-weight: 800;
-        font-size: 13px;
-        letter-spacing: 0.5px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);
-        transition: transform 0.15s ease, opacity 0.2s ease;
-    }
-    .refresh-btn:active { transform: scale(0.97); }
-    .refresh-btn.loading { opacity: 0.85; pointer-events: none; }
-    .refresh-btn i.spin { animation: spinAnim 0.7s linear infinite; }
-    @keyframes spinAnim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -247,23 +313,27 @@
             <div class="timer-tab" data-type="5m" onclick="switchTimer('5m', this)">5Min</div>
         </div>
 
-        <div class="single-ball-box">
-            <div class="ball split-0" id="activeBall">
-                <div class="side-glow-left"></div>
-                <div class="side-glow-right"></div>
-                <div class="bottom-glow"></div>
-                <span id="activeBallNumber">-</span>
+        <div class="single-ball-box" id="resultBox">
+            <div class="scan-stage" id="scanStage">
+                <div class="scan-btn-card">
+                    <div class="scan-beam"></div>
+                    <span class="scanning-label">SCANNING...</span>
+                </div>
             </div>
-            <div class="result-details-col">
-                <div class="status-pill size-small" id="activeSizeBadge">---</div>
-                <div class="status-pill clr-violet" id="activeColorBadge">---</div>
+
+            <div class="result-content">
+                <div class="ball split-0" id="activeBall">
+                    <div class="side-glow-left"></div>
+                    <div class="side-glow-right"></div>
+                    <div class="bottom-glow"></div>
+                    <span id="activeBallNumber">-</span>
+                </div>
+                <div class="result-details-col">
+                    <div class="status-pill size-small" id="activeSizeBadge">---</div>
+                    <div class="status-pill clr-violet" id="activeColorBadge">---</div>
+                </div>
             </div>
         </div>
-
-        <button type="button" class="refresh-btn" id="refreshBtn" onclick="loadRngResult()">
-            <i class="fa-solid fa-rotate-right" id="refreshIcon"></i>
-            <span>Refresh</span>
-        </button>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -273,6 +343,9 @@
         const userId = params.get('userId') || localStorage.getItem('rewards_userId') || sessionStorage.getItem('rewards_userId');
         let currentTimerType = params.get('timerType') || '30s';
         let currentPeriod = '';
+        let scanTimerId = null;
+        let isScanning = false;
+        let pendingResultData = null;
 
         const ballConfig = {
             0: { ballClass: 'split-0', size: 'Small', sizeClass: 'size-small', color: 'Violet', colorClass: 'clr-violet' },
@@ -293,8 +366,8 @@
             });
         }
 
-        function renderRngData(data) {
-            currentPeriod = data.period || '';
+        function applyResultToDOM(data) {
+            currentPeriod = data.period || currentPeriod;
             document.getElementById('periodNoHeader').textContent = 'Period: ' + (currentPeriod || '---');
             const num = ((Number(data.number) % 10) + 10) % 10;
             const cfg = ballConfig[num];
@@ -319,47 +392,91 @@
             }, 120);
         }
 
-        async function loadRngResult() {
-            const btn = document.getElementById('refreshBtn');
-            const icon = document.getElementById('refreshIcon');
-            btn.classList.add('loading');
-            icon.classList.add('spin');
+        function renderRngData(data, forceImmediate = false) {
+            if (isScanning && !forceImmediate) {
+                pendingResultData = data;
+                if (data.period) {
+                    document.getElementById('periodNoHeader').textContent = 'Period: ' + data.period;
+                }
+                return;
+            }
+            applyResultToDOM(data);
+        }
+
+        function startFiveSecScan(newPeriod) {
+            if (newPeriod) {
+                document.getElementById('periodNoHeader').textContent = 'Period: ' + newPeriod;
+            }
+            isScanning = true;
+            pendingResultData = null;
+            document.getElementById('resultBox').classList.add('is-scanning');
+
+            if (scanTimerId) {
+                clearTimeout(scanTimerId);
+            }
+
+            scanTimerId = setTimeout(() => {
+                isScanning = false;
+                document.getElementById('resultBox').classList.remove('is-scanning');
+                if (pendingResultData) {
+                    const dataToShow = pendingResultData;
+                    pendingResultData = null;
+                    applyResultToDOM(dataToShow);
+                } else {
+                    fetchLatestRng();
+                }
+            }, 5000);
+        }
+
+        async function fetchLatestRng(triggerScanOnPeriodChange = false) {
             try {
                 const res = await fetch(`/api/team/rng-result?userId=${encodeURIComponent(userId || '')}&timerType=${encodeURIComponent(currentTimerType)}`).then(r => r.json());
                 if (res.success) {
-                    renderRngData(res);
+                    const incomingPeriod = res.period || '';
+                    if (triggerScanOnPeriodChange && incomingPeriod && incomingPeriod !== currentPeriod) {
+                        currentPeriod = incomingPeriod;
+                        pendingResultData = res;
+                        if (!isScanning) {
+                            startFiveSecScan(incomingPeriod);
+                        }
+                    } else {
+                        renderRngData(res);
+                    }
                 }
             } catch (err) {}
-            setTimeout(() => {
-                icon.classList.remove('spin');
-                btn.classList.remove('loading');
-            }, 300);
         }
 
         function switchTimer(type, el) {
             currentTimerType = type;
             syncActiveTabUI();
-            loadRngResult();
+            fetchLatestRng(false);
         }
 
         window.addEventListener('message', (event) => {
             if (event.data && event.data.type === 'SET_TIMER_TYPE' && event.data.timerType) {
                 currentTimerType = event.data.timerType;
                 syncActiveTabUI();
-                loadRngResult();
+                fetchLatestRng(false);
             }
         });
 
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (tick) => {
                 if (currentTimerType === type && tick && tick.period && tick.period !== currentPeriod) {
-                    loadRngResult();
+                    currentPeriod = tick.period;
+                    startFiveSecScan(tick.period);
+                    fetchLatestRng(false);
                 }
             });
         });
 
+        // Auto refresh fallback every 3 seconds so updates stay synced even if a socket tick is missed
+        setInterval(() => {
+            fetchLatestRng(true);
+        }, 3000);
+
         syncActiveTabUI();
-        loadRngResult();
+        fetchLatestRng(false);
     </script>
 </body>
 </html>
