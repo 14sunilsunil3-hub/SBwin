@@ -734,6 +734,7 @@
 
             if (userId) {
                 loadSavedDetails();
+                await syncPaymentMethodsFromDB();
                 await refreshData();
             } else {
                 document.getElementById('userWithdrawalHistory').innerHTML =
@@ -746,6 +747,39 @@
                 setTimeout(() => { loader.style.display = 'none'; }, 300);
             }
         };
+
+        async function syncPaymentMethodsFromDB() {
+            if (!userId) return;
+            try {
+                const res = await fetch(`/api/user-payment-methods/${userId}`);
+                const data = await res.json();
+                if (data.success) {
+                    if (Array.isArray(data.savedBanks)) {
+                        savedBankList = data.savedBanks;
+                        localStorage.setItem('user_banks_' + userId, JSON.stringify(savedBankList));
+                    }
+                    if (Array.isArray(data.savedUpis)) {
+                        savedUpiList = data.savedUpis;
+                        localStorage.setItem('user_upis_' + userId, JSON.stringify(savedUpiList));
+                    }
+                    if (data.lockedHolderName) {
+                        localStorage.setItem('locked_holder_name_' + userId, data.lockedHolderName);
+                    } else if (savedBankList.length > 0) {
+                        localStorage.setItem('locked_holder_name_' + userId, savedBankList[0].accountHolderName);
+                    } else if (savedUpiList.length > 0) {
+                        localStorage.setItem('locked_holder_name_' + userId, savedUpiList[0].accountHolderName);
+                    }
+
+                    selectedBankIndex = 0;
+                    selectedUpiIndex = 0;
+
+                    renderMainBankSection();
+                    renderFullBankCardList();
+                    renderMainUpiSection();
+                    renderFullUpiCardList();
+                }
+            } catch (e) {}
+        }
 
         function initDraggableButton() {
             const btn = document.getElementById('adminPanelFloatingBtn');
@@ -1072,7 +1106,7 @@
             closeBankModal();
         }
 
-        function saveBankCard() {
+        async function saveBankCard() {
             let name = document.getElementById('bankRecipientName').value.trim();
             let accNo = document.getElementById('bankAccNoInput').value.trim();
             let phone = document.getElementById('bankPhoneInput').value.trim();
@@ -1087,24 +1121,50 @@
                 return;
             }
 
-            if (!lockedName) localStorage.setItem('locked_holder_name_' + userId, name);
+            const newBank = {
+                bankName: selectedBankName,
+                accountHolderName: name,
+                accountNumber: accNo,
+                phone,
+                ifsc: ifsc.toUpperCase()
+            };
 
-            let newBank = { bankName: selectedBankName, accountHolderName: name, accountNumber: accNo, phone, ifsc };
-            savedBankList.push(newBank);
-            localStorage.setItem('user_banks_' + userId, JSON.stringify(savedBankList));
+            try {
+                const res = await fetch('/api/save-bank', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, ...newBank })
+                });
+                const data = await res.json();
 
-            document.getElementById('bankAccNoInput').value = '';
-            document.getElementById('bankPhoneInput').value = '';
-            document.getElementById('bankIfscInput').value = '';
-            document.getElementById('selectedBankText').textContent = 'Please select a bank';
-            selectedBankName = '';
+                if (!data.success) {
+                    showToast(data.message || 'Could not save bank card.');
+                    return;
+                }
 
-            showToast('New bank card added successfully!');
-            loadSavedDetails();
-            showBankCardSelectionView();
+                if (data.lockedHolderName) {
+                    localStorage.setItem('locked_holder_name_' + userId, data.lockedHolderName);
+                }
+                savedBankList = Array.isArray(data.savedBanks) ? data.savedBanks : [...savedBankList, newBank];
+                localStorage.setItem('user_banks_' + userId, JSON.stringify(savedBankList));
+                selectedBankIndex = Math.max(0, savedBankList.length - 1);
+
+                document.getElementById('bankAccNoInput').value = '';
+                document.getElementById('bankPhoneInput').value = '';
+                document.getElementById('bankIfscInput').value = '';
+                document.getElementById('selectedBankText').textContent = 'Please select a bank';
+                selectedBankName = '';
+
+                showToast('New bank card saved!');
+                renderMainBankSection();
+                renderFullBankCardList();
+                showBankCardSelectionView();
+            } catch (e) {
+                showToast('Server error! Please try again.');
+            }
         }
 
-        function saveUpiDetails() {
+        async function saveUpiDetails() {
             let name = document.getElementById('upiNameInput').value.trim();
             let phone = document.getElementById('upiPhoneInput').value.trim();
             let upiId = document.getElementById('upiIdInput').value.trim();
@@ -1119,20 +1179,44 @@
                 return;
             }
 
-            if (!lockedName) localStorage.setItem('locked_holder_name_' + userId, name);
+            const newUpi = {
+                accountHolderName: name,
+                phone,
+                upiId: upiId.toLowerCase()
+            };
 
-            let newUpi = { accountHolderName: name, phone, upiId };
-            savedUpiList.push(newUpi);
-            localStorage.setItem('user_upis_' + userId, JSON.stringify(savedUpiList));
+            try {
+                const res = await fetch('/api/save-upi', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, ...newUpi })
+                });
+                const data = await res.json();
 
-            document.getElementById('upiNameInput').value = '';
-            document.getElementById('upiPhoneInput').value = '';
-            document.getElementById('upiIdInput').value = '';
-            document.getElementById('upiIdConfirmInput').value = '';
+                if (!data.success) {
+                    showToast(data.message || 'Could not save UPI ID.');
+                    return;
+                }
 
-            showToast('UPI saved successfully!');
-            loadSavedDetails();
-            showUpiSelectionView();
+                if (data.lockedHolderName) {
+                    localStorage.setItem('locked_holder_name_' + userId, data.lockedHolderName);
+                }
+                savedUpiList = Array.isArray(data.savedUpis) ? data.savedUpis : [...savedUpiList, newUpi];
+                localStorage.setItem('user_upis_' + userId, JSON.stringify(savedUpiList));
+                selectedUpiIndex = Math.max(0, savedUpiList.length - 1);
+
+                document.getElementById('upiNameInput').value = '';
+                document.getElementById('upiPhoneInput').value = '';
+                document.getElementById('upiIdInput').value = '';
+                document.getElementById('upiIdConfirmInput').value = '';
+
+                showToast('UPI saved!');
+                renderMainUpiSection();
+                renderFullUpiCardList();
+                showUpiSelectionView();
+            } catch (e) {
+                showToast('Server error! Please try again.');
+            }
         }
 
         function setAllAmount() {
