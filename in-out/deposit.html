@@ -644,6 +644,25 @@
 
     <script>
         const MIN_DEPOSIT_AMOUNT = 200;
+        const CHANNEL_QR_CONFIG = {
+            'UPI-QR': {
+                folder: '../assets/upi-QR',
+                fallback: '../assets/upi-qr.png'
+            },
+            'UPI x QR': {
+                folder: '../assets/Upi-x-qr',
+                fallback: '../assets/upi-2-qr.png'
+            },
+            'E-Wallet': {
+                folder: '../assets/E-Wallet-qr',
+                fallback: '../assets/e-wallet-qr.png'
+            },
+            'Paytm x QR': {
+                folder: '../assets/Paytm-qr',
+                fallback: '../assets/paytm-qr.png'
+            }
+        };
+
         let selectedAmount = 200;
         let selectedQrMethod = sessionStorage.getItem('selected_qr_method') || 'UPI-QR';
         let selectedQrImage = sessionStorage.getItem('selected_qr_image') || '../assets/upi-qr.png';
@@ -653,6 +672,36 @@
         let currentView = 'step1';
         let timerInterval = null;
         let timeLeft = 600;
+
+        function getQrImageForAmount(method, amount) {
+            const cfg = CHANNEL_QR_CONFIG[method] || CHANNEL_QR_CONFIG['UPI-QR'];
+            const numAmt = Number(amount);
+            if (!isNaN(numAmt) && numAmt > 0 && Number.isInteger(numAmt)) {
+                return `${cfg.folder}/${numAmt}.png`;
+            }
+            return cfg.fallback;
+        }
+
+        function applyQrImageWithFallback(imgEl, method, amount) {
+            const cfg = CHANNEL_QR_CONFIG[method] || CHANNEL_QR_CONFIG['UPI-QR'];
+            const amountQrUrl = getQrImageForAmount(method, amount);
+
+            imgEl.onerror = function () {
+                if (imgEl.src.endsWith(cfg.fallback.replace('..', ''))) {
+                    imgEl.onerror = null;
+                    return;
+                }
+                imgEl.onerror = function () {
+                    imgEl.onerror = null;
+                    imgEl.src = '../assets/upi-qr.png';
+                };
+                imgEl.src = cfg.fallback;
+            };
+
+            imgEl.src = amountQrUrl;
+            selectedQrImage = amountQrUrl;
+            sessionStorage.setItem('selected_qr_image', selectedQrImage);
+        }
 
         function updateBottomOverlay() {
             document.getElementById('overlayMethodLabel').textContent = selectedQrMethod;
@@ -676,23 +725,21 @@
             if (matchedBtn) {
                 matchedBtn.classList.add('active');
                 selectedQrMethod = matchedBtn.getAttribute('data-method') || 'UPI-QR';
-                selectedQrImage = matchedBtn.getAttribute('data-qr') || '../assets/upi-qr.png';
             }
             sessionStorage.setItem('selected_qr_method', selectedQrMethod);
-            sessionStorage.setItem('selected_qr_image', selectedQrImage);
-            document.getElementById('qrImageDisplay').src = selectedQrImage;
             document.getElementById('selectedQrLabel').textContent = selectedQrMethod;
+            applyQrImageWithFallback(document.getElementById('qrImageDisplay'), selectedQrMethod, selectedAmount);
             updateBottomOverlay();
         }
 
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('from') === 'account') {
-                sessionStorage.setItem('deposit_return_url', 'index.html#account');
+                sessionStorage.setItem('deposit_return_url', '/index.html#account');
             } else if (document.referrer && !document.referrer.includes('deposit.html')) {
                 let ref = document.referrer;
                 if (ref.includes('index.html') && !ref.includes('#')) {
-                    ref = 'index.html#account';
+                    ref = '/index.html#account';
                 }
                 sessionStorage.setItem('deposit_return_url', ref);
             }
@@ -709,11 +756,9 @@
             document.querySelectorAll('.qr-method-btn').forEach(btn => btn.classList.remove('active'));
             el.classList.add('active');
             selectedQrMethod = el.getAttribute('data-method') || 'UPI-QR';
-            selectedQrImage = el.getAttribute('data-qr') || '../assets/upi-qr.png';
             sessionStorage.setItem('selected_qr_method', selectedQrMethod);
-            sessionStorage.setItem('selected_qr_image', selectedQrImage);
-            document.getElementById('qrImageDisplay').src = selectedQrImage;
             document.getElementById('selectedQrLabel').textContent = selectedQrMethod;
+            applyQrImageWithFallback(document.getElementById('qrImageDisplay'), selectedQrMethod, selectedAmount);
             updateBottomOverlay();
         }
 
@@ -803,7 +848,7 @@
             if (returnUrl) {
                 window.location.href = returnUrl;
             } else {
-                window.location.href = 'index.html#account';
+                window.location.href = '/index.html#account';
             }
         }
 
