@@ -128,6 +128,75 @@
             cursor: pointer;
             transition: transform 0.3s ease;
         }
+
+        /* 4 QR / Payment Method Buttons */
+        .qr-method-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .qr-method-btn {
+            position: relative;
+            background: rgba(30, 27, 75, 0.7);
+            border: 1.5px solid #7c3aed;
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 4px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        .qr-method-btn:active {
+            transform: scale(0.96);
+        }
+        .qr-method-btn.active {
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.45), rgba(5, 150, 105, 0.75));
+            border-color: #34d399;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+        }
+        .qr-bonus-tag {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: linear-gradient(135deg, #ff5f45, #e52e2d);
+            color: #ffffff;
+            font-size: 9px;
+            font-weight: 800;
+            line-height: 1;
+            padding: 3px 5px 5px 6px;
+            border-bottom-left-radius: 8px;
+            z-index: 2;
+        }
+        .qr-method-icon-wrap {
+            width: 34px;
+            height: 34px;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .qr-method-icon-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            border-radius: 5px;
+        }
+        .qr-method-label {
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            letter-spacing: -0.2px;
+        }
+
         .step2-top-bar {
             display: flex;
             justify-content: space-between;
@@ -399,6 +468,44 @@
                 <div class="refresh-btn" onclick="refreshData()"><i class="fa-solid fa-rotate-right"></i></div>
             </div>
 
+            <!-- 4 QR CODE OPTION BUTTONS -->
+            <div class="card">
+                <div class="title">Select QR Channel</div>
+                <div class="qr-method-grid" id="qrMethodGrid">
+                    <button type="button" class="qr-method-btn active" data-method="UPI-QR" data-qr="../assets/qr-1.png" onclick="selectQrMethod(this)">
+                        <span class="qr-bonus-tag">+3%</span>
+                        <div class="qr-method-icon-wrap">
+                            <img src="../assets/qr-1.png" alt="UPI-QR">
+                        </div>
+                        <span class="qr-method-label">UPI-QR</span>
+                    </button>
+
+                    <button type="button" class="qr-method-btn" data-method="UPI x QR" data-qr="../assets/qr-2.png" onclick="selectQrMethod(this)">
+                        <span class="qr-bonus-tag">+3%</span>
+                        <div class="qr-method-icon-wrap">
+                            <img src="../assets/qr-2.png" alt="UPI x QR">
+                        </div>
+                        <span class="qr-method-label">UPI x QR</span>
+                    </button>
+
+                    <button type="button" class="qr-method-btn" data-method="E-Wallet" data-qr="../assets/qr-3.png" onclick="selectQrMethod(this)">
+                        <span class="qr-bonus-tag">+3%</span>
+                        <div class="qr-method-icon-wrap">
+                            <img src="../assets/qr-3.png" alt="E-Wallet">
+                        </div>
+                        <span class="qr-method-label">E-Wallet</span>
+                    </button>
+
+                    <button type="button" class="qr-method-btn" data-method="Paytm x QR" data-qr="../assets/qr-4.png" onclick="selectQrMethod(this)">
+                        <span class="qr-bonus-tag">+3%</span>
+                        <div class="qr-method-icon-wrap">
+                            <img src="../assets/qr-4.png" alt="Paytm x QR">
+                        </div>
+                        <span class="qr-method-label">Paytm x QR</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="title">Select Deposit Amount</div>
                 <div class="amount-grid">
@@ -448,9 +555,9 @@
             </div>
 
             <div class="card qr-section">
-                <div class="title" style="text-align: left;">Scan QR & Pay via any UPI App</div>
+                <div class="title" style="text-align: left;">Scan QR & Pay via any UPI App (<span id="selectedQrLabel">UPI-QR</span>)</div>
                 <div class="qr-box">
-                    <img id="qrImageDisplay" src="../assets/qr-code.png" alt="UPI QR Code">
+                    <img id="qrImageDisplay" src="../assets/qr-1.png" alt="UPI QR Code">
                 </div>
                 <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">1. Please use another device to scan the QR code with your payment app.</p>
                 <p style="font-size: 12px; color: #f87171; margin-top: 6px; line-height: 1.4;">Please pay your exact select amount otherwise your deposit will be rejected with us and company will be not responsible for that. Keep your payment securely.</p>
@@ -472,6 +579,8 @@
     <script>
         const MIN_DEPOSIT_AMOUNT = 100;
         let selectedAmount = 100;
+        let selectedQrMethod = 'UPI-QR';
+        let selectedQrImage = '../assets/qr-1.png';
         let userId = localStorage.getItem('userId') || localStorage.getItem('rewards_userId');
         let isAdmin = localStorage.getItem('isAdmin') === 'true';
         let secretTapCount = 0;
@@ -495,6 +604,15 @@
             checkAdminAccess();
             initDraggableButton();
         };
+
+        function selectQrMethod(el) {
+            document.querySelectorAll('.qr-method-btn').forEach(btn => btn.classList.remove('active'));
+            el.classList.add('active');
+            selectedQrMethod = el.getAttribute('data-method') || 'UPI-QR';
+            selectedQrImage = el.getAttribute('data-qr') || '../assets/qr-1.png';
+            document.getElementById('qrImageDisplay').src = selectedQrImage;
+            document.getElementById('selectedQrLabel').textContent = selectedQrMethod;
+        }
 
         function initDraggableButton() {
             const btn = document.getElementById('adminPanelFloatingBtn');
@@ -701,6 +819,8 @@
             }
             selectedAmount = amt;
             document.getElementById('displaySelectedAmt').textContent = selectedAmount.toFixed(2);
+            document.getElementById('qrImageDisplay').src = selectedQrImage;
+            document.getElementById('selectedQrLabel').textContent = selectedQrMethod;
             document.getElementById('step1View').classList.add('hidden');
             document.getElementById('step2View').classList.remove('hidden');
             document.getElementById('headerTitle').textContent = 'ArUpiPay';
@@ -731,7 +851,7 @@
                 let res = await fetch('/api/deposit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, amount: selectedAmount, utr, orderNo })
+                    body: JSON.stringify({ userId, amount: selectedAmount, utr, orderNo, qrMethod: selectedQrMethod })
                 });
                 let data = await res.json();
                 if (data.success) {
