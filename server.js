@@ -499,6 +499,150 @@ app.post('/api/admin/action', async (req, res) => {
 });
 
 // ==========================================
+// WITHDRAWAL APIs
+// ==========================================
+app.post('/api/withdraw', async (req, res) => {
+    try {
+        const {
+            userId,
+            amount,
+            password,
+            type = 'BANK CARD',
+            accountHolderName,
+            upiId,
+            bankName,
+            accountNumber,
+            ifsc,
+            phone
+        } = req.body;
+
+        const withdrawAmt = Number(amount);
+        if (!userId || !withdrawAmt || isNaN(withdrawAmt) || withdrawAmt < 110 || withdrawAmt > 1000000) {
+            return res.status(400).json({
+                success: false,
+                message: "Withdrawal amount must be between ₹110 and ₹1,000,000!"
+            });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found!" });
+        }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        if (!password || String(user.password) !== String(password)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid login password!"
+            });
+        }
+
+        const currentWin = Number(user.winningsBalance || 0);
+        if (currentWin < withdrawAmt) {
+            return res.status(400).json({
+                success: false,
+                message: "Insufficient winnings balance!"
+            });
+        }
+
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        const todayCount = await Withdrawal.countDocuments({
+            userId: user._id,
+            createdAt: { $gte: startOfToday },
+            status: { $ne: 'rejected' }
+        });
+
+        if (todayCount >= 3) {
+            return res.status(400).json({
+                success: false,
+                message: "Daily withdrawal limit (3) reached!"
+            });
+        }
+
+        user.winningsBalance = currentWin - withdrawAmt;
+        user.lastActiveAt = new Date();
+        await user.save();
+
+        const orderNo = 'WD' + Date.now() + Math.floor(100 + Math.random() * 900);
+
+        const newWithdrawal = new Withdrawal({
+            userId: user._id,
+            amount: withdrawAmt,
+            accountHolderName: accountHolderName || '',
+            upiId: upiId || '',
+            bankName: bankName || '',
+            accountNumber: accountNumber || '',
+            ifsc: ifsc || '',
+            mobile: phone || user.phone || '',
+            orderNo,
+            type,
+            status: 'pending'
+        });
+
+        await newWithdrawal.save();
+
+        return res.json({
+            success: true,
+            message: "Withdrawal request submitted successfully!",
+            orderNo,
+            newWinningsBalance: user.winningsBalance,
+            remainingWithdrawals: Math.max(0, 3 - (todayCount + 1))
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+app.get('/api/user-withdrawals/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found!" });
+        }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
+
+        const withdrawals = await Withdrawal.find({ userId }).sort({ createdAt: -1 }).limit(20);
+
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        const todayCount = await Withdrawal.countDocuments({
+            userId: user._id,
+            createdAt: { $gte: startOfToday },
+            status: { $ne: 'rejected' }
+        });
+
+        return res.json({
+            success: true,
+            withdrawals,
+            remainingWithdrawals: Math.max(0, 3 - todayCount)
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ==========================================
 // DEPOSIT APIs
 // ==========================================
 app.post('/api/deposit', async (req, res) => {
