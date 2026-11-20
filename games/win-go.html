@@ -61,7 +61,7 @@
 
         /* Compact Draggable Team View Popup (No Blur, Clear BG) */
         .team-frame-overlay {
-            position: none;
+            position: fixed;
             inset: 0;
             background: transparent;
             backdrop-filter: none;
@@ -70,20 +70,23 @@
             justify-content: center;
             align-items: center;
             z-index: 99999;
-            padding: 12px;
+            padding: 8px;
             pointer-events: none;
         }
         .team-frame-overlay.active {
             display: flex;
         }
         .team-frame-card {
-            position: relative;
-            width: 216px;
-            max-width: 216px;
-            height: 167px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 218px;
+            max-width: 218px;
+            height: 175px;
             background: linear-gradient(180deg, #1e1b4b 0%, #131130 100%);
             border: 1px solid rgba(124, 58, 237, 0.55);
-            border-radius: 18px;
+            border-radius: 15px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -92,26 +95,28 @@
             cursor: grab;
             touch-action: none;
             user-select: none;
+            z-index: 99999;
         }
         .team-frame-card.dragging {
             cursor: grabbing;
+            border-color: #38bdf8;
         }
         .team-frame-close {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 6px;
+            right: 6px;
             z-index: 20;
             background: rgba(124, 58, 237, 0.28);
             border: 1px solid rgba(124, 58, 237, 0.5);
             color: #a7f3d0;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
             transition: background 0.2s, color 0.2s;
         }
         .team-frame-close:hover {
@@ -1705,38 +1710,64 @@
         }
         fetchUserData();
 
-        // Draggable Team View Popup Logic (Anywhere on card)
+        // Draggable Floating Team View Card Logic (Touch + Mouse, Viewport Clamped)
         const teamCard = document.getElementById('teamDraggableCard');
         const teamIframe = document.getElementById('teamViewIframe');
         let isTeamDragging = false;
         let teamStartX = 0, teamStartY = 0;
-        let teamPosX = 0, teamPosY = 0;
+        let teamCardStartLeft = 0, teamCardStartTop = 0;
+        let teamPosInitialized = false;
+
+        function clampTeamCard(left, top) {
+            const pad = 6;
+            const maxLeft = Math.max(pad, window.innerWidth - teamCard.offsetWidth - pad);
+            const maxTop = Math.max(pad, window.innerHeight - teamCard.offsetHeight - pad);
+            return {
+                left: Math.min(Math.max(pad, left), maxLeft),
+                top: Math.min(Math.max(pad, top), maxTop)
+            };
+        }
 
         function resetTeamCardPosition() {
-            teamPosX = 0;
-            teamPosY = 0;
-            teamCard.style.transform = 'translate3d(0px, 0px, 0px)';
+            teamPosInitialized = false;
+            teamCard.style.left = '50%';
+            teamCard.style.top = '50%';
+            teamCard.style.transform = 'translate(-50%, -50%)';
+        }
+
+        function ensureTeamAbsoluteCoords() {
+            if (teamPosInitialized) return;
+            const rect = teamCard.getBoundingClientRect();
+            teamCard.style.transform = 'none';
+            teamCard.style.left = rect.left + 'px';
+            teamCard.style.top = rect.top + 'px';
+            teamPosInitialized = true;
         }
 
         function onTeamDragStart(e) {
             if (e.target.closest('.team-frame-close')) return;
+            ensureTeamAbsoluteCoords();
+            const pt = e.touches ? e.touches[0] : e;
+            const rect = teamCard.getBoundingClientRect();
             isTeamDragging = true;
+            teamStartX = pt.clientX;
+            teamStartY = pt.clientY;
+            teamCardStartLeft = rect.left;
+            teamCardStartTop = rect.top;
             teamCard.classList.add('dragging');
             teamIframe.style.pointerEvents = 'none';
-            const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-            const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-            teamStartX = clientX - teamPosX;
-            teamStartY = clientY - teamPosY;
         }
 
         function onTeamDragMove(e) {
             if (!isTeamDragging) return;
             if (e.cancelable) e.preventDefault();
-            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-            teamPosX = clientX - teamStartX;
-            teamPosY = clientY - teamStartY;
-            teamCard.style.transform = `translate3d(${teamPosX}px, ${teamPosY}px, 0px)`;
+            const pt = e.touches ? e.touches[0] : e;
+            const clamped = clampTeamCard(
+                teamCardStartLeft + (pt.clientX - teamStartX),
+                teamCardStartTop + (pt.clientY - teamStartY)
+            );
+            teamCard.style.left = clamped.left + 'px';
+            teamCard.style.top = clamped.top + 'px';
         }
 
         function onTeamDragEnd() {
@@ -1745,6 +1776,14 @@
             teamCard.classList.remove('dragging');
             teamIframe.style.pointerEvents = 'auto';
         }
+
+        window.addEventListener('resize', () => {
+            if (!teamPosInitialized) return;
+            const rect = teamCard.getBoundingClientRect();
+            const clamped = clampTeamCard(rect.left, rect.top);
+            teamCard.style.left = clamped.left + 'px';
+            teamCard.style.top = clamped.top + 'px';
+        });
 
         teamCard.addEventListener('mousedown', onTeamDragStart);
         document.addEventListener('mousemove', onTeamDragMove);
