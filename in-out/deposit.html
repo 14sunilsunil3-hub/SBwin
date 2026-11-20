@@ -223,7 +223,6 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            margin-bottom: 14px;
         }
         .amt-btn {
             background: rgba(30, 27, 75, 0.6);
@@ -583,7 +582,6 @@
                     <div class="amt-btn" onclick="setAmount(50000, this)">₹50000</div>
                     <div class="amt-btn" onclick="setAmount(100000, this)">₹100000</div>
                 </div>
-                <input type="number" id="depositAmount" class="input-box" value="200" min="200" placeholder="Minimum deposit ₹200" oninput="onAmountInputChange()">
             </div>
 
             <div class="instructions-box">
@@ -705,8 +703,7 @@
 
         function updateBottomOverlay() {
             document.getElementById('overlayMethodLabel').textContent = selectedQrMethod;
-            const rawVal = parseFloat(document.getElementById('depositAmount').value);
-            const displayAmt = isNaN(rawVal) || rawVal < 0 ? 0 : rawVal;
+            const displayAmt = isNaN(selectedAmount) || selectedAmount < 0 ? 0 : selectedAmount;
             document.getElementById('overlayAmountLabel').textContent = displayAmt.toFixed(2);
         }
 
@@ -759,16 +756,6 @@
             sessionStorage.setItem('selected_qr_method', selectedQrMethod);
             document.getElementById('selectedQrLabel').textContent = selectedQrMethod;
             applyQrImageWithFallback(document.getElementById('qrImageDisplay'), selectedQrMethod, selectedAmount);
-            updateBottomOverlay();
-        }
-
-        function onAmountInputChange() {
-            const val = parseFloat(document.getElementById('depositAmount').value);
-            selectedAmount = isNaN(val) ? 0 : val;
-            document.querySelectorAll('.amt-btn').forEach(b => {
-                const btnAmt = parseFloat(b.textContent.replace(/[^0-9.]/g, ''));
-                b.classList.toggle('active', btnAmt === selectedAmount);
-            });
             updateBottomOverlay();
         }
 
@@ -964,14 +951,13 @@
 
         function setAmount(amt, el) {
             selectedAmount = amt;
-            document.getElementById('depositAmount').value = amt;
             document.querySelectorAll('.amt-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
             updateBottomOverlay();
         }
 
         function proceedToPay() {
-            let amt = parseFloat(document.getElementById('depositAmount').value);
+            let amt = Number(selectedAmount);
             if (isNaN(amt) || amt < MIN_DEPOSIT_AMOUNT) {
                 showToast(`Minimum deposit amount is ₹${MIN_DEPOSIT_AMOUNT}!`);
                 return;
