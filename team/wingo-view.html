@@ -272,6 +272,7 @@
         const params = new URLSearchParams(window.location.search);
         const userId = params.get('userId') || localStorage.getItem('rewards_userId') || sessionStorage.getItem('rewards_userId');
         let currentTimerType = params.get('timerType') || '30s';
+        let currentPeriod = '';
 
         const ballConfig = {
             0: { ballClass: 'split-0', size: 'Small', sizeClass: 'size-small', color: 'Violet', colorClass: 'clr-violet' },
@@ -293,7 +294,8 @@
         }
 
         function renderRngData(data) {
-            document.getElementById('periodNoHeader').textContent = 'Period: ' + (data.period || '---');
+            currentPeriod = data.period || '';
+            document.getElementById('periodNoHeader').textContent = 'Period: ' + (currentPeriod || '---');
             const num = ((Number(data.number) % 10) + 10) % 10;
             const cfg = ballConfig[num];
 
@@ -340,14 +342,18 @@
             loadRngResult();
         }
 
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SET_TIMER_TYPE' && event.data.timerType) {
+                currentTimerType = event.data.timerType;
+                syncActiveTabUI();
+                loadRngResult();
+            }
+        });
+
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (tick) => {
-                if (currentTimerType === type) {
-                    const prevText = document.getElementById('periodNoHeader').textContent;
-                    const newText = 'Period: ' + (tick.period || '---');
-                    if (prevText !== newText) {
-                        loadRngResult();
-                    }
+                if (currentTimerType === type && tick && tick.period && tick.period !== currentPeriod) {
+                    loadRngResult();
                 }
             });
         });
