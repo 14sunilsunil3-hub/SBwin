@@ -95,7 +95,6 @@ function getRngOutcome(period, timerType) {
         () => rngWeighted()
     ];
 
-    // Pick one of the 5 engines using cryptographic randomness
     const engineIndex = crypto.randomInt(0, engines.length);
     const randomNum = engines[engineIndex]();
 
