@@ -38,6 +38,10 @@ app.get('/withdraw.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'withdraw.html'));
 });
 
+app.get('/navigation/wheel.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'navigation', 'wheel.html'));
+});
+
 const MONGO_URI = "mongodb+srv://14sunilsunil3_db_user:W1LlrneQfi7toLpn@cluster1.pr9b0cx.mongodb.net/sbwin_db?retryWrites=true&w=majority";
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
@@ -841,6 +845,8 @@ app.get('*', (req, res) => {
   if (reqPath.startsWith('/games/')) {
     res.sendFile(path.join(__dirname, reqPath));
   } else if (reqPath.startsWith('/in-out/')) {
+    res.sendFile(path.join(__dirname, reqPath));
+  } else if (reqPath.startsWith('/navigation/')) {
     res.sendFile(path.join(__dirname, reqPath));
   } else {
     const cleanPath = reqPath.substring(1) || 'index.html';
