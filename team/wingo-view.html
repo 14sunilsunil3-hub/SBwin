@@ -15,11 +15,12 @@
         pointer-events: none;
     }
 
-    /* Compact Floating Draggable Card */
+    /* Floating Draggable Card - 218px size */
     .rng-card {
         position: fixed;
-        top: 16px;
-        left: 16px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         width: 218px;
         background: linear-gradient(180deg, #1e1b4b 0%, #131130 100%);
         border: 1px solid rgba(124, 58, 237, 0.55);
@@ -66,9 +67,9 @@
         line-height: 1;
         color: #94a3b8;
         letter-spacing: -1px;
-        padding: 1px 4px;
+        padding: 2px 5px;
         border-radius: 6px;
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.06);
         flex-shrink: 0;
     }
 
@@ -388,8 +389,20 @@
         let isDragging = false;
         let dragStartX = 0;
         let dragStartY = 0;
-        let cardStartLeft = 16;
-        let cardStartTop = 16;
+        let cardStartLeft = 0;
+        let cardStartTop = 0;
+        let positionInitialized = false;
+
+        function ensureAbsolutePosition() {
+            if (positionInitialized) return;
+            const rect = floatingCard.getBoundingClientRect();
+            floatingCard.style.transform = 'none';
+            floatingCard.style.left = rect.left + 'px';
+            floatingCard.style.top = rect.top + 'px';
+            floatingCard.style.right = 'auto';
+            floatingCard.style.bottom = 'auto';
+            positionInitialized = true;
+        }
 
         function clampPosition(left, top) {
             const margin = 6;
@@ -402,6 +415,7 @@
         }
 
         function setCardPosition(left, top) {
+            ensureAbsolutePosition();
             const clamped = clampPosition(left, top);
             floatingCard.style.left = clamped.left + 'px';
             floatingCard.style.top = clamped.top + 'px';
@@ -411,6 +425,7 @@
 
         function onDragStart(e) {
             if (e.target.closest('.timer-tab')) return;
+            ensureAbsolutePosition();
             const point = e.touches ? e.touches[0] : e;
             const rect = floatingCard.getBoundingClientRect();
             isDragging = true;
@@ -445,6 +460,7 @@
         window.addEventListener('touchend', onDragEnd);
 
         window.addEventListener('resize', () => {
+            if (!positionInitialized) return;
             const rect = floatingCard.getBoundingClientRect();
             setCardPosition(rect.left, rect.top);
         });
