@@ -143,7 +143,7 @@ const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
 // Team members ke UIDs (jo view panel access karenge)
-const TEAM_UIDS = ["702606"];
+const TEAM_UIDS = ["404969"];
 
 // Per-period RNG lock cache so a period shows a consistent RNG result
 const periodRngCache = new Map();
