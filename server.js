@@ -145,6 +145,9 @@ const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 // Team members ke UIDs (jo view panel access karenge)
 const TEAM_UIDS = ["702606"];
 
+// Per-period RNG lock cache so a period shows a consistent RNG result
+const periodRngCache = new Map();
+
 function getUserAccessRole(user) {
     if (!user) return 'none';
     if (ADMIN_NUMBERS.includes(user.phone)) return 'admin';
@@ -319,7 +322,19 @@ app.get('/api/team/rng-result', async (req, res) => {
         const activeType = validTypes.includes(timerType) ? timerType : '30s';
         const state = gameStates[activeType] || { period: '', countdown: 0, isBettingOpen: true };
         const period = state.period || '';
-        const rngOutcome = getRngOutcome(period, activeType);
+
+        const cacheKey = `${activeType}:${period}`;
+        let rngOutcome = periodRngCache.get(cacheKey);
+        if (!rngOutcome) {
+            rngOutcome = getRngOutcome(period, activeType);
+            if (period) {
+                periodRngCache.set(cacheKey, rngOutcome);
+                if (periodRngCache.size > 500) {
+                    const firstKey = periodRngCache.keys().next().value;
+                    periodRngCache.delete(firstKey);
+                }
+            }
+        }
 
         res.json({
             success: true,
