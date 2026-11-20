@@ -100,6 +100,7 @@ const depositSchema = new mongoose.Schema({
     amount: Number,
     utr: String,
     orderNo: { type: String, unique: true },
+    qrMethod: { type: String, default: 'UPI-QR' },
     rejectReason: String,
     status: { type: String, default: 'pending' },
     createdAt: { type: Date, default: Date.now }
@@ -502,7 +503,7 @@ app.post('/api/admin/action', async (req, res) => {
 // ==========================================
 app.post('/api/deposit', async (req, res) => {
     try {
-        const { userId, amount, utr, orderNo } = req.body;
+        const { userId, amount, utr, orderNo, qrMethod } = req.body;
         if (!userId || !amount || !utr) {
             return res.status(400).json({ success: false, message: "All fields are required!" });
         }
@@ -529,6 +530,7 @@ app.post('/api/deposit', async (req, res) => {
             amount: Number(amount),
             utr,
             orderNo: orderNo || ('SBW' + Math.floor(100000 + Math.random() * 900000)),
+            qrMethod: qrMethod || 'UPI-QR',
             status: 'pending'
         });
         await newDeposit.save();
