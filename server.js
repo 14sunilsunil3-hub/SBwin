@@ -50,6 +50,20 @@ function generateUID() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+const bankAccountSubSchema = new mongoose.Schema({
+    bankName: { type: String, required: true },
+    accountHolderName: { type: String, required: true },
+    accountNumber: { type: String, required: true },
+    phone: { type: String, default: '' },
+    ifsc: { type: String, required: true }
+}, { _id: false });
+
+const upiAccountSubSchema = new mongoose.Schema({
+    accountHolderName: { type: String, required: true },
+    phone: { type: String, default: '' },
+    upiId: { type: String, required: true }
+}, { _id: false });
+
 const userSchema = new mongoose.Schema({
     uid: { type: String, unique: true, default: generateUID },
     phone: { type: String, required: true, unique: true },
@@ -57,6 +71,9 @@ const userSchema = new mongoose.Schema({
     balance: { type: Number, default: 0 }, 
     winningsBalance: { type: Number, default: 0 }, 
     totalBetDone: { type: Number, default: 0 }, 
+    lockedHolderName: { type: String, default: '' },
+    savedBanks: { type: [bankAccountSubSchema], default: [] },
+    savedUpis: { type: [upiAccountSubSchema], default: [] },
     lastLoginTime: { type: Date, default: null },
     lastActiveAt: { type: Date, default: Date.now },
     sessionExpired: { type: Boolean, default: false },
@@ -495,6 +512,172 @@ app.post('/api/admin/action', async (req, res) => {
         }
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ==========================================
+// SAVED BANK & UPI PAYMENT METHODS APIs
+// ==========================================
+app.get('/api/user-payment-methods/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found!" });
+        }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
+
+        return res.json({
+            success: true,
+            lockedHolderName: user.lockedHolderName || '',
+            savedBanks: user.savedBanks || [],
+            savedUpis: user.savedUpis || []
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+app.post('/api/save-bank', async (req, res) => {
+    try {
+        const { userId, bankName, accountHolderName, accountNumber, phone = '', ifsc } = req.body;
+
+        if (!userId || !bankName || !accountHolderName || !accountNumber || !ifsc) {
+            return res.status(400).json({ success: false, message: "Please fill all required bank fields!" });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found!" });
+        }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        const cleanName = String(accountHolderName).trim();
+        const cleanAcc = String(accountNumber).trim();
+        const cleanPhone = String(phone || '').trim();
+        const cleanIfsc = String(ifsc).trim().toUpperCase();
+        const cleanBank = String(bankName).trim();
+
+        const existingLocked = (user.lockedHolderName || '').trim();
+        if (existingLocked && existingLocked.toLowerCase() !== cleanName.toLowerCase()) {
+            return res.status(400).json({
+                success: false,
+                message: `Name must match locked name: ${existingLocked}`
+            });
+        }
+
+        if (!existingLocked) {
+            user.lockedHolderName = cleanName;
+        }
+
+        const duplicateIndex = (user.savedBanks || []).findIndex(
+            b => String(b.accountNumber).trim() === cleanAcc
+        );
+
+        if (duplicateIndex === -1) {
+            user.savedBanks.push({
+                bankName: cleanBank,
+                accountHolderName: cleanName,
+                accountNumber: cleanAcc,
+                phone: cleanPhone,
+                ifsc: cleanIfsc
+            });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
+
+        return res.json({
+            success: true,
+            message: "Bank card saved to database!",
+            lockedHolderName: user.lockedHolderName,
+            savedBanks: user.savedBanks
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+app.post('/api/save-upi', async (req, res) => {
+    try {
+        const { userId, accountHolderName, phone = '', upiId } = req.body;
+
+        if (!userId || !accountHolderName || !upiId) {
+            return res.status(400).json({ success: false, message: "Please fill all required UPI fields!" });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found!" });
+        }
+
+        const validSession = await isUserSessionValid(user);
+        if (!validSession) {
+            return res.status(401).json({
+                success: false,
+                code: 'SESSION_EXPIRED',
+                message: 'Session expired due to 1 hour inactivity. Please login again.'
+            });
+        }
+
+        const cleanName = String(accountHolderName).trim();
+        const cleanPhone = String(phone || '').trim();
+        const cleanUpi = String(upiId).trim().toLowerCase();
+
+        const existingLocked = (user.lockedHolderName || '').trim();
+        if (existingLocked && existingLocked.toLowerCase() !== cleanName.toLowerCase()) {
+            return res.status(400).json({
+                success: false,
+                message: `Name must match locked name: ${existingLocked}`
+            });
+        }
+
+        if (!existingLocked) {
+            user.lockedHolderName = cleanName;
+        }
+
+        const duplicateIndex = (user.savedUpis || []).findIndex(
+            u => String(u.upiId).trim().toLowerCase() === cleanUpi
+        );
+
+        if (duplicateIndex === -1) {
+            user.savedUpis.push({
+                accountHolderName: cleanName,
+                phone: cleanPhone,
+                upiId: cleanUpi
+            });
+        }
+
+        user.lastActiveAt = new Date();
+        await user.save();
+
+        return res.json({
+            success: true,
+            message: "UPI ID saved to database!",
+            lockedHolderName: user.lockedHolderName,
+            savedUpis: user.savedUpis
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message });
     }
 });
 
