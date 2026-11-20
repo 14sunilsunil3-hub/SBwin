@@ -36,9 +36,18 @@ function buildOutcomeFromNumber(randomNum) {
     return { number: num, color, size };
 }
 
-// Cryptographic random RNG (0 to 9) via crypto.randomInt
+// Option 3: HMAC-SHA256 RNG per period & timerType (ManualOverride does NOT affect this)
 function getRngOutcome(period, timerType) {
-    const randomNum = crypto.randomInt(0, 10);
+    const safePeriod = String(period || '');
+    const safeType = String(timerType || '30s');
+    const secretKey = process.env.RNG_SECRET || 'change_this_hmac_key';
+
+    const hmac = crypto
+        .createHmac('sha256', secretKey)
+        .update(`${safePeriod}:${safeType}`)
+        .digest('hex');
+
+    const randomNum = parseInt(hmac.slice(0, 8), 16) % 10;
     return buildOutcomeFromNumber(randomNum);
 }
 
