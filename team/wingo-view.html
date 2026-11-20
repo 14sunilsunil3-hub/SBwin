@@ -12,55 +12,78 @@
         background: transparent !important;
         color: #fff;
         overflow: hidden;
+        pointer-events: none;
     }
-    body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
-    }
+
+    /* Compact Floating Draggable Card */
     .rng-card {
-        width: 100%;
-        height: 100%;
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        width: 218px;
         background: linear-gradient(180deg, #1e1b4b 0%, #131130 100%);
-        border: 1px solid rgba(124, 58, 237, 0.5);
-        border-radius: 18px;
-        padding: 14px;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(124, 58, 237, 0.55);
+        border-radius: 15px;
+        padding: 10px;
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.65);
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        gap: 8px;
+        z-index: 99999;
+        pointer-events: auto;
+        user-select: none;
+        touch-action: none;
+        cursor: grab;
     }
+    .rng-card.dragging {
+        cursor: grabbing;
+        border-color: #38bdf8;
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.8), 0 0 14px rgba(56, 189, 248, 0.3);
+    }
+
     .rng-top {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
+        gap: 6px;
     }
     .period-badge {
-        font-size: 11px;
+        font-size: 9.5px;
         font-weight: 700;
         color: #38bdf8;
         background: rgba(14, 165, 233, 0.15);
         border: 1px solid rgba(56, 189, 248, 0.35);
-        padding: 3px 8px;
+        padding: 2px 7px;
         border-radius: 20px;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.2px;
         font-family: monospace;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
+    .drag-handle {
+        font-size: 11px;
+        line-height: 1;
+        color: #94a3b8;
+        letter-spacing: -1px;
+        padding: 1px 4px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.05);
+        flex-shrink: 0;
+    }
+
     .timer-tabs-row {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 4px;
-        margin-bottom: 12px;
+        gap: 3px;
     }
     .timer-tab {
         background: rgba(30, 27, 75, 0.9);
         border: 1px solid rgba(124, 58, 237, 0.4);
         color: #a7f3d0;
-        padding: 5px 2px;
-        border-radius: 7px;
-        font-size: 10px;
+        padding: 4px 1px;
+        border-radius: 6px;
+        font-size: 9px;
         font-weight: 800;
         text-align: center;
         cursor: pointer;
@@ -72,19 +95,19 @@
         border-color: #38bdf8;
         box-shadow: 0 0 8px rgba(124, 58, 237, 0.5);
     }
+
     .single-ball-box {
         position: relative;
-        flex: 1;
-        background: rgba(15, 23, 42, 0.65);
+        background: rgba(15, 23, 42, 0.72);
         border: 1px solid rgba(124, 58, 237, 0.35);
-        padding: 10px;
-        border-radius: 14px;
+        padding: 9px 10px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 14px;
+        gap: 10px;
         overflow: hidden;
-        min-height: 124px;
+        min-height: 88px;
     }
 
     /* Full resultBox Scanning Overlay + Aligned Scanner Card */
@@ -96,8 +119,8 @@
         display: none;
         align-items: center;
         justify-content: center;
-        padding: 6px;
-        background: linear-gradient(160deg, rgba(9, 13, 22, 0.94), rgba(15, 23, 42, 0.96));
+        padding: 5px;
+        background: linear-gradient(160deg, rgba(9, 13, 22, 0.95), rgba(15, 23, 42, 0.97));
         backdrop-filter: blur(3px);
         z-index: 10;
     }
@@ -112,9 +135,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 14px;
+        gap: 10px;
         width: 100%;
-        padding: 4px 6px;
         transition: opacity 0.2s ease;
     }
 
@@ -125,14 +147,14 @@
         justify-content: center;
         width: 100%;
         height: 100%;
-        min-height: 104px;
-        padding: 0 24px;
-        border-radius: 12px;
+        min-height: 76px;
+        padding: 0 14px;
+        border-radius: 10px;
         background: linear-gradient(145deg, #111827, #0b101b);
         border: 1px solid rgba(56, 189, 248, 0.45);
         box-shadow:
-            0 10px 24px rgba(0, 0, 0, 0.6),
-            inset 0 0 18px rgba(56, 189, 248, 0.14);
+            0 8px 20px rgba(0, 0, 0, 0.6),
+            inset 0 0 16px rgba(56, 189, 248, 0.14);
         overflow: hidden;
     }
     .scan-beam {
@@ -172,30 +194,30 @@
     .scanning-label {
         position: relative;
         z-index: 1;
-        font-size: 13px;
+        font-size: 11px;
         font-weight: 800;
-        letter-spacing: 0.16em;
+        letter-spacing: 0.15em;
         text-transform: uppercase;
         color: #38bdf8;
         text-shadow: 0 0 12px rgba(56, 189, 248, 0.55);
     }
 
-    /* Glossy 3D Ball Styles */
+    /* Compact Glossy 3D Ball Styles */
     .ball {
         position: relative;
-        width: 58px;
-        height: 58px;
+        width: 46px;
+        height: 46px;
         flex-shrink: 0;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 24px;
+        font-size: 19px;
         font-weight: bold;
         overflow: hidden;
         outline: none;
         border: none;
-        box-shadow: inset 0 -5px 7px rgba(0,0,0,0.3), 0 4px 10px rgba(0,0,0,0.4);
+        box-shadow: inset 0 -4px 6px rgba(0,0,0,0.3), 0 3px 8px rgba(0,0,0,0.4);
         transition: transform 0.2s ease;
     }
     .ball.pop-anim {
@@ -204,8 +226,8 @@
     .ball::before {
         content: '';
         position: absolute;
-        width: 38px;
-        height: 38px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         z-index: 1;
     }
@@ -215,8 +237,8 @@
         top: 2px;
         left: 50%;
         transform: translateX(-50%);
-        width: 15px;
-        height: 5px;
+        width: 12px;
+        height: 4px;
         background: rgba(255, 255, 255, 0.65);
         border-radius: 50%;
         z-index: 3;
@@ -231,22 +253,22 @@
         top: 50%;
         left: 2px;
         transform: translateY(-50%);
-        width: 5px;
-        height: 13px;
+        width: 4px;
+        height: 10px;
     }
     .side-glow-right {
         top: 50%;
         right: 2px;
         transform: translateY(-50%);
-        width: 5px;
-        height: 13px;
+        width: 4px;
+        height: 10px;
     }
     .bottom-glow {
         bottom: 2px;
         left: 50%;
         transform: translateX(-50%);
-        width: 11px;
-        height: 3.5px;
+        width: 9px;
+        height: 3px;
     }
     .ball span {
         position: relative;
@@ -293,15 +315,15 @@
         -webkit-text-fill-color: transparent;
     }
 
-    .result-details-col { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .result-details-col { display: flex; flex-direction: column; gap: 6px; flex: 1; }
     .status-pill {
         width: 100%;
-        padding: 7px 10px;
-        border-radius: 9px;
-        font-size: 12px;
+        padding: 5px 8px;
+        border-radius: 7px;
+        font-size: 10px;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.6px;
+        letter-spacing: 0.5px;
         text-align: center;
         color: #fff;
         transition: all 0.2s ease;
@@ -314,18 +336,17 @@
 </style>
 </head>
 <body>
-    <div class="rng-card">
-        <div>
-            <div class="rng-top">
-                <span class="period-badge" id="periodNoHeader">Period: ---</span>
-            </div>
+    <div class="rng-card" id="floatingCard">
+        <div class="rng-top">
+            <span class="period-badge" id="periodNoHeader">Period: ---</span>
+            <span class="drag-handle" title="Drag">⋮⋮</span>
+        </div>
 
-            <div class="timer-tabs-row">
-                <div class="timer-tab active" data-type="30s" onclick="switchTimer('30s', this)">30Sec</div>
-                <div class="timer-tab" data-type="60s" onclick="switchTimer('60s', this)">1Min</div>
-                <div class="timer-tab" data-type="3m" onclick="switchTimer('3m', this)">3Min</div>
-                <div class="timer-tab" data-type="5m" onclick="switchTimer('5m', this)">5Min</div>
-            </div>
+        <div class="timer-tabs-row">
+            <div class="timer-tab active" data-type="30s" onclick="switchTimer('30s', this)">30Sec</div>
+            <div class="timer-tab" data-type="60s" onclick="switchTimer('60s', this)">1Min</div>
+            <div class="timer-tab" data-type="3m" onclick="switchTimer('3m', this)">3Min</div>
+            <div class="timer-tab" data-type="5m" onclick="switchTimer('5m', this)">5Min</div>
         </div>
 
         <div class="single-ball-box" id="resultBox">
@@ -361,6 +382,72 @@
         let scanTimerId = null;
         let isScanning = false;
         let pendingResultData = null;
+
+        // Floating Drag Logic (Touch + Mouse)
+        const floatingCard = document.getElementById('floatingCard');
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let cardStartLeft = 16;
+        let cardStartTop = 16;
+
+        function clampPosition(left, top) {
+            const margin = 6;
+            const maxLeft = Math.max(margin, window.innerWidth - floatingCard.offsetWidth - margin);
+            const maxTop = Math.max(margin, window.innerHeight - floatingCard.offsetHeight - margin);
+            return {
+                left: Math.min(Math.max(margin, left), maxLeft),
+                top: Math.min(Math.max(margin, top), maxTop)
+            };
+        }
+
+        function setCardPosition(left, top) {
+            const clamped = clampPosition(left, top);
+            floatingCard.style.left = clamped.left + 'px';
+            floatingCard.style.top = clamped.top + 'px';
+            floatingCard.style.right = 'auto';
+            floatingCard.style.bottom = 'auto';
+        }
+
+        function onDragStart(e) {
+            if (e.target.closest('.timer-tab')) return;
+            const point = e.touches ? e.touches[0] : e;
+            const rect = floatingCard.getBoundingClientRect();
+            isDragging = true;
+            dragStartX = point.clientX;
+            dragStartY = point.clientY;
+            cardStartLeft = rect.left;
+            cardStartTop = rect.top;
+            floatingCard.classList.add('dragging');
+        }
+
+        function onDragMove(e) {
+            if (!isDragging) return;
+            if (e.cancelable) e.preventDefault();
+            const point = e.touches ? e.touches[0] : e;
+            const dx = point.clientX - dragStartX;
+            const dy = point.clientY - dragStartY;
+            setCardPosition(cardStartLeft + dx, cardStartTop + dy);
+        }
+
+        function onDragEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            floatingCard.classList.remove('dragging');
+        }
+
+        floatingCard.addEventListener('mousedown', onDragStart);
+        window.addEventListener('mousemove', onDragMove);
+        window.addEventListener('mouseup', onDragEnd);
+
+        floatingCard.addEventListener('touchstart', onDragStart, { passive: true });
+        window.addEventListener('touchmove', onDragMove, { passive: false });
+        window.addEventListener('touchend', onDragEnd);
+
+        window.addEventListener('resize', () => {
+            const rect = floatingCard.getBoundingClientRect();
+            setCardPosition(rect.left, rect.top);
+        });
 
         const ballConfig = {
             0: { ballClass: 'split-0', size: 'Small', sizeClass: 'size-small', color: 'Violet', colorClass: 'clr-violet' },
