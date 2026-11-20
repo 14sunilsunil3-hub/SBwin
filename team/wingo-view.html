@@ -15,8 +15,8 @@
         pointer-events: none;
     }
 
-    /* Floating Draggable Card - 218px size */
-    .rng-card {
+    /* Standalone Draggable Popup */
+    .rng-popup {
         position: fixed;
         top: 50%;
         left: 50%;
@@ -36,13 +36,13 @@
         touch-action: none;
         cursor: grab;
     }
-    .rng-card.dragging {
+    .rng-popup.dragging {
         cursor: grabbing;
         border-color: #38bdf8;
         box-shadow: 0 14px 32px rgba(0, 0, 0, 0.8), 0 0 14px rgba(56, 189, 248, 0.3);
     }
 
-    .rng-top {
+    .popup-top {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -337,8 +337,8 @@
 </style>
 </head>
 <body>
-    <div class="rng-card" id="floatingCard">
-        <div class="rng-top">
+    <div class="rng-popup" id="floatingPopup">
+        <div class="popup-top">
             <span class="period-badge" id="periodNoHeader">Period: ---</span>
             <span class="drag-handle" title="Drag">⋮⋮</span>
         </div>
@@ -385,55 +385,55 @@
         let pendingResultData = null;
 
         // Floating Drag Logic (Touch + Mouse)
-        const floatingCard = document.getElementById('floatingCard');
+        const floatingPopup = document.getElementById('floatingPopup');
         let isDragging = false;
         let dragStartX = 0;
         let dragStartY = 0;
-        let cardStartLeft = 0;
-        let cardStartTop = 0;
+        let popupStartLeft = 0;
+        let popupStartTop = 0;
         let positionInitialized = false;
 
         function ensureAbsolutePosition() {
             if (positionInitialized) return;
-            const rect = floatingCard.getBoundingClientRect();
-            floatingCard.style.transform = 'none';
-            floatingCard.style.left = rect.left + 'px';
-            floatingCard.style.top = rect.top + 'px';
-            floatingCard.style.right = 'auto';
-            floatingCard.style.bottom = 'auto';
+            const rect = floatingPopup.getBoundingClientRect();
+            floatingPopup.style.transform = 'none';
+            floatingPopup.style.left = rect.left + 'px';
+            floatingPopup.style.top = rect.top + 'px';
+            floatingPopup.style.right = 'auto';
+            floatingPopup.style.bottom = 'auto';
             positionInitialized = true;
         }
 
         function clampPosition(left, top) {
             const margin = 6;
-            const maxLeft = Math.max(margin, window.innerWidth - floatingCard.offsetWidth - margin);
-            const maxTop = Math.max(margin, window.innerHeight - floatingCard.offsetHeight - margin);
+            const maxLeft = Math.max(margin, window.innerWidth - floatingPopup.offsetWidth - margin);
+            const maxTop = Math.max(margin, window.innerHeight - floatingPopup.offsetHeight - margin);
             return {
                 left: Math.min(Math.max(margin, left), maxLeft),
                 top: Math.min(Math.max(margin, top), maxTop)
             };
         }
 
-        function setCardPosition(left, top) {
+        function setPopupPosition(left, top) {
             ensureAbsolutePosition();
             const clamped = clampPosition(left, top);
-            floatingCard.style.left = clamped.left + 'px';
-            floatingCard.style.top = clamped.top + 'px';
-            floatingCard.style.right = 'auto';
-            floatingCard.style.bottom = 'auto';
+            floatingPopup.style.left = clamped.left + 'px';
+            floatingPopup.style.top = clamped.top + 'px';
+            floatingPopup.style.right = 'auto';
+            floatingPopup.style.bottom = 'auto';
         }
 
         function onDragStart(e) {
             if (e.target.closest('.timer-tab')) return;
             ensureAbsolutePosition();
             const point = e.touches ? e.touches[0] : e;
-            const rect = floatingCard.getBoundingClientRect();
+            const rect = floatingPopup.getBoundingClientRect();
             isDragging = true;
             dragStartX = point.clientX;
             dragStartY = point.clientY;
-            cardStartLeft = rect.left;
-            cardStartTop = rect.top;
-            floatingCard.classList.add('dragging');
+            popupStartLeft = rect.left;
+            popupStartTop = rect.top;
+            floatingPopup.classList.add('dragging');
         }
 
         function onDragMove(e) {
@@ -442,27 +442,27 @@
             const point = e.touches ? e.touches[0] : e;
             const dx = point.clientX - dragStartX;
             const dy = point.clientY - dragStartY;
-            setCardPosition(cardStartLeft + dx, cardStartTop + dy);
+            setPopupPosition(popupStartLeft + dx, popupStartTop + dy);
         }
 
         function onDragEnd() {
             if (!isDragging) return;
             isDragging = false;
-            floatingCard.classList.remove('dragging');
+            floatingPopup.classList.remove('dragging');
         }
 
-        floatingCard.addEventListener('mousedown', onDragStart);
+        floatingPopup.addEventListener('mousedown', onDragStart);
         window.addEventListener('mousemove', onDragMove);
         window.addEventListener('mouseup', onDragEnd);
 
-        floatingCard.addEventListener('touchstart', onDragStart, { passive: true });
+        floatingPopup.addEventListener('touchstart', onDragStart, { passive: true });
         window.addEventListener('touchmove', onDragMove, { passive: false });
         window.addEventListener('touchend', onDragEnd);
 
         window.addEventListener('resize', () => {
             if (!positionInitialized) return;
-            const rect = floatingCard.getBoundingClientRect();
-            setCardPosition(rect.left, rect.top);
+            const rect = floatingPopup.getBoundingClientRect();
+            setPopupPosition(rect.left, rect.top);
         });
 
         const ballConfig = {
