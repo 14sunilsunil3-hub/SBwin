@@ -111,27 +111,6 @@
         min-height: 88px;
     }
 
-    /* Full resultBox Scanning Overlay + Aligned Scanner Card */
-    .scan-stage {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 5px;
-        background: linear-gradient(160deg, rgba(9, 13, 22, 0.95), rgba(15, 23, 42, 0.97));
-        backdrop-filter: blur(3px);
-        z-index: 10;
-    }
-    .single-ball-box.is-scanning .scan-stage {
-        display: flex;
-    }
-    .single-ball-box.is-scanning .result-content {
-        opacity: 0;
-        pointer-events: none;
-    }
     .result-content {
         display: flex;
         align-items: center;
@@ -139,68 +118,6 @@
         gap: 10px;
         width: 100%;
         transition: opacity 0.2s ease;
-    }
-
-    .scan-btn-card {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        min-height: 76px;
-        padding: 0 14px;
-        border-radius: 10px;
-        background: linear-gradient(145deg, #111827, #0b101b);
-        border: 1px solid rgba(56, 189, 248, 0.45);
-        box-shadow:
-            0 8px 20px rgba(0, 0, 0, 0.6),
-            inset 0 0 16px rgba(56, 189, 248, 0.14);
-        overflow: hidden;
-    }
-    .scan-beam {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: -45%;
-        height: 45%;
-        background: linear-gradient(
-            to bottom,
-            rgba(56, 189, 248, 0) 0%,
-            rgba(56, 189, 248, 0.25) 60%,
-            rgba(224, 242, 254, 0.92) 100%
-        );
-        border-bottom: 2px solid #7dd3fc;
-        box-shadow: 0 2px 14px rgba(56, 189, 248, 0.85);
-        animation: scanSweep 1.25s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-        pointer-events: none;
-        z-index: 2;
-    }
-    @keyframes scanSweep {
-        0% {
-            top: -45%;
-            opacity: 0.25;
-        }
-        15% {
-            opacity: 1;
-        }
-        85% {
-            opacity: 1;
-        }
-        100% {
-            top: 115%;
-            opacity: 0.25;
-        }
-    }
-    .scanning-label {
-        position: relative;
-        z-index: 1;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: #38bdf8;
-        text-shadow: 0 0 12px rgba(56, 189, 248, 0.55);
     }
 
     /* Compact Glossy 3D Ball Styles */
@@ -351,13 +268,6 @@
         </div>
 
         <div class="single-ball-box" id="resultBox">
-            <div class="scan-stage" id="scanStage">
-                <div class="scan-btn-card">
-                    <div class="scan-beam"></div>
-                    <span class="scanning-label">SCANNING...</span>
-                </div>
-            </div>
-
             <div class="result-content">
                 <div class="ball split-0" id="activeBall">
                     <div class="side-glow-left"></div>
@@ -381,9 +291,6 @@
         const uidParam = params.get('uid') || localStorage.getItem('rewards_uid') || sessionStorage.getItem('rewards_uid') || '';
         let currentTimerType = params.get('timerType') || '30s';
         let currentPeriod = '';
-        let scanTimerId = null;
-        let isScanning = false;
-        let pendingResultData = null;
 
         // Floating Drag Logic (Touch + Mouse)
         const floatingPopup = document.getElementById('floatingPopup');
@@ -485,7 +392,7 @@
             });
         }
 
-        function applyResultToDOM(data) {
+        function renderUpcomingResult(data) {
             currentPeriod = data.period || currentPeriod;
             document.getElementById('periodNoHeader').textContent = 'Period: ' + (currentPeriod || '---');
             const num = ((Number(data.number) % 10) + 10) % 10;
@@ -493,61 +400,19 @@
 
             const ballEl = document.getElementById('activeBall');
             const numEl = document.getElementById('activeBallNumber');
-            ballEl.classList.add('pop-anim');
+            ballEl.className = 'ball ' + cfg.ballClass;
+            numEl.textContent = num;
 
-            setTimeout(() => {
-                ballEl.className = 'ball ' + cfg.ballClass;
-                numEl.textContent = num;
+            const sizeEl = document.getElementById('activeSizeBadge');
+            sizeEl.textContent = (data.size || cfg.size).toUpperCase();
+            sizeEl.className = 'status-pill ' + cfg.sizeClass;
 
-                const sizeEl = document.getElementById('activeSizeBadge');
-                sizeEl.textContent = (data.size || cfg.size).toUpperCase();
-                sizeEl.className = 'status-pill ' + cfg.sizeClass;
-
-                const colorEl = document.getElementById('activeColorBadge');
-                colorEl.textContent = (data.color || cfg.color).toUpperCase();
-                colorEl.className = 'status-pill ' + cfg.colorClass;
-
-                ballEl.classList.remove('pop-anim');
-            }, 120);
+            const colorEl = document.getElementById('activeColorBadge');
+            colorEl.textContent = (data.color || cfg.color).toUpperCase();
+            colorEl.className = 'status-pill ' + cfg.colorClass;
         }
 
-        function renderRngData(data, forceImmediate = false) {
-            if (isScanning && !forceImmediate) {
-                pendingResultData = data;
-                if (data.period) {
-                    document.getElementById('periodNoHeader').textContent = 'Period: ' + data.period;
-                }
-                return;
-            }
-            applyResultToDOM(data);
-        }
-
-        function startFiveSecScan(newPeriod) {
-            if (newPeriod) {
-                document.getElementById('periodNoHeader').textContent = 'Period: ' + newPeriod;
-            }
-            isScanning = true;
-            pendingResultData = null;
-            document.getElementById('resultBox').classList.add('is-scanning');
-
-            if (scanTimerId) {
-                clearTimeout(scanTimerId);
-            }
-
-            scanTimerId = setTimeout(() => {
-                isScanning = false;
-                document.getElementById('resultBox').classList.remove('is-scanning');
-                if (pendingResultData) {
-                    const dataToShow = pendingResultData;
-                    pendingResultData = null;
-                    applyResultToDOM(dataToShow);
-                } else {
-                    fetchLatestRng();
-                }
-            }, 5000);
-        }
-
-        async function fetchLatestRng(triggerScanOnPeriodChange = false) {
+        async function fetchUpcomingResult() {
             try {
                 const query = new URLSearchParams({
                     timerType: currentTimerType
@@ -557,16 +422,7 @@
 
                 const res = await fetch(`/api/team/rng-result?${query.toString()}`).then(r => r.json());
                 if (res.success) {
-                    const incomingPeriod = res.period || '';
-                    if (triggerScanOnPeriodChange && incomingPeriod && incomingPeriod !== currentPeriod) {
-                        currentPeriod = incomingPeriod;
-                        pendingResultData = res;
-                        if (!isScanning) {
-                            startFiveSecScan(incomingPeriod);
-                        }
-                    } else {
-                        renderRngData(res);
-                    }
+                    renderUpcomingResult(res);
                 }
             } catch (err) {}
         }
@@ -574,34 +430,35 @@
         function switchTimer(type, el) {
             currentTimerType = type;
             syncActiveTabUI();
-            fetchLatestRng(false);
+            fetchUpcomingResult();
         }
 
         window.addEventListener('message', (event) => {
             if (event.data && event.data.type === 'SET_TIMER_TYPE' && event.data.timerType) {
                 currentTimerType = event.data.timerType;
                 syncActiveTabUI();
-                fetchLatestRng(false);
+                fetchUpcomingResult();
             }
         });
 
         ['30s', '60s', '3m', '5m'].forEach(type => {
             socket.on(`timerTick_${type}`, (tick) => {
-                if (currentTimerType === type && tick && tick.period && tick.period !== currentPeriod) {
-                    currentPeriod = tick.period;
-                    startFiveSecScan(tick.period);
-                    fetchLatestRng(false);
+                if (currentTimerType === type && tick) {
+                    if (tick.period) {
+                        currentPeriod = tick.period;
+                        document.getElementById('periodNoHeader').textContent = 'Period: ' + currentPeriod;
+                    }
+                    fetchUpcomingResult();
                 }
             });
         });
 
-        // Auto refresh fallback every 3 seconds so updates stay synced even if a socket tick is missed
         setInterval(() => {
-            fetchLatestRng(true);
-        }, 3000);
+            fetchUpcomingResult();
+        }, 2000);
 
         syncActiveTabUI();
-        fetchLatestRng(false);
+        fetchUpcomingResult();
     </script>
 </body>
 </html>
