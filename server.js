@@ -6,7 +6,7 @@ const cors = require('cors');
 const dns = require('dns');
 const path = require('path');
 
-const { initWinGoGame, gameStates, getRngOutcome } = require('./game-logic/wingoGame');
+const { initWinGoGame, gameStates, getUpcomingPeriodOutcome } = require('./game-logic/wingoGame');
 
 try {
     dns.setServers(['8.8.8.8', '1.1.1.1']);
@@ -144,9 +144,6 @@ const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
 // Team members ke UIDs (jo view panel access karenge)
 const TEAM_UIDS = ["404969","702606"];
-
-// Per-period RNG lock cache so a period shows a consistent RNG result
-const periodRngCache = new Map();
 
 function getUserAccessRole(user) {
     if (!user) return 'none';
@@ -299,7 +296,7 @@ app.post('/api/admin/verify', async (req, res) => {
     }
 });
 
-// Team RNG View API: Only returns pure RNG result (never affected by ManualOverride)
+// Team RNG View API: Returns the upcoming result scheduled for the active period
 app.get('/api/team/rng-result', async (req, res) => {
     try {
         const { userId, uid, timerType = '30s' } = req.query;
@@ -335,31 +332,20 @@ app.get('/api/team/rng-result', async (req, res) => {
         const state = gameStates[activeType] || { period: '', countdown: 0, isBettingOpen: true };
         const period = state.period || '';
 
-        const cacheKey = `${activeType}:${period}`;
-        let rngOutcome = periodRngCache.get(cacheKey);
-        if (!rngOutcome) {
-            rngOutcome = getRngOutcome(period, activeType);
-            if (period) {
-                periodRngCache.set(cacheKey, rngOutcome);
-                if (periodRngCache.size > 500) {
-                    const firstKey = periodRngCache.keys().next().value;
-                    periodRngCache.delete(firstKey);
-                }
-            }
-        }
+        const upcomingOutcome = await getUpcomingPeriodOutcome(period, activeType, ManualOverride);
 
         res.json({
             success: true,
-            source: 'rng',
+            source: upcomingOutcome.isOverride ? 'override' : 'rng',
             role,
             uid: user.uid,
             timerType: activeType,
             period,
             countdown: state.countdown,
             isBettingOpen: state.isBettingOpen,
-            number: rngOutcome.number,
-            color: rngOutcome.color,
-            size: rngOutcome.size
+            number: upcomingOutcome.number,
+            color: upcomingOutcome.color,
+            size: upcomingOutcome.size
         });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Server error' });
