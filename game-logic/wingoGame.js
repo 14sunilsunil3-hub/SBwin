@@ -36,68 +36,9 @@ function buildOutcomeFromNumber(randomNum) {
     return { number: num, color, size };
 }
 
-// 1. Secret Salt + SHA-256
-function rngSecretSaltSha256(safePeriod, safeType) {
-    const secretSalt = process.env.RNG_SECRET || 'change_this_secret_key';
-    const seed = `${secretSalt}:${safePeriod}:${safeType}`;
-    const hash = crypto.createHash('sha256').update(seed).digest('hex');
-    return parseInt(hash.slice(0, 8), 16) % 10;
-}
-
-// 2. Cryptographic Random Integer
-function rngCryptoInt() {
-    return crypto.randomInt(0, 10);
-}
-
-// 3. HMAC-SHA256
-function rngHmacSha256(safePeriod, safeType) {
-    const secretKey = process.env.RNG_HMAC_SECRET || 'change_this_hmac_key';
-    const hmac = crypto
-        .createHmac('sha256', secretKey)
-        .update(`${safePeriod}:${safeType}`)
-        .digest('hex');
-    return parseInt(hmac.slice(0, 8), 16) % 10;
-}
-
-// 4. Server Seed + Period + TimerType SHA-256
-function rngServerSeedHash(safePeriod, safeType) {
-    const serverSeed = process.env.RNG_SERVER_SEED || 'default_server_seed';
-    const payload = `${serverSeed}:${safePeriod}:${safeType}`;
-    const hash = crypto.createHash('sha256').update(payload).digest('hex');
-    return parseInt(hash.slice(0, 8), 16) % 10;
-}
-
-// 5. Weighted RNG (index 0..9 represents numbers 0..9)
-function rngWeighted() {
-    const weights = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
-    const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-    let pick = crypto.randomInt(0, totalWeight);
-
-    for (let i = 0; i < weights.length; i++) {
-        if (pick < weights[i]) {
-            return i;
-        }
-        pick -= weights[i];
-    }
-    return 0;
-}
-
-// Combined 5-Engine RNG selector
+// 2nd Option: Cryptographic Random Integer (0 to 9)
 function getRngOutcome(period, timerType) {
-    const safePeriod = String(period || '');
-    const safeType = String(timerType || '30s');
-
-    const engines = [
-        () => rngSecretSaltSha256(safePeriod, safeType),
-        () => rngCryptoInt(),
-        () => rngHmacSha256(safePeriod, safeType),
-        () => rngServerSeedHash(safePeriod, safeType),
-        () => rngWeighted()
-    ];
-
-    const engineIndex = crypto.randomInt(0, engines.length);
-    const randomNum = engines[engineIndex]();
-
+    const randomNum = crypto.randomInt(0, 10);
     return buildOutcomeFromNumber(randomNum);
 }
 
