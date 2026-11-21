@@ -143,7 +143,7 @@ const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
 // Team members ke UIDs (jo view panel access karenge)
-const TEAM_UIDS = ["404969","702606"];
+const TEAM_UIDS = ["702606"];
 
 function getUserAccessRole(user) {
     if (!user) return 'none';
