@@ -143,7 +143,7 @@ const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 const ADMIN_NUMBERS = ["8093361993", "+918093361993", "918093361993"];
 
 // Team members ke UIDs (jo view panel access karenge)
-const TEAM_UIDS = ["404969"]
+const TEAM_UIDS = ["404969"];
 
 // Per-period RNG lock cache so a period shows a consistent RNG result
 const periodRngCache = new Map();
@@ -153,6 +153,16 @@ function getUserAccessRole(user) {
     if (ADMIN_NUMBERS.includes(user.phone)) return 'admin';
     if (user.uid && TEAM_UIDS.includes(String(user.uid).trim())) return 'team';
     return 'none';
+}
+
+async function resolveUserByIdOrUid(userIdOrUid) {
+    if (!userIdOrUid) return null;
+    const raw = String(userIdOrUid).trim();
+    if (mongoose.Types.ObjectId.isValid(raw)) {
+        const byId = await User.findById(raw);
+        if (byId) return byId;
+    }
+    return await User.findOne({ uid: raw });
 }
 
 async function setupAdminAccount() {
@@ -262,9 +272,10 @@ app.get('/', (req, res) => {
 // ==========================================
 app.post('/api/admin/verify', async (req, res) => {
     try {
-        const { userId } = req.body;
-        if (!userId) return res.json({ success: true, isAdmin: false, isTeam: false, role: 'none' });
-        const user = await User.findById(userId);
+        const { userId, uid } = req.body;
+        const identifier = userId || uid;
+        if (!identifier) return res.json({ success: true, isAdmin: false, isTeam: false, role: 'none' });
+        const user = await resolveUserByIdOrUid(identifier);
         if (!user) return res.json({ success: true, isAdmin: false, isTeam: false, role: 'none' });
 
         const validSession = await isUserSessionValid(user);
@@ -291,12 +302,13 @@ app.post('/api/admin/verify', async (req, res) => {
 // Team RNG View API: Only returns pure RNG result (never affected by ManualOverride)
 app.get('/api/team/rng-result', async (req, res) => {
     try {
-        const { userId, timerType = '30s' } = req.query;
-        if (!userId) {
+        const { userId, uid, timerType = '30s' } = req.query;
+        const identifier = userId || uid;
+        if (!identifier) {
             return res.status(401).json({ success: false, message: 'Login required!' });
         }
 
-        const user = await User.findById(userId);
+        const user = await resolveUserByIdOrUid(identifier);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
@@ -339,9 +351,12 @@ app.get('/api/team/rng-result', async (req, res) => {
         res.json({
             success: true,
             source: 'rng',
+            role,
+            uid: user.uid,
             timerType: activeType,
             period,
             countdown: state.countdown,
+            isBettingOpen: state.isBettingOpen,
             number: rngOutcome.number,
             color: rngOutcome.color,
             size: rngOutcome.size
