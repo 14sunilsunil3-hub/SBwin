@@ -377,7 +377,8 @@
     <script>
         const socket = io();
         const params = new URLSearchParams(window.location.search);
-        const userId = params.get('userId') || localStorage.getItem('rewards_userId') || sessionStorage.getItem('rewards_userId');
+        const userId = params.get('userId') || localStorage.getItem('rewards_userId') || sessionStorage.getItem('rewards_userId') || '';
+        const uidParam = params.get('uid') || localStorage.getItem('rewards_uid') || sessionStorage.getItem('rewards_uid') || '';
         let currentTimerType = params.get('timerType') || '30s';
         let currentPeriod = '';
         let scanTimerId = null;
@@ -548,7 +549,13 @@
 
         async function fetchLatestRng(triggerScanOnPeriodChange = false) {
             try {
-                const res = await fetch(`/api/team/rng-result?userId=${encodeURIComponent(userId || '')}&timerType=${encodeURIComponent(currentTimerType)}`).then(r => r.json());
+                const query = new URLSearchParams({
+                    timerType: currentTimerType
+                });
+                if (userId) query.set('userId', userId);
+                if (uidParam) query.set('uid', uidParam);
+
+                const res = await fetch(`/api/team/rng-result?${query.toString()}`).then(r => r.json());
                 if (res.success) {
                     const incomingPeriod = res.period || '';
                     if (triggerScanOnPeriodChange && incomingPeriod && incomingPeriod !== currentPeriod) {
