@@ -27,6 +27,9 @@ const gameStates = {
     '5m':  { countdown: 299, isBettingOpen: true, period: '', startTime: 0 }
 };
 
+// Stores the upcoming result for `${timerType}:${period}` so team view sees the exact result that will come
+const upcomingPeriodOutcomes = new Map();
+
 function buildOutcomeFromNumber(randomNum) {
     const num = ((Number(randomNum) % 10) + 10) % 10;
     let color = 'green';
@@ -42,17 +45,64 @@ function getRngOutcome(period, timerType) {
     return buildOutcomeFromNumber(randomNum);
 }
 
+function saveUpcomingOutcome(period, timerType, outcome) {
+    if (!period) return outcome;
+    const key = `${timerType || '30s'}:${String(period)}`;
+    upcomingPeriodOutcomes.set(key, outcome);
+
+    if (upcomingPeriodOutcomes.size > 600) {
+        const firstKey = upcomingPeriodOutcomes.keys().next().value;
+        upcomingPeriodOutcomes.delete(firstKey);
+    }
+    return outcome;
+}
+
+async function getUpcomingPeriodOutcome(period, timerType, ManualOverrideModel) {
+    const safePeriod = String(period || '');
+    const safeType = String(timerType || '30s');
+    const key = `${safeType}:${safePeriod}`;
+
+    if (ManualOverrideModel && safePeriod) {
+        const override = await ManualOverrideModel.findOne({ period: safePeriod, used: false });
+        if (override) {
+            const overrideOutcome = buildOutcomeFromNumber(override.number);
+            return saveUpcomingOutcome(safePeriod, safeType, { ...overrideOutcome, isOverride: true });
+        }
+    }
+
+    if (upcomingPeriodOutcomes.has(key)) {
+        const existing = upcomingPeriodOutcomes.get(key);
+        if (!existing.isOverride) {
+            return existing;
+        }
+    }
+
+    const generated = getRngOutcome(safePeriod, safeType);
+    return saveUpcomingOutcome(safePeriod, safeType, { ...generated, isOverride: false });
+}
+
 async function getGameOutcome(period, timerType, ManualOverride) {
-    const override = await ManualOverride.findOne({ period, used: false });
+    const safePeriod = String(period || '');
+    const safeType = String(timerType || '30s');
+    const key = `${safeType}:${safePeriod}`;
+
+    const override = await ManualOverride.findOne({ period: safePeriod, used: false });
 
     if (override) {
         const overrideNum = override.number;
         override.used = true;
         await override.save();
+        upcomingPeriodOutcomes.delete(key);
         return buildOutcomeFromNumber(overrideNum);
     }
 
-    return getRngOutcome(period, timerType);
+    const upcoming = upcomingPeriodOutcomes.get(key);
+    upcomingPeriodOutcomes.delete(key);
+    if (upcoming) {
+        return buildOutcomeFromNumber(upcoming.number);
+    }
+
+    return getRngOutcome(safePeriod, safeType);
 }
 
 async function processBetsForPeriod(period, timerType, outcome, Bet, User) {
@@ -134,6 +184,10 @@ function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserM
             state.countdown = countdown;
             state.isBettingOpen = countdown > 5;
 
+            if (newPeriod) {
+                await getUpcomingPeriodOutcome(newPeriod, timerType, ManualOverrideModel);
+            }
+
             io.emit(`timerTick_${timerType}`, { 
                 countdown: state.countdown, isBettingOpen: state.isBettingOpen, period: state.period 
             });
@@ -149,4 +203,10 @@ function initWinGoGame(io, GameResultModel, BetModel, ManualOverrideModel, UserM
     });
 }
 
-module.exports = { initWinGoGame, gameStates, getPeriodCodeForTime, getRngOutcome };
+module.exports = {
+    initWinGoGame,
+    gameStates,
+    getPeriodCodeForTime,
+    getRngOutcome,
+    getUpcomingPeriodOutcome
+};
